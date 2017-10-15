@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Meetaroo.Models;
+using Npgsql;
 
 namespace Meetaroo
 {
@@ -18,6 +18,8 @@ namespace Meetaroo
             var dbHost = Environment.GetEnvironmentVariable("DATABASE_HOST") ?? "localhost";
             var connectionString = string.Format("Server={0};Database=meetaroo;Username=meetaroo;Password=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71", dbHost);
 
+            services.AddScoped<NpgsqlConnection>(serviceProvider => new NpgsqlConnection(connectionString));
+            //services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddMvc();
         }
 

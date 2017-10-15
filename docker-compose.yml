@@ -1,13 +1,6 @@
 version: '3'
 
 services:
-  meetaroo:
-    image: meetaroo
-    build:
-      context: ./Meetaroo
-      dockerfile: Dockerfile
-    environment:
-      - DATABASE_HOST=db
   db:
     image: postgres:10-alpine
     restart: always
@@ -17,3 +10,24 @@ services:
       POSTGRES_PASSWORD: x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71
       POSTGRES_USER: meetaroo
       POSTGRES_DB: meetaroo
+  migrator:
+    image: ubergesundheit/docker-postgres-migrator
+    external_links:
+      - db
+    environment:
+      - SLEEP=5
+      - DB_NAME=meetaroo
+      - DB_HOST=db
+      - DB_PASSWORD=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71
+      - DB_USER=meetaroo
+    volumes:
+      - ./Meetaroo/migrations:/migrations
+    depends_on:
+      - "db"
+  meetaroo:
+    image: meetaroo
+    build:
+      context: ./Meetaroo
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_HOST=db
