@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Meetaroo.Models;
-using Microsoft.Extensions.Configuration;
 
 namespace Meetaroo
 {
@@ -21,7 +19,6 @@ namespace Meetaroo
             var connectionString = string.Format("Server={0};Database=meetaroo;Username=meetaroo;Password=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71", dbHost);
 
             services.AddMvc();
-            services.AddEntityFrameworkNpgsql().AddDbContext<MeetarooContext>(opt => opt.UseNpgsql(connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
