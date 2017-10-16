@@ -4,12 +4,12 @@ services:
   db:
     image: postgres:10-alpine
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71
       POSTGRES_USER: meetaroo
       POSTGRES_DB: meetaroo
+    volumes:
+     - ./data:/var/lib/postgresql/data
   migrator:
     image: ubergesundheit/docker-postgres-migrator
     external_links:
