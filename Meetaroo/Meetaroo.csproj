@@ -15,4 +15,8 @@
     <PackageReference Include="Npgsql" Version="3.2.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Migrator\Migrator.csproj" />
+  </ItemGroup>
+
 </Project>

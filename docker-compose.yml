@@ -11,17 +11,15 @@ services:
     volumes:
      - ./data:/var/lib/postgresql/data
   migrator:
-    image: ubergesundheit/docker-postgres-migrator
-    external_links:
-      - db
+    image: migrator
+    build:
+      context: ./Migrator
+      dockerfile: Dockerfile
     environment:
       - SLEEP=5
-      - DB_NAME=meetaroo
-      - DB_HOST=db
-      - DB_PASSWORD=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71
-      - DB_USER=meetaroo
+      - DATABASE_HOST=db
     volumes:
-      - ./Meetaroo/migrations:/migrations
+      - ./migrations:/migrations
     depends_on:
       - "db"
   meetaroo:
@@ -31,3 +29,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - DATABASE_HOST=db
+    volumes:
+      - ./migrations:/migrations
+    depends_on:
+      - "db"
