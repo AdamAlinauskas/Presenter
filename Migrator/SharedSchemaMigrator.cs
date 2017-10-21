@@ -1,4 +1,7 @@
-﻿using Npgsql;
+﻿using System;
+using System.Linq;
+using Dapper;
+using Npgsql;
 
 namespace Migrator
 {
@@ -18,9 +21,15 @@ namespace Migrator
         {
             using (connection = connector.Connect("meetaroo_shared"))
             {
+                EnsureSharedSchemaExists(connection);
                 migrator.Connection = connection;
                 migrator.Migrate("meetaroo_shared", "shared");
             }
+        }
+
+        private void EnsureSharedSchemaExists(NpgsqlConnection connection)
+        {
+            connection.Execute("CREATE SCHEMA IF NOT EXISTS meetaroo_shared");
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Meetaroo
         {
             // TODO AP : Use Configuration loaded from appSettings.json and environment for these strings
             var dbHost = Environment.GetEnvironmentVariable("DATABASE_HOST");
-            var connectionString = string.Format("Server={0};Database=meetaroo;Username=meetaroo;Password=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71", dbHost);
+            var connectionString = string.Format("Server={0};Database=meetaroo;Username=meetaroo;Password=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71;Search Path=meetaroo_shared", dbHost);
 
             services.AddScoped(serviceProvider => new NpgsqlConnection(connectionString));
             //services.AddScoped<IOrganizationRepository, OrganizationRepository>();
