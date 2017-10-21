@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+# Create migration
+# Run as create <migration set> <name>
+# Example: create shared add_users
+
+cat << EOF > "../migrations/$1/$(date -u +%y%m%d)_$2.sql"
+START TRANSACTION;
+
+-- Migration here
+
+COMMIT;
+EOF
