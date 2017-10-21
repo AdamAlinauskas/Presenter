@@ -5,3 +5,11 @@
         <li>@org.id : @org.display_name</li>
     }
 </ul>
+
+@using (Html.BeginForm("Create", "OrganizationAdmin")) {
+    @Html.Label("schemaName", "Schema name");
+    @Html.TextBox("schemaName")
+    @Html.Label("displayName", "Display name");
+    @Html.TextBox("displayName")
+    <input type="submit" value="create" />
+}

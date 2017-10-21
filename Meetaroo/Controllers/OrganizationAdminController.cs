@@ -23,14 +23,21 @@ namespace Meetaroo.Controllers
 
             var result = await connection.QueryAsync("SELECT id, display_name FROM Organizations");
             return View(result);
-            var content = string.Join("\n", result.Select(row => $"{row.id}: {row.display_name}"));
-            
-            return new ContentResult
-            {
-                ContentType = "text",
-                Content = content,
-                StatusCode = 200
-            };
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(string schemaName, string displayName)
+        {
+            await connection.OpenAsync();
+
+            await connection.ExecuteAsync(
+                "INSERT INTO meetaroo_shared.organizations (schema_name, display_name) VALUES (@schemaName, @displayName)",
+                new { schemaName, displayName }
+            );
+
+            // TODO AP : Actually create schema and migrate it up
+
+            return RedirectToAction("Index");
         }
     }
 }
