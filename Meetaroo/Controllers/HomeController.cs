@@ -25,7 +25,7 @@ namespace Meetaroo.Controllers
 
             var result = new StringBuilder();
 
-            using (var cmd = new NpgsqlCommand("SELECT Id, Name FROM Organizations", connection))
+            using (var cmd = new NpgsqlCommand("SELECT id, display_name FROM Organizations", connection))
             using (var reader = await cmd.ExecuteReaderAsync())
             {
                 while (reader.Read())
