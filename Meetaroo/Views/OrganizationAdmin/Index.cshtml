@@ -1,0 +1,7 @@
+@model System.Collections.Generic.IEnumerable<dynamic>
+<ul>
+    @foreach(var org in Model)
+    {
+        <li>@org.id : @org.display_name</li>
+    }
+</ul>
