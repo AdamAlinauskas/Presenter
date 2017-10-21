@@ -53,11 +53,12 @@ namespace Migrator
 
         private void Run(string migration)
         {
+            Console.WriteLine($"Running {migration}");
             var path = $"{migrationFolder}{migration}.sql";
             var command = File.ReadAllText(path);
             Connection.Execute(command);
             Connection.Execute($"INSERT INTO versions VALUES ('{migration}')");
-            Console.WriteLine($"Ran {migration}");
+            Console.WriteLine(" ...success");
         }
     }
 }

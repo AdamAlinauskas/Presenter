@@ -1,7 +1,16 @@
 #!/bin/sh
 
-cd ..
+# First parameter is passed to docker-compose, so you can use "run_dev -d" to run in background
 
-docker-compose -f docker-compose.ci.build.yml up && docker-compose up --build $1 && docker ps
+(
+    cd ..
+    set -e
+    # This command works without dotnet installed
+    # docker-compose -f docker-compose.ci.build.yml up && docker-compose up --build $1 && docker ps
 
-cd -
+    # Let's assume we have dotnet on development machine
+    # Alas, the docker project doesn't build properly outside of Visual Studio 2017
+    dotnet restore ./Meetaroo.no_docker.sln && dotnet publish ./Meetaroo.no_docker.sln -c Release -o ./obj/Docker/publish
+    docker-compose up --build $1
+    docker ps
+)
