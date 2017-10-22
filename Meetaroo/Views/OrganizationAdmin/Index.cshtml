@@ -1,4 +1,7 @@
 @model System.Collections.Generic.IEnumerable<dynamic>
+
+<p>Logged In : @User.Identity.IsAuthenticated</p>
+
 <ul>
     @foreach(var org in Model)
     {
