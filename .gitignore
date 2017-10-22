@@ -261,3 +261,6 @@ __pycache__/
 *.pyc
 
 /data/
+
+# VS Code
+.vscode/temp.sql
