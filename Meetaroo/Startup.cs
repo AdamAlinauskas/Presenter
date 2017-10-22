@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +15,15 @@ namespace Meetaroo
 {
     public class Startup
     {
+        public Startup(IHostingEnvironment env){
+            var builder = new ConfigurationBuilder()
+            .SetBasePath(env.ContentRootPath)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+            .AddEnvironmentVariables();
+             Configuration = builder.Build();
+        }
+
         public IConfigurationRoot Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -29,6 +39,16 @@ namespace Meetaroo
             ConfigureAuth(services);
 
             services.AddMvc();
+
+            AddAws(services);
+            
+        }
+
+        private void AddAws(IServiceCollection services)
+        {
+            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonS3>();
+            //services.AddAWSService<IAmazonDynamoDB>(); don't thnk we are using that.
         }
 
         private void ConfigureAuth(IServiceCollection services)
