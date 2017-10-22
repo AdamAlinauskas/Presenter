@@ -32,7 +32,7 @@ namespace Migrator
 
         private static bool WaitForDatabaseToComeOnline()
         {
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 60; i++)
             {
                 try
                 {
