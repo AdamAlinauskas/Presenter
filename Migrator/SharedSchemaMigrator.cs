@@ -1,35 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using Npgsql;
 
 namespace Migrator
 {
-    class SharedSchemaMigrator
+    class SharedSchemaMigrator : BaseMigrator
     {
-        private Connector connector;
-        private DatabaseMigrator migrator;
-        private NpgsqlConnection connection;
-
-        public SharedSchemaMigrator(Connector connector, DatabaseMigrator migrator)
+        public SharedSchemaMigrator(Connector connector, DatabaseAssistant migrator) : base(connector, migrator, "meetaroo_shared")
         {
-            this.connector = connector;
-            this.migrator = migrator;
         }
 
-        public void Migrate()
+        public override void Migrate()
         {
-            using (connection = connector.Connect("meetaroo_shared"))
-            {
-                EnsureSharedSchemaExists(connection);
-                migrator.Connection = connection;
-                migrator.Migrate("meetaroo_shared", "shared");
-            }
+            EnsureSchemaExists(connection);
+            migrator.Migrate(schema, "shared");
         }
 
-        private void EnsureSharedSchemaExists(NpgsqlConnection connection)
+        internal IEnumerable<string> GetOrgs()
         {
-            connection.Execute("CREATE SCHEMA IF NOT EXISTS meetaroo_shared");
+            var result = connection.Query("SELECT schema_name AS schema FROM organizations");
+            return result.Select(row => row.schema as string);
         }
     }
 }

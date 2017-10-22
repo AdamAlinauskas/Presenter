@@ -7,7 +7,7 @@ using Dapper;
 
 namespace Migrator
 {
-    class DatabaseMigrator
+    class DatabaseAssistant
     {
         // TODO AP : All of this shit should be async for use with asp.net
 
