@@ -7,6 +7,7 @@ using Dapper;
 using System.Linq;
 using System;
 using Migrator;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Meetaroo.Controllers
 {
@@ -19,6 +20,7 @@ namespace Meetaroo.Controllers
             this.connection = connection;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             await connection.OpenAsync();

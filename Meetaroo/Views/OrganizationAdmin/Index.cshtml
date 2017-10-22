@@ -1,6 +1,7 @@
 @model System.Collections.Generic.IEnumerable<dynamic>
 
-<p>Logged In : @User.Identity.IsAuthenticated</p>
+<p>Logged in as : @User.Identity.Name</p>
+<img src="@(User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value)" />
 
 <ul>
     @foreach(var org in Model)

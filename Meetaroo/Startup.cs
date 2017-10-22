@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 
 namespace Meetaroo
@@ -54,7 +55,15 @@ namespace Meetaroo
 
                 // Configure the scope
                 options.Scope.Clear();
-                            options.Scope.Add("openid");
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+
+                // Set the correct name claim type
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name"
+                };
+
 
                 // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
                 // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
@@ -62,6 +71,8 @@ namespace Meetaroo
 
                 // Configure the Claims Issuer to be Auth0
                 options.ClaimsIssuer = "Auth0";
+
+                options.SaveTokens = true;
 
                 options.Events = new OpenIdConnectEvents
                 {
