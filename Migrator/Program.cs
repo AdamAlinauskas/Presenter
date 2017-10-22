@@ -32,7 +32,7 @@ namespace Migrator
 
         private static bool WaitForDatabaseToComeOnline()
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 20; i++)
             {
                 try
                 {
@@ -42,7 +42,7 @@ namespace Migrator
                     Console.WriteLine("Connected to database");
                     return true;
                 }
-                catch (Npgsql.PostgresException ex)
+                catch (System.Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     Console.WriteLine($"Connection attempt {i+1} failed. Retrying...");
