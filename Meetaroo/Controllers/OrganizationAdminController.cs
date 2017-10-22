@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using System.Linq;
+using System;
+using Migrator;
 
 namespace Meetaroo.Controllers
 {
@@ -34,10 +36,17 @@ namespace Meetaroo.Controllers
                 "INSERT INTO meetaroo_shared.organizations (schema_name, display_name) VALUES (@schemaName, @displayName)",
                 new { schemaName, displayName }
             );
-
-            // TODO AP : Actually create schema and migrate it up
+            MigrateOrg(schemaName);
 
             return RedirectToAction("Index");
+        }
+
+        private void MigrateOrg(string schemaName)
+        {
+            var connector = new Connector();
+            var dbAssistant = new DatabaseAssistant();
+            var migrator = new OrganizationMigrator(connector, dbAssistant, schemaName);
+            migrator.Migrate();
         }
     }
 }

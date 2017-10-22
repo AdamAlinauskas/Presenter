@@ -30,6 +30,6 @@ services:
     environment:
       - DATABASE_HOST=db
     volumes:
-      - ./migrations:/migrations
+      - ./migrations:/srv/migrations
     depends_on:
       - "db"

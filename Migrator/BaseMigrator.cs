@@ -4,7 +4,7 @@ using Npgsql;
 
 namespace Migrator
 {
-    abstract class BaseMigrator : IDisposable
+    public abstract class BaseMigrator : IDisposable
     {
         protected DatabaseAssistant migrator;
         protected NpgsqlConnection connection;

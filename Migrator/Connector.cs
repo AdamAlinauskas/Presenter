@@ -3,7 +3,7 @@ using System;
 
 namespace Migrator
 {
-    class Connector
+    public class Connector
     {
         public NpgsqlConnection Connect(string schemaName)
         {
