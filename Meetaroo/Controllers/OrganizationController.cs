@@ -27,13 +27,15 @@ namespace Meetaroo.Controllers
 
         [HttpPost]
         public  async Task<IActionResult> UploadPresentation(IFormFile file){    
+            var extension = Path.GetExtension(file.FileName);
+            
             var client = new AmazonS3Client("AKIAJNOS24TJ3PWZHKEQ", "+d+qIQ5Uv8dfFTdsdvBd0Hp0Exm5QY2YH1ZL8903", RegionEndpoint.USWest2);
             var transfer = new Amazon.S3.Transfer.TransferUtility(client);
 
             var request  = new TransferUtilityUploadRequest();
             request.BucketName = "sakjfkls-test-bucket";
             request.InputStream = new MemoryStream();
-            request.Key = Guid.NewGuid().ToString();
+            request.Key = Guid.NewGuid().ToString()+extension;
             await file.CopyToAsync(request.InputStream);
 
             request.CannedACL = S3CannedACL.AuthenticatedRead;
@@ -48,10 +50,9 @@ namespace Meetaroo.Controllers
             
             var url = client.GetPreSignedURL(new GetPreSignedUrlRequest{
                 BucketName = "sakjfkls-test-bucket",
-                Key ="99961adc-3977-4a9c-98de-3c2b1db5cfee", //"db029c0b-8c7d-47d1-b50a-75ddefef414d",
+                Key ="16004a12-7d05-4c23-afe1-5c679ea76695.pdf", //"db029c0b-8c7d-47d1-b50a-75ddefef414d",
                 Expires = DateTime.Now.AddDays(5),
                 Verb=  HttpVerb.GET
-
             });
             
             var dto = new PresentationFilesDto{PresentationUrl = url};
