@@ -13,6 +13,7 @@ using Amazon.S3;
 using Amazon.S3.Transfer;
 using Amazon;
 using System.IO;
+using Amazon.S3.Model;
 
 namespace Meetaroo.Controllers
 {
@@ -55,27 +56,6 @@ namespace Meetaroo.Controllers
             var migrator = new OrganizationMigrator(connector, dbAssistant, schemaName);
             migrator.Migrate();
         }
-
-        public  IActionResult UploadPresentation(){
-            
-            return View();
-        }
-
-        [HttpPost]
-        public  async Task<IActionResult> UploadPresentation(IFormFile file){    
-            var client = new AmazonS3Client("AKIAJNOS24TJ3PWZHKEQ", "+d+qIQ5Uv8dfFTdsdvBd0Hp0Exm5QY2YH1ZL8903", RegionEndpoint.USWest2);
-            var transfer = new Amazon.S3.Transfer.TransferUtility(client);
-            var request  = new TransferUtilityUploadRequest();
-            request.BucketName = "sakjfkls-test-bucket";
-            request.InputStream = new MemoryStream();
-            request.Key = Guid.NewGuid().ToString();
-            await file.CopyToAsync(request.InputStream);
-
-            request.CannedACL = S3CannedACL.AuthenticatedRead;
-
-            await transfer.UploadAsync(request);
-            
-            return RedirectToAction("UploadPresentation","OrganizationAdmin");
-        }
     }
+       
 }
