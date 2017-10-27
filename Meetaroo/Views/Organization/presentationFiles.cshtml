@@ -1,3 +1,4 @@
 @model Meetaroo.Controllers.PresentationFilesDto
-<a asp-controller="Organization" asp-action="ViewPresentation">view</a>
+<a href='@Url.Action("ViewPresentation","Organization")'>view</a>
+<br/>
 <a href='@Model.PresentationUrl' download>Download</a>
