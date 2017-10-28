@@ -79,6 +79,7 @@ namespace Meetaroo
                 options.Scope.Clear();
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
+                options.Scope.Add("email");
 
                 // Set the correct name claim type
                 options.TokenValidationParameters = new TokenValidationParameters
