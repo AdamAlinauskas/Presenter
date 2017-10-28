@@ -1,7 +1,10 @@
 @model System.Collections.Generic.IEnumerable<dynamic>
 
 <p>Logged in as : @User.Identity.Name</p>
-<img src="@(User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value)" />
+@foreach (var claim in User.Claims) {
+    <pre>@claim.Type = @claim.Value</pre>
+}
+<img width="100" height="100" src="@(User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value)" />
 
 <ul>
     @foreach(var org in Model)
