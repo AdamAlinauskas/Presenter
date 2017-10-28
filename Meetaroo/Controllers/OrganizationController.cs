@@ -18,6 +18,7 @@ using Amazon.S3.Model;
 namespace Meetaroo.Controllers
 {
 
+    [TypeFilterAttribute(typeof(RetrieveSchemaActionFilter))]
     public class OrganizationController : Controller{
 
         public  IActionResult UploadPresentation(){
