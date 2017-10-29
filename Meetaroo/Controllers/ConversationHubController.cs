@@ -47,9 +47,12 @@ namespace Meetaroo.Controllers
         {
             await Connect();
             var userId = await GetUserIdAsync();
-            System.Console.WriteLine($"User id is {userId}");
 
             // TODO AP : Actually create the conversation
+            await connection.ExecuteAsync(
+                "INSERT INTO conversations (topic, created_by) VALUES (@topic, @userId)",
+                new { topic, userId }
+            );
 
             return RedirectToRoute(
                 "schemaBased",
@@ -60,7 +63,6 @@ namespace Meetaroo.Controllers
         private async Task<int> GetUserIdAsync()
         {
             var userIdentifier = User.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
-            System.Console.WriteLine($"Looking for user : {userIdentifier}");
             var user = await connection.QueryFirstAsync<dynamic>(
                 "SELECT id FROM meetaroo_shared.users WHERE identifier = @identifier",
                 new { identifier = userIdentifier }
