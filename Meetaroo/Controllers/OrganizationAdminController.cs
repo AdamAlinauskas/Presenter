@@ -31,7 +31,7 @@ namespace Meetaroo.Controllers
         {
             await connection.OpenAsync();
 
-            var result = await connection.QueryAsync("SELECT id, display_name FROM Organizations");
+            var result = await connection.QueryAsync("SELECT id, display_name, schema_name FROM Organizations");
             return View(result);
         }
 
