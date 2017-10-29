@@ -2,10 +2,19 @@
 
 <h1>@Model.topic</h1>
 
+<ul id="messages"></ul>
+
 <form id="add-message">
     <input type="hidden" name="conversationId" value="@Model.id" />
     <input id="message" name="message" placeholder="Message" />
     <input type="submit" value="Send" />
 </form>
 
+<template id="message-template">
+    <li><span class="author"></span> - <span class="message"></span></li>
+</template>
+
+<script type="text/javascript">
+    window.conversationId = @Model.id
+</script>
 <script type="text/javascript" src="/scripts/conversation/conversation.js"></script>

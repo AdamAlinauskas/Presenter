@@ -64,6 +64,35 @@ namespace Meetaroo.Controllers
             return new ContentResult { Content = message };
         }
 
+        public async Task<JsonResult> GetMessages(long conversationId, long since)
+        {
+            await Connect();
+            var messages = await connection.QueryAsync(
+                @"SELECT
+                    message.id,
+                    message.created_at,
+                    message.text,
+                    author.name AS author_name,
+                    event.id AS event_id
+                FROM message_events AS event
+                INNER JOIN messages AS message ON event.message_id = message.id
+                INNER JOIN meetaroo_shared.users AS author ON message.created_by = author.id
+                WHERE
+                    event.id > @since
+                    AND message.conversation_id = @conversationId
+                ORDER BY message.created_at",
+                new { since, conversationId }
+            );
+
+            return new JsonResult(new {
+                messages,
+                lastEventId = messages
+                    .OrderByDescending(message => message.event_id)
+                    .FirstOrDefault()
+                    ?.event_id ?? since
+            });
+        }
+
         private async Task Connect()
         {
             await connection.OpenAsync();
