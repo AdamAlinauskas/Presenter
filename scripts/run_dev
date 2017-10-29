@@ -11,7 +11,7 @@
 
     # Let's assume we have dotnet on development machine
     # Alas, the docker project doesn't build properly outside of Visual Studio 2017
-    dotnet restore ./Meetaroo.no_docker.sln && dotnet publish ./Meetaroo.no_docker.sln -c Release -o ./obj/Docker/publish
+    dotnet restore ./Meetaroo.no_docker.sln && dotnet publish ./Meetaroo.no_docker.sln -c Debug -o ./obj/Docker/publish
     docker-compose up --build $1
     docker ps
 )

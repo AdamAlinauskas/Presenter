@@ -1,0 +1,8 @@
+@model System.Collections.Generic.IEnumerable<dynamic>
+These are your convos
+
+<ul>
+@foreach(var row in Model) {
+    <li>@row.id : @row.topic by @row.created_by</li>
+}
+</ul>

@@ -2,7 +2,7 @@ START TRANSACTION;
 
 -- Migration here
 CREATE TABLE users (
-	id SERIAL PRIMARY KEY,
+	id BIGSERIAL PRIMARY KEY,
     email text,
     name text,
     picture text,
