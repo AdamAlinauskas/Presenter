@@ -3,6 +3,7 @@
 <h1>@Model.topic</h1>
 
 <form id="add-message">
+    <input type="hidden" name="conversationId" value="@Model.id" />
     <input id="message" name="message" placeholder="Message" />
     <input type="submit" value="Send" />
 </form>
