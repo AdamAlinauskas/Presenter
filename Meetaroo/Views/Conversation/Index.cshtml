@@ -1,3 +1,10 @@
 @model dynamic
 
 <h1>@Model.topic</h1>
+
+<form id="add-message">
+    <input id="message" name="message" placeholder="Message" />
+    <input type="submit" value="Send" />
+</form>
+
+<script type="text/javascript" src="/scripts/conversation/conversation.js"></script>

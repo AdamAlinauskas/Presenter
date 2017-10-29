@@ -29,6 +29,11 @@ namespace Meetaroo.Controllers
             return View(conversation);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> AddMessage(string message) {
+            return new ContentResult { Content = message };
+        }
+
         private async Task Connect()
         {
             await connection.OpenAsync();
