@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Amazon.S3;
+using DataAccess;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +38,9 @@ namespace Meetaroo
 
             services.AddScoped(serviceProvider => new NpgsqlConnection(connectionString));
             services.AddScoped<ICurrentSchema, CurrentSchema>();
+            services.AddTransient<IConfirmSchemaExists,ConfirmSchemaExists>();
+            services.AddTransient<IOrganizationRepository,OrganizationRepository>();
+
 
             ConfigureAuth(services);
 
