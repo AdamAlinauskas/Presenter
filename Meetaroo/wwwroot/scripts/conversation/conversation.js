@@ -1,4 +1,6 @@
 window.onload = () => {
+    Notification.requestPermission();
+    
     const messageForm = document.getElementById('add-message');
     messageForm.onsubmit = (event) => {
         event.preventDefault();
@@ -35,8 +37,8 @@ window.onload = () => {
     }
 
     function populateMessageNode(elem, message) {
-        elem.querySelector('.author').innerText = message.author_name;
-        elem.querySelector('.message').innerText = message.text;
+        elem.querySelector('.mt-author').innerText = message.author_name;
+        elem.querySelector('.mt-message').innerText = message.text;
     }
 
     let lastSeenEvent = -1;
@@ -57,7 +59,7 @@ window.onload = () => {
         ).catch(
             (err) => { 
                 console.log(err);
-                alert('Something went wrong');
+                new Notification('Something went wrong');
             }
         );
     };

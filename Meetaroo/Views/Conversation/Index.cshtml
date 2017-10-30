@@ -1,17 +1,41 @@
 @model dynamic
 
-<h1>@Model.topic</h1>
+@{
+    Layout = "~/Views/Conversation/Layout.cshtml";
+}
 
-<ul id="messages"></ul>
+<div class="container" style="position: fixed; top: 0; width: 100%">
+    <nav class="navbar is-dark">
+        <div class="navbar-item">
+            <div class="navbar-link" style="background:inherit">
+                <div style="color: whitesmoke">Logged in as @User.Identity.Name</div>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class="container">
+    <section class="hero">
+        <h1 class="title" style="margin: 60px 0 20px 0">@Model.topic</h1>
+    </section>
+</div>
 
-<form id="add-message">
+<section id="messages"></section>
+
+<form id="add-message" style="position: fixed; bottom: 0; width: 100%" class="columns is-mobile">
     <input type="hidden" name="conversationId" value="@Model.id" />
-    <input id="message" name="message" placeholder="Message" />
-    <input type="submit" value="Send" />
+    <div class="column">
+        <input id="message" name="message" placeholder="Message" class="input" />
+    </div>
+    <div class="column is-narrow">
+        <input type="submit" value="Send" class="button"/>
+    </div>
 </form>
 
 <template id="message-template">
-    <li><span class="author"></span> - <span class="message"></span></li>
+    <div class="notification is-info">
+        <div><strong class="mt-author"></strong></div>
+        <div class="mt-message"></div>
+    </div>
 </template>
 
 <script type="text/javascript">
