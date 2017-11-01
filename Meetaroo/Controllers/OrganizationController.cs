@@ -14,12 +14,19 @@ using Amazon.S3.Transfer;
 using Amazon;
 using System.IO;
 using Amazon.S3.Model;
+using Service;
 
 namespace Meetaroo.Controllers
 {
 
     [TypeFilterAttribute(typeof(RetrieveSchemaActionFilter))]
     public class OrganizationController : Controller{
+        private readonly IUploadFileCommand uploadFileCommand;
+
+        public OrganizationController(IUploadFileCommand uploadFileCommand)
+        {
+            this.uploadFileCommand = uploadFileCommand;
+        }
 
         public  IActionResult UploadPresentation(){
             
@@ -28,6 +35,13 @@ namespace Meetaroo.Controllers
 
         [HttpPost]
         public  async Task<IActionResult> UploadPresentation(IFormFile file){    
+            var fileStream = new MemoryStream();
+            await file.CopyToAsync(fileStream);
+
+
+            uploadFileCommand.Execute(fileStream, file.FileName);
+            
+            
             var extension = Path.GetExtension(file.FileName);
             
             var client = new AmazonS3Client("AKIAJNOS24TJ3PWZHKEQ", "+d+qIQ5Uv8dfFTdsdvBd0Hp0Exm5QY2YH1ZL8903", RegionEndpoint.USWest2);

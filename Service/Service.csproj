@@ -5,6 +5,14 @@
   </PropertyGroup>
    <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\Dto\Dto.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+   <ItemGroup>
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.3" />
+    <PackageReference Include="awssdk.core" Version="3.3.18.1" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.11.2" />
   </ItemGroup>
 
 </Project>

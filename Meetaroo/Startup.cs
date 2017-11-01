@@ -38,8 +38,16 @@ namespace Meetaroo
 
             services.AddScoped(serviceProvider => new NpgsqlConnection(connectionString));
             services.AddScoped<ICurrentSchema, CurrentSchema>();
+            
+            //Service Layer
             services.AddTransient<IConfirmSchemaExists,ConfirmSchemaExists>();
+            services.AddTransient<IUploadFileCommand,UploadFileCommand>();
+            
+
+            //DAL
+            
             services.AddTransient<IOrganizationRepository,OrganizationRepository>();
+            services.AddTransient<IFileRepository,FileRepository>();
 
 
             ConfigureAuth(services);

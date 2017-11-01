@@ -19,5 +19,6 @@
     <ProjectReference Include="..\Migrator\Migrator.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\Dto\Dto.csproj" />
   </ItemGroup>
 </Project>
