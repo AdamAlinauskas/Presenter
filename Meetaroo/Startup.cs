@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Amazon.S3;
 using DataAccess;
+using Domain;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -42,10 +45,10 @@ namespace Meetaroo
             //Service Layer
             services.AddTransient<IConfirmSchemaExists,ConfirmSchemaExists>();
             services.AddTransient<IUploadFileCommand,UploadFileCommand>();
-            
+            services.AddTransient<ICreateProfileService,CreateProfileService>();
 
             //DAL
-            
+            services.AddTransient<IUserRepository,UserRepository>();
             services.AddTransient<IOrganizationRepository,OrganizationRepository>();
             services.AddTransient<IFileRepository,FileRepository>();
 
@@ -132,6 +135,16 @@ namespace Meetaroo
                         context.HandleResponse();
 
                         return Task.CompletedTask;
+                    },
+                    OnTokenValidated = (context) => {
+                        var principal = context.Principal;
+                        var userProfile = new User {
+                            Name = principal.Identity.Name,
+                            Email = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
+                            Picture = principal.Claims.FirstOrDefault(claim => claim.Type == "picture")?.Value,
+                            Identifier = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value
+                        };
+                        return services.BuildServiceProvider().GetService<ICreateProfileService>().EnsureExists(userProfile);
                     }
                 };
             });
