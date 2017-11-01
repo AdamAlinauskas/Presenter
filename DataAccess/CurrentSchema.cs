@@ -1,4 +1,4 @@
-namespace Service{
+namespace DataAccess{
     public class CurrentSchema : ICurrentSchema {
         public string Name {get;set;}
     }

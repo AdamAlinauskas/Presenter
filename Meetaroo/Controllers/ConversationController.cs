@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using Service;
+using DataAccess;
 
 namespace Meetaroo.Controllers
 {
