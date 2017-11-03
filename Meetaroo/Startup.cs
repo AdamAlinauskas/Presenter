@@ -44,14 +44,14 @@ namespace Meetaroo
             
             //Service Layer
             services.AddTransient<IConfirmSchemaExists,ConfirmSchemaExists>();
-            services.AddTransient<IUploadFileCommand,UploadFileCommand>();
             services.AddTransient<ICreateProfileService,CreateProfileService>();
+            services.AddTransient<IUploadFileCommand,UploadFileCommand>();
 
             //DAL
-            services.AddTransient<IUserRepository,UserRepository>();
-            services.AddTransient<IOrganizationRepository,OrganizationRepository>();
+            services.AddTransient<IConversationRepository,ConversationRepository>();
             services.AddTransient<IFileRepository,FileRepository>();
-
+            services.AddTransient<IOrganizationRepository,OrganizationRepository>();
+            services.AddTransient<IUserRepository,UserRepository>();
 
             ConfigureAuth(services);
 

@@ -1,9 +1,12 @@
-@model System.Collections.Generic.IEnumerable<dynamic>
+@model System.Collections.Generic.IEnumerable<Domain.Conversation>
 These are your convos
 
 <ul>
-@foreach(var row in Model) {
-    <li><a href="Conversation?id=@row.id">@row.topic</a> started by @row.created_by</li>
+@foreach(var conversation in Model) {
+    <li>
+        <a href="Conversation?id=@conversation.Id">@conversation.Topic</a>
+        started by @conversation.CreatedBy.Name
+    </li>
 }
 </ul>
 

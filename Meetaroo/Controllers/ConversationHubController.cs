@@ -1,4 +1,3 @@
-
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -18,30 +17,23 @@ namespace Meetaroo.Controllers
     {
         private readonly ICurrentSchema currentSchema;
         private readonly NpgsqlConnection connection;
+        private readonly IConversationRepository repository;
 
-        public ConversationHubController(ICurrentSchema currentSchema, NpgsqlConnection connection)
+        public ConversationHubController(
+            ICurrentSchema currentSchema,
+            NpgsqlConnection connection,
+            IConversationRepository repository
+        )
         {
             this.currentSchema = currentSchema;
             this.connection = connection;
+            this.repository = repository;
         }
 
         public async Task<ViewResult> Index()
         {
-            await Connect();
-
-            // Joining on meetaroo_shared.users only works while
-            // we have only one database server
-            var queryResult = await connection.QueryAsync(
-                @"SELECT
-                    conversations.id AS id,
-                    topic,
-                    name as created_by
-                FROM conversations
-                INNER JOIN meetaroo_shared.users AS users ON conversations.created_by = users.id
-                ORDER BY created_at"
-            );
-
-            return View(queryResult);
+            var conversations = await repository.GetConversations();
+            return View(conversations);
         }
 
         public async Task<ActionResult> Create(string topic)
