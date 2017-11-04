@@ -41,6 +41,7 @@ namespace Meetaroo
 
             services.AddScoped(serviceProvider => new NpgsqlConnection(connectionString));
             services.AddScoped<ICurrentSchema, CurrentSchema>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             
             //Service Layer
             services.AddTransient<IConfirmSchemaExists,ConfirmSchemaExists>();

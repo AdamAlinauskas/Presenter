@@ -11,6 +11,7 @@ namespace DataAccess
     {
         Task<bool> DoesUserExist(string identifier);
         Task CreateUser(User userProfile);
+        Task<User> GetByIdentifier(string userIdentifier);
     }
 
     public class UserRepository : IUserRepository
@@ -38,6 +39,21 @@ namespace DataAccess
                 VALUES (@name, @email, @picture, @identifier)
                 ON CONFLICT DO NOTHING",
                 userProfile
+            );
+        }
+
+        public async Task<User> GetByIdentifier(string userIdentifier)
+        {
+            return await connection.QueryFirstAsync<User>(
+                @"SELECT
+                    id AS Id,
+                    name AS Name,
+                    email AS Email,
+                    picture AS Picture,
+                    identifier AS Identifier
+                FROM meetaroo_shared.users
+                WHERE identifier = @userIdentifier",
+                new { userIdentifier }
             );
         }
     }
