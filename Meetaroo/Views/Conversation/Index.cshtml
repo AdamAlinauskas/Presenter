@@ -1,4 +1,4 @@
-@model dynamic
+@model Domain.Conversation
 
 @{
     Layout = "~/Views/Conversation/Layout.cshtml";
@@ -15,14 +15,14 @@
 </div>
 <div class="container">
     <section class="hero">
-        <h1 class="title" style="margin: 60px 0 20px 0">@Model.topic</h1>
+        <h1 class="title" style="margin: 60px 0 20px 0">@Model.Topic</h1>
     </section>
 </div>
 
 <section id="messages"></section>
 
 <form id="add-message" style="position: fixed; bottom: 0; width: 100%" class="columns is-mobile">
-    <input type="hidden" name="conversationId" value="@Model.id" />
+    <input type="hidden" name="conversationId" value="@Model.Id" />
     <div class="column">
         <input id="message" name="message" placeholder="Message" class="input" />
     </div>
@@ -39,6 +39,6 @@
 </template>
 
 <script type="text/javascript">
-    window.conversationId = @Model.id
+    window.conversationId = @Model.Id
 </script>
 <script type="text/javascript" src="/scripts/conversation/conversation.js"></script>

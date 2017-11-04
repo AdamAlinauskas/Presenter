@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
 using Domain;
+using Dto;
 using Npgsql;
 
 namespace DataAccess
@@ -10,7 +11,9 @@ namespace DataAccess
     {
         Task<Conversation> GetConversation(long id);
         Task<IEnumerable<Conversation>> GetConversations();
-        Task<IEnumerable<Message>> GetMessages(long conversationId, long lastSeenMessage);
+        Task CreateConversation(string topic, long createdBy);
+        Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage);
+        Task AddMessage(long conversationId, string message, long id);
     }
 
     public class ConversationRepository : BaseRepository, IConversationRepository
@@ -58,9 +61,64 @@ namespace DataAccess
             );
         }
 
-        public async Task<IEnumerable<Message>> GetMessages(long conversationId, long lastSeenMessage)
+        public async Task CreateConversation(string topic, long createdBy) {
+            await Connect();
+            await connection.ExecuteAsync(
+                @"INSERT INTO conversations (topic, created_by)
+                VALUES (@topic, @createdBy)",
+                new { topic, createdBy }
+            );
+        }
+
+        public async Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage)
         {
-            throw new System.NotImplementedException();
+            await Connect();
+            return await connection.QueryAsync<ViewMessageDto>(
+                @"SELECT
+                    message.id AS MessageId,
+                    message.created_at AS CreatedAt,
+                    message.text AS Text,
+                    author.name AS Author,
+                    event.id AS EventId
+                FROM message_events AS event
+                INNER JOIN messages AS message ON event.message_id = message.id
+                INNER JOIN meetaroo_shared.users AS author ON message.created_by = author.id
+                WHERE
+                    event.id > @lastSeenMessage
+                    AND message.conversation_id = @conversationId
+                ORDER BY message.created_at",
+                new { lastSeenMessage, conversationId }
+            );
+        }
+
+        public async Task AddMessage(long conversationId, string message, long createdBy)
+        {
+            await Connect();
+            var transaction = connection.BeginTransaction();
+
+            try
+            {
+                var messageResult = await connection.QueryFirstAsync<dynamic>(
+                    @"INSERT INTO
+                        messages (text, conversation_id, created_by)
+                        VALUES (@message, @conversationId, @createdBy)
+                        RETURNING id",
+                    new { message, conversationId, createdBy }
+                );
+                await connection.ExecuteAsync(
+                    @"INSERT INTO
+                        message_events(message_id, event_type, created_by)
+                        VALUES (@messageId, 'message_created', @createdBy)",
+                    new { messageId = messageResult.id, createdBy }
+                );
+
+                await transaction.CommitAsync();
+            }
+            catch (System.Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

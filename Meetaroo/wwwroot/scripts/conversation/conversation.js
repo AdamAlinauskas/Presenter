@@ -23,7 +23,7 @@ window.onload = () => {
     // This bit could be much better done by react, angular, whatever
     function render(messages) {
         messages.forEach(message => {
-            let elem = document.getElementById(`message-${message.id}`);
+            let elem = document.getElementById(`message-${message.messageId}`);
 
             if (elem) {
                 populateMessageNode(elem, message);
@@ -37,7 +37,7 @@ window.onload = () => {
     }
 
     function populateMessageNode(elem, message) {
-        elem.querySelector('.mt-author').innerText = message.author_name;
+        elem.querySelector('.mt-author').innerText = message.author;
         elem.querySelector('.mt-message').innerText = message.text;
     }
 
