@@ -15,6 +15,7 @@ using Amazon;
 using System.IO;
 using Amazon.S3.Model;
 using Service;
+using DataAccess;
 
 namespace Meetaroo.Controllers
 {
@@ -22,10 +23,12 @@ namespace Meetaroo.Controllers
     [TypeFilterAttribute(typeof(RetrieveSchemaActionFilter))]
     public class OrganizationController : Controller{
         private readonly IUploadFileCommand uploadFileCommand;
+        private readonly ICurrentSchema currentSchema;
 
-        public OrganizationController(IUploadFileCommand uploadFileCommand)
+        public OrganizationController(IUploadFileCommand uploadFileCommand, ICurrentSchema currentSchema)
         {
             this.uploadFileCommand = uploadFileCommand;
+            this.currentSchema = currentSchema;
         }
 
         public  IActionResult UploadPresentation(){
@@ -39,25 +42,15 @@ namespace Meetaroo.Controllers
             await file.CopyToAsync(fileStream);
 
 
-            uploadFileCommand.Execute(fileStream, file.FileName);
+            await uploadFileCommand.Execute(fileStream, file.FileName);
             
             
-            var extension = Path.GetExtension(file.FileName);
-            
-            var client = new AmazonS3Client("AKIAJNOS24TJ3PWZHKEQ", "+d+qIQ5Uv8dfFTdsdvBd0Hp0Exm5QY2YH1ZL8903", RegionEndpoint.USWest2);
-            var transfer = new Amazon.S3.Transfer.TransferUtility(client);
+            return RedirectToRoute(
+                "schemaBased",
+                new { schema = currentSchema.Name, controller = "Organization", action = "UploadPresentation" }
+            );
 
-            var request  = new TransferUtilityUploadRequest();
-            request.BucketName = "sakjfkls-test-bucket";
-            request.InputStream = new MemoryStream();
-            request.Key = Guid.NewGuid().ToString()+extension;
-            await file.CopyToAsync(request.InputStream);
-
-            request.CannedACL = S3CannedACL.AuthenticatedRead;
-
-            await transfer.UploadAsync(request);
             
-            return RedirectToAction("UploadPresentation");
         }
 
         public IActionResult PresentationFiles(){

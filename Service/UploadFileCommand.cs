@@ -1,6 +1,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Transfer;
@@ -9,7 +10,7 @@ using DataAccess;
 namespace Service{
     
     public interface IUploadFileCommand{
-        void Execute(Stream fileStream, string fileName);
+        Task Execute(Stream fileStream, string fileName);
     }
     
     public class UploadFileCommand : IUploadFileCommand{
@@ -19,9 +20,10 @@ namespace Service{
             this.fileRepository = fileRepository;
         }
 
-        public async void Execute(Stream fileStream, string fileName)
+        public async Task Execute(Stream fileStream, string fileName)
         {
-            await UploadFile(fileName, fileStream);
+            var awsKey = await UploadFile(fileName, fileStream);
+            await fileRepository.Save(fileName,awsKey);
         }
 
         private static async System.Threading.Tasks.Task<string> UploadFile(string fileName,Stream fileStream)

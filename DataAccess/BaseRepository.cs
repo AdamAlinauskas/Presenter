@@ -13,7 +13,7 @@ namespace DataAccess{
             this.currentSchema = currentSchema;
         }
          
-         private async Task Connect()
+         public async Task ConnectAndSetSchema()
         {
             await connection.OpenAsync();
 

@@ -37,7 +37,7 @@ namespace Meetaroo
             var connectionString = string.Format("Server={0};Database=meetaroo;Username=meetaroo;Password=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71;Search Path=meetaroo_shared", dbHost);
 
             services.AddScoped(serviceProvider => new NpgsqlConnection(connectionString));
-            services.AddScoped<ICurrentSchema, CurrentSchema>();
+            services.AddScoped<DataAccess.ICurrentSchema, DataAccess.CurrentSchema>();
             
             //Service Layer
             services.AddTransient<IConfirmSchemaExists,ConfirmSchemaExists>();

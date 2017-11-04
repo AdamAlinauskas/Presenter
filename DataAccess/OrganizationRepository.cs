@@ -25,6 +25,7 @@ namespace DataAccess{
             var result = await connection.QueryFirstAsync<int>("SELECT count(*) FROM Organizations where schema_name=@schemaName",
             new {schemaName});
             connection.Close();
+            
             return result > 0;     
         }
     }
