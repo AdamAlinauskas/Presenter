@@ -48,10 +48,11 @@ namespace Meetaroo
             services.AddTransient<IConfirmSchemaExists,ConfirmSchemaExists>();
             services.AddTransient<ICreateProfileService,CreateProfileService>();
             services.AddTransient<IUploadFileCommand,UploadFileCommand>();
+            services.AddTransient<IRetrieveDocumentsQuery, RetrieveDocumentsQuery>();
 
             //DAL
             services.AddTransient<IConversationRepository,ConversationRepository>();
-            services.AddTransient<IFileRepository,FileRepository>();
+            services.AddTransient<IDocumentRepository,DocumentRepository>();
             services.AddTransient<IOrganizationRepository,OrganizationRepository>();
             services.AddTransient<IUserRepository,UserRepository>();
 

@@ -1,18 +1,21 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
+using Dto;
 using Npgsql;
 
 namespace DataAccess{
     
-    public interface IFileRepository{
+    public interface IDocumentRepository{
         Task Save(string fileName, string awsKey);
+        Task<IList<DocumentDto>> All();
     }
-    public class FileRepository : BaseRepository, IFileRepository{
+    public class DocumentRepository : BaseRepository, IDocumentRepository{
         
         private readonly ICurrentSchema currentSchema;
 
-        public FileRepository(NpgsqlConnection connection, ICurrentSchema currentSchema) : base(connection, currentSchema)
+        public DocumentRepository(NpgsqlConnection connection, ICurrentSchema currentSchema) : base(connection, currentSchema)
         {
             
             this.currentSchema = currentSchema;
@@ -30,5 +33,11 @@ namespace DataAccess{
             connection.Close();
         }
 
+        public async Task<IList<DocumentDto>> All(){ 
+            await ConnectAndSetSchema();
+            var result = (await connection.QueryAsync<DocumentDto>("SELECT Id, file_name as FileName FROM FILES")).AsList();
+            connection.Close();
+            return result;
+        }
     }
 }

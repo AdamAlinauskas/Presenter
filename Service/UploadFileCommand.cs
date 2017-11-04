@@ -14,9 +14,9 @@ namespace Service{
     }
     
     public class UploadFileCommand : IUploadFileCommand{
-        private readonly IFileRepository fileRepository;
+        private readonly IDocumentRepository fileRepository;
 
-        public UploadFileCommand(IFileRepository fileRepository){
+        public UploadFileCommand(IDocumentRepository fileRepository){
             this.fileRepository = fileRepository;
         }
 
