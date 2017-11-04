@@ -49,6 +49,7 @@ namespace Meetaroo
             services.AddTransient<ICreateProfileService,CreateProfileService>();
             services.AddTransient<IUploadFileCommand,UploadFileCommand>();
             services.AddTransient<IRetrieveDocumentsQuery, RetrieveDocumentsQuery>();
+            services.AddTransient<IRetrieveDocumentUrlQuery,RetrieveDocumentUrlQuery>();
 
             //DAL
             services.AddTransient<IConversationRepository,ConversationRepository>();

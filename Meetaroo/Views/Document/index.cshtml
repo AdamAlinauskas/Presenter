@@ -20,7 +20,7 @@
     <ol>
     @foreach(var item in Model.Documents)
     {
-        <li>@item.FileName</li>
+        <li><a href="Document/View/@item.Id"> @item.FileName</a></li>
     }
     </ol>
 </div>
