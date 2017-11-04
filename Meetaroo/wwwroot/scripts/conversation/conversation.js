@@ -22,6 +22,9 @@ window.onload = () => {
 
     // This bit could be much better done by react, angular, whatever
     function render(messages) {
+        let newMessage = false;
+        const messagesElem = document.getElementById('messages');
+
         messages.forEach(message => {
             let elem = document.getElementById(`message-${message.messageId}`);
 
@@ -30,10 +33,14 @@ window.onload = () => {
             } else {
                 elem = document.getElementById('message-template').content;
                 populateMessageNode(elem, message);
-                const messagesElem = document.getElementById('messages');
                 messagesElem.appendChild(document.importNode(elem, true));
+                newMessage = true;
             }
         });
+
+        if (newMessage) {
+            messagesElem.scrollTop = messagesElem.scrollHeight;
+        }
     }
 
     function populateMessageNode(elem, message) {

@@ -4,32 +4,33 @@
     Layout = "~/Views/Conversation/Layout.cshtml";
 }
 
-<div class="container" style="position: fixed; top: 0; width: 100%">
-    <nav class="navbar is-dark">
-        <div class="navbar-item">
-            <div class="navbar-link" style="background:inherit">
-                <div style="color: whitesmoke">Logged in as @User.Identity.Name</div>
-            </div>
+<nav class="navbar is-dark">
+    <div class="navbar-item">
+        <div class="navbar-link" style="background:inherit">
+            <div style="color: whitesmoke">Logged in as @User.Identity.Name</div>
         </div>
-    </nav>
-</div>
-<div class="container">
-    <section class="hero">
+    </div>
+</nav>
+
+<div class="columns" style="margin:0; height:calc(100vh - 56px)">
+    <section class="column is-two-thirds" style="border-right: 1px solid lightgray">
         <h1 class="title" style="margin: 60px 0 20px 0">@Model.Topic</h1>
+        <p>Presentation content goes here</p>
     </section>
-</div>
 
-<section id="messages"></section>
-
-<form id="add-message" style="position: fixed; bottom: 0; width: 100%" class="columns is-mobile">
-    <input type="hidden" name="conversationId" value="@Model.Id" />
     <div class="column">
-        <input id="message" name="message" placeholder="Message" class="input" />
+        <section id="messages" style="height:calc(100% - 40px);overflow-y:scroll;padding: 0 0 16px 0;"></section>
+        <form id="add-message" class="columns is-mobile">
+            <input type="hidden" name="conversationId" value="@Model.Id" />
+            <div class="column">
+                <input id="message" name="message" placeholder="Message" class="input" autocomplete="off" />
+            </div>
+            <div class="column is-narrow">
+                <input type="submit" value="Send" class="button"/>
+            </div>
+        </form>
     </div>
-    <div class="column is-narrow">
-        <input type="submit" value="Send" class="button"/>
-    </div>
-</form>
+</div>
 
 <template id="message-template">
     <div class="notification is-info">
