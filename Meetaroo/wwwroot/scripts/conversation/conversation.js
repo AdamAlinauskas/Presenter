@@ -54,11 +54,18 @@ window.onload = () => {
             if (elem) {
                 populateMessageNode(elem, message);
             } else {
-                elem = document.getElementById('message-template').content;
-                populateMessageNode(elem, message);
-                messagesElem.appendChild(document.importNode(elem, true));
-                wireUpMessage(messagesElem.querySelector(`#${messageId}`), message);
-                newMessage = true;
+                if (message.repliesToId) {
+                    elem = document.getElementById('message-reply-template').content;
+                    populateMessageNode(elem, message);
+                    const parentElem = document.querySelector(`#message-${message.repliesToId} .media-content`);
+                    parentElem.appendChild(document.importNode(elem, true));
+                } else {
+                    elem = document.getElementById('message-template').content;
+                    populateMessageNode(elem, message);
+                    messagesElem.appendChild(document.importNode(elem, true));
+                    wireUpMessage(messagesElem.querySelector(`#${messageId}`), message);
+                    newMessage = true;
+                }
             }
         });
 

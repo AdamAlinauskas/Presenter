@@ -20,15 +20,26 @@ namespace Meetaroo.Controllers
             this.repository = repository;
         }
 
-        public async Task<ViewResult> Index(long id) {
+        public async Task<ViewResult> Index(long id)
+        {
             var conversation = await repository.GetConversation(id);
             return View(conversation);
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddMessage(long conversationId, string message) {
+        public async Task<ActionResult> AddMessage(long conversationId, string message)
+        {
             var user = await this.GetCurrentUser();
             await repository.AddMessage(conversationId, message, user.Id);
+
+            return new EmptyResult();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddReply(long conversationId, long messageId, string message)
+        {
+            var user = await this.GetCurrentUser();
+            await repository.AddReply(conversationId, messageId, message, user.Id);
 
             return new EmptyResult();
         }

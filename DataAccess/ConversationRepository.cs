@@ -14,6 +14,7 @@ namespace DataAccess
         Task CreateConversation(string topic, long createdBy);
         Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage);
         Task AddMessage(long conversationId, string message, long id);
+        Task AddReply(long conversationId, long messageId, string message, long createdBy);
     }
 
     public class ConversationRepository : BaseRepository, IConversationRepository
@@ -76,6 +77,7 @@ namespace DataAccess
             return await connection.QueryAsync<ViewMessageDto>(
                 @"SELECT
                     message.id AS MessageId,
+                    replies_to AS RepliesToId,
                     message.created_at AS CreatedAt,
                     message.text AS Text,
                     author.name AS Author,
@@ -110,6 +112,36 @@ namespace DataAccess
                     @"INSERT INTO
                         message_events(message_id, event_type, created_by)
                         VALUES (@messageId, 'message_created', @createdBy)",
+                    new { messageId = messageResult.id, createdBy }
+                );
+
+                await transaction.CommitAsync();
+            }
+            catch (System.Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        public async Task AddReply(long conversationId, long messageId, string message, long createdBy)
+        {
+            await ConnectAndSetSchema();
+            var transaction = connection.BeginTransaction();
+
+            try
+            {
+                var messageResult = await connection.QueryFirstAsync<dynamic>(
+                    @"INSERT INTO
+                        messages (text, conversation_id, replies_to, created_by)
+                        VALUES (@message, @conversationId, @messageId, @createdBy)
+                        RETURNING id",
+                    new { message, conversationId, messageId, createdBy }
+                );
+                await connection.ExecuteAsync(
+                    @"INSERT INTO
+                        message_events(message_id, event_type, created_by)
+                        VALUES (@messageId, 'reply_created', @createdBy)",
                     new { messageId = messageResult.id, createdBy }
                 );
 
