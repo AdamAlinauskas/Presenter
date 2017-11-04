@@ -1,6 +1,7 @@
 window.onload = () => {
     Notification.requestPermission();
-    
+
+    // TODO AP : Can refactor these two methods into one
     const messageForm = document.getElementById('add-message');
     messageForm.onsubmit = (event) => {
         event.preventDefault();
@@ -20,13 +21,35 @@ window.onload = () => {
         document.getElementById('message').value = '';
     };
 
+    function addReply(event) {
+        event.preventDefault();
+        var messageForm = event.target;
+        var messageInput = messageForm.querySelector('.mt-message-input');
+
+        const data = new FormData(messageForm);
+        if (!data.get('message')) return;
+
+        fetch(
+            "Conversation/AddReply",
+            {
+                method: 'POST',
+                body: data,
+                credentials: 'include'
+            }
+        );
+
+        messageInput.value = '';
+        messageForm.classList.add('is-hidden');
+    }
+
     // This bit could be much better done by react, angular, whatever
     function render(messages) {
         let newMessage = false;
         const messagesElem = document.getElementById('messages');
 
         messages.forEach(message => {
-            let elem = document.getElementById(`message-${message.messageId}`);
+            const messageId = `message-${message.messageId}`;
+            let elem = document.getElementById(messageId);
 
             if (elem) {
                 populateMessageNode(elem, message);
@@ -34,6 +57,7 @@ window.onload = () => {
                 elem = document.getElementById('message-template').content;
                 populateMessageNode(elem, message);
                 messagesElem.appendChild(document.importNode(elem, true));
+                wireUpMessage(messagesElem.querySelector(`#${messageId}`), message);
                 newMessage = true;
             }
         });
@@ -44,8 +68,20 @@ window.onload = () => {
     }
 
     function populateMessageNode(elem, message) {
+        elem.firstElementChild.setAttribute('id', `message-${message.messageId}`);
         elem.querySelector('.mt-author').innerText = message.author;
         elem.querySelector('.mt-message').innerText = message.text;
+        elem.querySelector('.mt-author-picture').setAttribute('src', message.authorPicture);
+    }
+
+    function wireUpMessage(elem, message) {
+        elem.querySelector('.mt-message-id').value = message.messageId;
+        var replyForm = elem.querySelector('.mt-reply-form');
+        replyForm.onsubmit = addReply;
+        elem.querySelector('.mt-reply').onclick = (event) => {
+            event.preventDefault();
+            replyForm.classList.toggle('is-hidden');
+        }
     }
 
     let lastSeenEvent = -1;
@@ -63,12 +99,12 @@ window.onload = () => {
                 render(response.messages);
                 setTimeout(receiveMessages, 500);
             })
-        ).catch(
-            (err) => { 
+            ).catch(
+            (err) => {
                 console.log(err);
                 new Notification('Something went wrong');
             }
-        );
+            );
     };
     setTimeout(receiveMessages, 500);
 };

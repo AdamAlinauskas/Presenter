@@ -79,6 +79,7 @@ namespace DataAccess
                     message.created_at AS CreatedAt,
                     message.text AS Text,
                     author.name AS Author,
+                    author.picture AS AuthorPicture,
                     event.id AS EventId
                 FROM message_events AS event
                 INNER JOIN messages AS message ON event.message_id = message.id

@@ -19,23 +19,41 @@
     </section>
 
     <div class="column">
-        <section id="messages" style="height:calc(100% - 40px);overflow-y:scroll;padding: 0 0 16px 0;"></section>
+        <section id="messages" class="mt-messages"></section>
         <form id="add-message" class="columns is-mobile">
             <input type="hidden" name="conversationId" value="@Model.Id" />
             <div class="column">
                 <input id="message" name="message" placeholder="Message" class="input" autocomplete="off" />
             </div>
             <div class="column is-narrow">
-                <input type="submit" value="Send" class="button"/>
+                <input type="submit" value="Send" class="button is-primary"/>
             </div>
         </form>
     </div>
 </div>
 
 <template id="message-template">
-    <div class="notification is-info">
-        <div><strong class="mt-author"></strong></div>
-        <div class="mt-message"></div>
+    <div class="media is-info mt-media">
+        <figure class="media-left">
+            <p class="image is-32x32">
+            <img src="" class="mt-author-picture">
+            </p>
+        </figure>
+        <div class="media-content">
+            <strong class="mt-author"></strong><br/>
+            <div class="mt-message"></div>
+            <small><a class="mt-reply">Reply</a></small>
+            <form class="columns is-mobile mt-reply-form is-hidden">
+                <input type="hidden" name="conversationId" value="@Model.Id" />
+                <input type="hidden" name="messageId" class="mt-message-id"/>
+                <div class="column">
+                    <input name="message" placeholder="Message" class="input mt-message-input" autocomplete="off" />
+                </div>
+                <div class="column is-narrow">
+                    <input type="submit" value="Send" class="button is-primary"/>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
