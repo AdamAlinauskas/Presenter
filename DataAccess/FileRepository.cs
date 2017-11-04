@@ -9,12 +9,12 @@ namespace DataAccess{
         Task Save(string fileName, string awsKey);
     }
     public class FileRepository : BaseRepository, IFileRepository{
-        private readonly NpgsqlConnection connection;
+        
         private readonly ICurrentSchema currentSchema;
 
         public FileRepository(NpgsqlConnection connection, ICurrentSchema currentSchema) : base(connection, currentSchema)
         {
-            this.connection = connection;
+            
             this.currentSchema = currentSchema;
         }
 

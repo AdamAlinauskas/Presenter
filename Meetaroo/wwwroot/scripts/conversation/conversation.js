@@ -22,22 +22,29 @@ window.onload = () => {
 
     // This bit could be much better done by react, angular, whatever
     function render(messages) {
+        let newMessage = false;
+        const messagesElem = document.getElementById('messages');
+
         messages.forEach(message => {
-            let elem = document.getElementById(`message-${message.id}`);
+            let elem = document.getElementById(`message-${message.messageId}`);
 
             if (elem) {
                 populateMessageNode(elem, message);
             } else {
                 elem = document.getElementById('message-template').content;
                 populateMessageNode(elem, message);
-                const messagesElem = document.getElementById('messages');
                 messagesElem.appendChild(document.importNode(elem, true));
+                newMessage = true;
             }
         });
+
+        if (newMessage) {
+            messagesElem.scrollTop = messagesElem.scrollHeight;
+        }
     }
 
     function populateMessageNode(elem, message) {
-        elem.querySelector('.mt-author').innerText = message.author_name;
+        elem.querySelector('.mt-author').innerText = message.author;
         elem.querySelector('.mt-message').innerText = message.text;
     }
 

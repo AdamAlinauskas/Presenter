@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Amazon.S3;
 using DataAccess;
+using Domain;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -37,18 +40,20 @@ namespace Meetaroo
             var connectionString = string.Format("Server={0};Database=meetaroo;Username=meetaroo;Password=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71;Search Path=meetaroo_shared", dbHost);
 
             services.AddScoped(serviceProvider => new NpgsqlConnection(connectionString));
-            services.AddScoped<DataAccess.ICurrentSchema, DataAccess.CurrentSchema>();
-            
+
+            services.AddScoped<ICurrentSchema, CurrentSchema>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             //Service Layer
             services.AddTransient<IConfirmSchemaExists,ConfirmSchemaExists>();
+            services.AddTransient<ICreateProfileService,CreateProfileService>();
             services.AddTransient<IUploadFileCommand,UploadFileCommand>();
-            
 
             //DAL
-            
-            services.AddTransient<IOrganizationRepository,OrganizationRepository>();
+            services.AddTransient<IConversationRepository,ConversationRepository>();
             services.AddTransient<IFileRepository,FileRepository>();
-
+            services.AddTransient<IOrganizationRepository,OrganizationRepository>();
+            services.AddTransient<IUserRepository,UserRepository>();
 
             ConfigureAuth(services);
 
@@ -132,6 +137,16 @@ namespace Meetaroo
                         context.HandleResponse();
 
                         return Task.CompletedTask;
+                    },
+                    OnTokenValidated = (context) => {
+                        var principal = context.Principal;
+                        var userProfile = new User {
+                            Name = principal.Identity.Name,
+                            Email = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
+                            Picture = principal.Claims.FirstOrDefault(claim => claim.Type == "picture")?.Value,
+                            Identifier = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value
+                        };
+                        return services.BuildServiceProvider().GetService<ICreateProfileService>().EnsureExists(userProfile);
                     }
                 };
             });
