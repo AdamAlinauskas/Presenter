@@ -50,12 +50,15 @@ namespace Meetaroo
             services.AddTransient<IUploadFileCommand,UploadFileCommand>();
             services.AddTransient<IRetrieveDocumentsQuery, RetrieveDocumentsQuery>();
             services.AddTransient<IRetrieveDocumentUrlQuery,RetrieveDocumentUrlQuery>();
+            services.AddTransient<IRetrievePresentationListingQuery,RetrievePresentationListingQuery>();
+            services.AddTransient<ICreatePresentationCommand, CreatePresentationCommand>();
 
             //DAL
             services.AddTransient<IConversationRepository,ConversationRepository>();
             services.AddTransient<IDocumentRepository,DocumentRepository>();
             services.AddTransient<IOrganizationRepository,OrganizationRepository>();
             services.AddTransient<IUserRepository,UserRepository>();
+            services.AddTransient<IPresentationRepository, PresentationRepository>();
 
             ConfigureAuth(services);
 
