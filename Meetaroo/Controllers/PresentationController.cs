@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,7 @@ namespace Meetaroo.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            return View();
+            return View(new PresentationListingDto());
         }
     }
 }
