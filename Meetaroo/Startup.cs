@@ -20,21 +20,28 @@ namespace Meetaroo
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env){
+        public Startup(IHostingEnvironment env)
+        {
             var builder = new ConfigurationBuilder()
             .SetBasePath(env.ContentRootPath)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
             .AddEnvironmentVariables();
-             Configuration = builder.Build();
+            Configuration = builder.Build();
         }
 
         public IConfigurationRoot Configuration { get; set; }
+
+        // public void Configure(IApplicationBuilder app){
+           
+        // }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
+
             // TODO AP : Use Configuration loaded from appSettings.json and environment for these strings
             var dbHost = Environment.GetEnvironmentVariable("DATABASE_HOST");
             var connectionString = string.Format("Server={0};Database=meetaroo;Username=meetaroo;Password=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71;Search Path=meetaroo_shared", dbHost);
@@ -45,19 +52,19 @@ namespace Meetaroo
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //Service Layer
-            services.AddTransient<IConfirmSchemaExists,ConfirmSchemaExists>();
-            services.AddTransient<ICreateProfileService,CreateProfileService>();
-            services.AddTransient<IUploadFileCommand,UploadFileCommand>();
+            services.AddTransient<IConfirmSchemaExists, ConfirmSchemaExists>();
+            services.AddTransient<ICreateProfileService, CreateProfileService>();
+            services.AddTransient<IUploadFileCommand, UploadFileCommand>();
             services.AddTransient<IRetrieveDocumentsQuery, RetrieveDocumentsQuery>();
-            services.AddTransient<IRetrieveDocumentUrlQuery,RetrieveDocumentUrlQuery>();
-            services.AddTransient<IRetrievePresentationListingQuery,RetrievePresentationListingQuery>();
+            services.AddTransient<IRetrieveDocumentUrlQuery, RetrieveDocumentUrlQuery>();
+            services.AddTransient<IRetrievePresentationListingQuery, RetrievePresentationListingQuery>();
             services.AddTransient<ICreatePresentationCommand, CreatePresentationCommand>();
 
             //DAL
-            services.AddTransient<IConversationRepository,ConversationRepository>();
-            services.AddTransient<IDocumentRepository,DocumentRepository>();
-            services.AddTransient<IOrganizationRepository,OrganizationRepository>();
-            services.AddTransient<IUserRepository,UserRepository>();
+            services.AddTransient<IConversationRepository, ConversationRepository>();
+            services.AddTransient<IDocumentRepository, DocumentRepository>();
+            services.AddTransient<IOrganizationRepository, OrganizationRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPresentationRepository, PresentationRepository>();
 
             ConfigureAuth(services);
@@ -65,7 +72,7 @@ namespace Meetaroo
             services.AddMvc();
 
             AddAws(services);
-            
+
         }
 
         private void AddAws(IServiceCollection services)
@@ -92,7 +99,7 @@ namespace Meetaroo
 
                 // Configure the Auth0 Client ID and Client Secret
                 options.ClientId = Configuration["Auth0:ClientId"];
-                            options.ClientSecret = Configuration["Auth0:ClientSecret"];
+                options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
                 // Set response type to code
                 options.ResponseType = "code";
@@ -143,9 +150,11 @@ namespace Meetaroo
 
                         return Task.CompletedTask;
                     },
-                    OnTokenValidated = (context) => {
+                    OnTokenValidated = (context) =>
+                    {
                         var principal = context.Principal;
-                        var userProfile = new User {
+                        var userProfile = new User
+                        {
                             Name = principal.Identity.Name,
                             Email = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
                             Picture = principal.Claims.FirstOrDefault(claim => claim.Type == "picture")?.Value,
@@ -160,6 +169,12 @@ namespace Meetaroo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<Chat>("chat");
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -169,7 +184,8 @@ namespace Meetaroo
 
             app.UseAuthentication();
 
-            app.UseMvc(routes => {
+            app.UseMvc(routes =>
+            {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}"

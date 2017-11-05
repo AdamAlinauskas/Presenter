@@ -40,5 +40,9 @@ namespace Meetaroo.Controllers
                 new { schema = currentSchema.Name, controller = "Presentation", action = "index" }
             );
         }
+
+        public IActionResult ViewPresentation(){
+            return View();
+        }
     }
 }
