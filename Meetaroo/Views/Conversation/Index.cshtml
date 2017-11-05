@@ -37,14 +37,18 @@
     <div class="media is-info mt-media">
         <figure class="media-left">
             <p class="image is-32x32">
-            <img src="" class="mt-author-picture">
+                <img src="" class="mt-author-picture">
             </p>
         </figure>
         <div class="media-content">
             <div class="content">
-                <strong class="mt-author"></strong><br/>
+                <div class="columns is-gapless mt-author-line">
+                    <strong class="mt-author column"></strong>
+                    <div class="mt-boost column is-narrow"><span class="icon"><i class="fa fa-rocket"></i></span></div>
+                </div>
                 <div class="mt-message"></div>
-                <small><a class="mt-reply">Reply</a></small>
+                <!-- <small><span class="mt-reply-button"><a class="mt-reply">Reply</a> · </span><a class="mt-boost-button">Boost</a></small> -->
+                <small><span class="mt-reply-button"><a class="mt-reply">Reply</a></small>
                 <form class="columns is-mobile mt-reply-form is-hidden">
                     <input type="hidden" name="conversationId" value="@Model.Id" />
                     <input type="hidden" name="messageId" class="mt-message-id"/>

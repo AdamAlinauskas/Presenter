@@ -63,6 +63,16 @@ namespace Meetaroo.Controllers
             });
         }
 
+        public async Task<ActionResult> Boost(long id)
+        {
+            return new EmptyResult();
+        }
+
+        public async Task<ActionResult> RemoveBoost(long id)
+        {
+            return new EmptyResult();
+        }
+
         private async Task<bool> CurrentUserIsMod(User user, long conversationId)
         {
             return await repository.IsModerator(user.Id, conversationId);

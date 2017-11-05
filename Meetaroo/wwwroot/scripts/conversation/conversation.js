@@ -10,7 +10,7 @@ window.onload = () => {
         if (!data.get('message')) return;
 
         fetch(
-            "Conversation/AddMessage",
+            'Conversation/AddMessage',
             {
                 method: 'POST',
                 body: data,
@@ -30,7 +30,7 @@ window.onload = () => {
         if (!data.get('message')) return;
 
         fetch(
-            "Conversation/AddReply",
+            'Conversation/AddReply',
             {
                 method: 'POST',
                 body: data,
@@ -40,6 +40,16 @@ window.onload = () => {
 
         messageInput.value = '';
         messageForm.classList.add('is-hidden');
+    }
+
+    function boost(messageId) {
+        return (event) => {
+            const isBoosted = event.target.classList.contains('mt-boosted');
+            const action = isBoosted ? 'Boost' : 'RemoveBoost';
+            const url = `Conversation/${action}/${messageId}`;
+            
+            fetch(url, { credentials: 'include' });
+        };
     }
 
     // This bit could be much better done by react, angular, whatever
@@ -91,7 +101,8 @@ window.onload = () => {
                 replyForm.classList.toggle('is-hidden');
             }
         } else {
-            elem.querySelector('.mt-reply').classList.add('is-hidden');
+            elem.querySelector('.mt-reply-button').classList.add('is-hidden');
+            elem.querySelector('.mt-boost').onclick = boost(message.messageId);
         }
     }
 

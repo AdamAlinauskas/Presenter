@@ -8,6 +8,10 @@ html {
     background-size: cover;
 }
 
+.mt-messages .columns.mt-author-line {
+    margin-bottom: 0;
+}
+
 .media.mt-media {
     word-break: break-word;
 }
