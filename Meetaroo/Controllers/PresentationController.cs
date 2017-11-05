@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using DataAccess;
 using Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace Meetaroo.Controllers
     public class PresentationController : Controller
     {
         private readonly IRetrievePresentationListingQuery retrievePresentationListingQuery;
+        private readonly ICurrentSchema currentSchema;
 
-        public PresentationController(IRetrievePresentationListingQuery retrievePresentationListingQuery)
+        public PresentationController(IRetrievePresentationListingQuery retrievePresentationListingQuery, ICurrentSchema currentSchema)
         {
             this.retrievePresentationListingQuery = retrievePresentationListingQuery;
+            this.currentSchema = currentSchema;
         }
 
         public async Task<IActionResult> Index()
@@ -26,7 +29,10 @@ namespace Meetaroo.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(PresentationDto dto)
         {
-            return View(new PresentationListingDto());
+            return RedirectToRoute(
+                "schemaBased",
+                new { schema = currentSchema.Name, controller = "Presentation", action = "index" }
+            );
         }
     }
 }
