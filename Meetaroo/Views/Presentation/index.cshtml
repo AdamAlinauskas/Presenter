@@ -2,14 +2,27 @@
 <h1>Presentations</h1>
 
 <form method="post">
-    Name <input name='name'/> 
-    <select>
+    Name <input name='Name'/> 
+    <select name='DocumentId'>
         @foreach(var item in Model.Documents)
         {
             <option value="@item.Id">@item.FileName</option>
         }
     </select> 
 
-    <input type="submit">
+    <input type="submit" value="Create">
     
 </form>
+
+<table>
+    <th>Name</th>
+    <th>Document</th>
+@foreach(var presentation in Model.Presentations)
+{
+    <tr>
+        <td>@presentation.Name</td>
+        <td>@presentation.DocumentName</td>
+    </tr>
+}
+
+</table>

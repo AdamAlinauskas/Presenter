@@ -9,6 +9,7 @@ namespace DataAccess
     public interface IPresentationRepository
     {
         Task<IList<PresentationDto>> All();
+        Task Create(PresentationDto dto);
     }
     public class PresentationRepository : BaseRepository, IPresentationRepository
     {
@@ -26,10 +27,16 @@ namespace DataAccess
                 @"SELECT presentations.id as Id, 
                         presentations.name as Name,
                         files.id as DocumentId,
-                        files.file_name                
-                  FROM Presentations inner join files on files.id = presentations.document_id")).AsList();
+                        files.file_name as DocumentName                
+                  FROM presentations inner join files on files.id = presentations.document_id")).AsList();
             connection.Close();
             return result;
+        }
+
+        public async Task Create(PresentationDto dto)
+        {
+            await ConnectAndSetSchema();
+            await connection.ExecuteAsync("INSERT INTO presentations(name, document_id, created_by) values(@Name, @DocumentId, @CreatedBy)",dto);
         }
     }
 }
