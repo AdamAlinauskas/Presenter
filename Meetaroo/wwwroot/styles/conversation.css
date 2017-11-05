@@ -1,0 +1,43 @@
+html {
+    overflow:hidden;
+}
+
+.mt-presentation {
+    border-right: 1px solid lightgray;
+    background-image: url('/images/background.svg');
+    background-size: cover;
+}
+
+.media.mt-media {
+    word-break: break-word;
+}
+
+.mt-author-picture {
+    border-radius: 5px;
+}
+
+.mt-messages {
+    height: calc(100% - 40px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 0 4px 16px 0;
+    margin: 0 -4px 4px 0;
+}
+
+.mt-messages::-webkit-scrollbar-track
+{
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+
+.mt-messages::-webkit-scrollbar
+{
+    width: 8px;
+}
+
+.mt-messages::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #363636;
+}

@@ -16,27 +16,13 @@ namespace Meetaroo.Controllers
             this.connection = connection;
         }
 
-        public async Task<IActionResult> Index()
+        public ActionResult Index()
         {
-            // When we have a proper signup process, this should be
-            // run as a part of it.
-
-            var userProfile = new {
-                name = User.Identity.Name,
-                email = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
-                picture = User.Claims.FirstOrDefault(claim => claim.Type == "picture")?.Value,
-                identifier = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value
-            };
-
-            await connection.OpenAsync();
-            await connection.ExecuteAsync(
-                @"INSERT INTO meetaroo_shared.users (name, email, picture, identifier)
-                VALUES (@name, @email, @picture, @identifier)
-                ON CONFLICT DO NOTHING",
-                userProfile
-            );
-
-            return RedirectToAction("Index", "OrganizationAdmin");
+            if (User.Identity.IsAuthenticated) {
+                return RedirectToAction("Index", "OrganizationAdmin");
+            } else {
+                return View();
+            }
         }
     }
 }
