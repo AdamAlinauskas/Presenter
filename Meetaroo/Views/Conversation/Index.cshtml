@@ -15,6 +15,11 @@
 <div class="columns" style="margin:0; height:calc(100vh - 56px)">
     <section class="mt-presentation column is-two-thirds">
         <h1 class="title" style="margin: 60px 0 20px 0">@Model.Topic</h1>
+        @if (ViewBag.CurrentUserIsMod) {
+            <p>You are the moderator</p>
+        } else {
+            <p>Moderated by @Model.CreatedBy.Name</p>
+        }
         <p>Presentation content goes here</p>
     </section>
 
@@ -75,6 +80,9 @@
 </template>
 
 <script type="text/javascript">
-    window.conversationId = @Model.Id
+    window.conversationInfo = @Json.Serialize(new {
+        id = Model.Id,
+        isMod = ViewBag.CurrentUserIsMod
+    });
 </script>
 <script type="text/javascript" src="/scripts/conversation/conversation.js"></script>

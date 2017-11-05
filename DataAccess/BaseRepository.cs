@@ -1,3 +1,4 @@
+using System.Data;
 using System.Threading.Tasks;
 using Dapper;
 using Npgsql;
@@ -14,9 +15,11 @@ namespace DataAccess{
         }
          
 
-         public async Task ConnectAndSetSchema()
+        public async Task ConnectAndSetSchema()
         {
-            await connection.OpenAsync();
+            if (connection.State == ConnectionState.Closed) {
+                await connection.OpenAsync();
+            }
 
             // Can't parameterize this
             await connection.ExecuteAsync(

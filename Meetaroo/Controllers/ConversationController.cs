@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DataAccess;
 using Meetaroo.Services;
+using Domain;
+using System;
 
 namespace Meetaroo.Controllers
 {
@@ -22,8 +24,11 @@ namespace Meetaroo.Controllers
 
         public async Task<ViewResult> Index(long id)
         {
+            var user = await this.GetCurrentUser();
             var conversation = await repository.GetConversation(id);
-            return View(conversation);
+            bool isMod = await CurrentUserIsMod(user, id);
+            ViewBag.CurrentUserIsMod = isMod;
+            return base.View(conversation);
         }
 
         [HttpPost]
@@ -39,7 +44,8 @@ namespace Meetaroo.Controllers
         public async Task<ActionResult> AddReply(long conversationId, long messageId, string message)
         {
             var user = await this.GetCurrentUser();
-            await repository.AddReply(conversationId, messageId, message, user.Id);
+            if (await CurrentUserIsMod(user, conversationId))
+                await repository.AddReply(conversationId, messageId, message, user.Id);
 
             return new EmptyResult();
         }
@@ -55,6 +61,11 @@ namespace Meetaroo.Controllers
                     .FirstOrDefault()
                     ?.EventId ?? since
             });
+        }
+
+        private async Task<bool> CurrentUserIsMod(User user, long conversationId)
+        {
+            return await repository.IsModerator(user.Id, conversationId);
         }
     }
 }

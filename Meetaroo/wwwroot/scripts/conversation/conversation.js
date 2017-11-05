@@ -82,12 +82,16 @@ window.onload = () => {
     }
 
     function wireUpMessage(elem, message) {
-        elem.querySelector('.mt-message-id').value = message.messageId;
-        var replyForm = elem.querySelector('.mt-reply-form');
-        replyForm.onsubmit = addReply;
-        elem.querySelector('.mt-reply').onclick = (event) => {
-            event.preventDefault();
-            replyForm.classList.toggle('is-hidden');
+        if (conversationInfo.isMod) {
+            elem.querySelector('.mt-message-id').value = message.messageId;
+            var replyForm = elem.querySelector('.mt-reply-form');
+            replyForm.onsubmit = addReply;
+            elem.querySelector('.mt-reply').onclick = (event) => {
+                event.preventDefault();
+                replyForm.classList.toggle('is-hidden');
+            }
+        } else {
+            elem.querySelector('.mt-reply').classList.add('is-hidden');
         }
     }
 
@@ -96,7 +100,7 @@ window.onload = () => {
         let success = true;
 
         fetch(
-            `Conversation/GetMessages?conversationId=${conversationId}&since=${lastSeenEvent}`,
+            `Conversation/GetMessages?conversationId=${conversationInfo.id}&since=${lastSeenEvent}`,
             {
                 credentials: 'include'
             }

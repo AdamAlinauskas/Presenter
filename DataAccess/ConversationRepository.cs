@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Domain;
@@ -15,6 +16,7 @@ namespace DataAccess
         Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage);
         Task AddMessage(long conversationId, string message, long id);
         Task AddReply(long conversationId, long messageId, string message, long createdBy);
+        Task<bool> IsModerator(long userId, long conversationId);
     }
 
     public class ConversationRepository : BaseRepository, IConversationRepository
@@ -50,16 +52,24 @@ namespace DataAccess
             // Joining on meetaroo_shared.users only works while
             // we have only one database server
             await ConnectAndSetSchema();
-            return await connection.QueryFirstAsync<Conversation>(
+            var result = await connection.QueryAsync<Conversation, User, Conversation>(
                 @"SELECT
                     conversations.id AS Id,
                     topic AS Topic,
-                    created_at AS CreatedAt
+                    created_at AS CreatedAt,
+                    users.id AS Id,
+                    name
                 FROM conversations
+                JOIN meetaroo_shared.users users ON conversations.created_by = users.id
                 WHERE conversations.id = @id
                 ORDER BY created_at",
+                (conversation, createdBy) => {
+                    conversation.CreatedBy = createdBy;
+                    return conversation;
+                },
                 new { id }
             );
+            return result.First();
         }
 
         public async Task CreateConversation(string topic, long createdBy) {
@@ -152,6 +162,16 @@ namespace DataAccess
                 await transaction.RollbackAsync();
                 throw;
             }
+        }
+
+        public async Task<bool> IsModerator(long userId, long conversationId)
+        {
+            await ConnectAndSetSchema();
+            var result = await connection.QueryFirstAsync<dynamic>(
+                "SELECT created_by = @userId AS ismod FROM conversations WHERE id = @conversationId",
+                new { userId, conversationId }
+            );
+            return result.ismod;
         }
     }
 }
