@@ -1,26 +1,53 @@
 @model System.Collections.Generic.IEnumerable<dynamic>
 
-<p>Logged in as : @User.Identity.Name</p>
-@foreach (var claim in User.Claims) {
-    <pre>@claim.Type = @claim.Value</pre>
+@{
+    Layout = "~/Views/Layout.cshtml";
 }
-<img width="100" height="100" src="@(User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value)" />
 
-<ul>
-    @foreach(var org in Model)
-    {
-        <li>@org.id : @org.display_name 
-            <a href="/@org.schema_name/ConversationHub">Conversations</a> 
-            | <a href="/@org.schema_name/Document">Documents</a> 
-            | <a href="/@org.schema_name/Presentation">Presentations</a>
-        </li>
-    }
-</ul>
+<section class="section">
+    <div class="container">
+        <h1 class="title">Organization Administration</h1>
+        <h2 class="subtitle">
+            This page won't be accessible to regular users, not even account admins.<br/>
+            For now, this gives us a way of quickly creating and switching between organizations.
+        </h2>
+    </div>
+</section>
 
-@using (Html.BeginForm("Create", "OrganizationAdmin")) {
-    @Html.Label("schemaName", "Schema name");
-    @Html.TextBox("schemaName")
-    @Html.Label("displayName", "Display name");
-    @Html.TextBox("displayName")
-    <input type="submit" value="create" />
-}
+<section class="section">
+    <div class="container">
+        <ul>
+            @foreach(var org in Model)
+            {
+                <li>@org.id : @org.display_name 
+                    <a href="/@org.schema_name/ConversationHub">Conversations</a> 
+                    | <a href="/@org.schema_name/Document">Documents</a> 
+                    | <a href="/@org.schema_name/Presentation">Presentations</a>
+                </li>
+            }
+        </ul>
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="container">
+        <h3 class="title is-4">Create a new organization</h3>
+        @using (Html.BeginForm("Create", "OrganizationAdmin", FormMethod.Post, new { id = "mt-create-org-form" })) {
+            <div class="field is-grouped">
+                <p class="control is-expanded">
+                    @Html.TextBox("displayName", "", new { id = "mt-org-name", @class = "input", placeholder="Organization name" })
+                </p>
+                <div class="control">
+                    <input class="button is-primary" type="submit" value="create" />
+                </div>
+            </div>
+
+            <p>Your site will be at: <span id="mt-schema-display" class="tag is-light is-medium">&nbsp;</span>.meetaroo.com</p>
+            
+            @Html.Hidden("schemaName", "", new { id = "mt-schema" })
+        }
+    </div>
+</section>
+
+<script type="text/javascript" src="/scripts/organizationAdmin/organizationAdmin.js"></script>
