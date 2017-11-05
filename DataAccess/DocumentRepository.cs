@@ -9,7 +9,7 @@ namespace DataAccess
 {
     public interface IDocumentRepository
     {
-        Task Save(string fileName, string awsKey);
+        Task Save(string fileName, string awsKey, long userId);
         Task<IList<DocumentDto>> All();
         Task<string> GetAwsKeyFor(long id);
     }
@@ -22,16 +22,13 @@ namespace DataAccess
             this.currentSchema = currentSchema;
         }
 
-        public async Task Save(string fileName, string awsKey)
+        public async Task Save(string fileName, string awsKey, long userId)
         {
-            int createdBy = 0;
             await ConnectAndSetSchema();
-
             await connection.ExecuteAsync(
-                "INSERT INTO files (file_name, awsKey, created_by) VALUES (@fileName, @awsKey,@createdBy)",
-                new { awsKey, fileName, createdBy }
+                "INSERT INTO files (file_name, awsKey, created_by) VALUES (@fileName, @awsKey,@userId)",
+                new { awsKey, fileName, userId }
             );
-
             connection.Close();
         }
 

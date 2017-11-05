@@ -10,7 +10,7 @@ using DataAccess;
 namespace Service{
     
     public interface IUploadFileCommand{
-        Task Execute(Stream fileStream, string fileName);
+        Task Execute(Stream fileStream, string fileName, long userId);
     }
     
     public class UploadFileCommand : IUploadFileCommand{
@@ -20,10 +20,10 @@ namespace Service{
             this.fileRepository = fileRepository;
         }
 
-        public async Task Execute(Stream fileStream, string fileName)
+        public async Task Execute(Stream fileStream, string fileName,long userId)
         {
             var awsKey = await UploadFile(fileName, fileStream);
-            await fileRepository.Save(fileName,awsKey);
+            await fileRepository.Save(fileName,awsKey,userId);
         }
 
         private static async System.Threading.Tasks.Task<string> UploadFile(string fileName,Stream fileStream)

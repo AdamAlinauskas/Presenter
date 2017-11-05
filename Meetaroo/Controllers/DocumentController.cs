@@ -16,6 +16,7 @@ using System.IO;
 using Amazon.S3.Model;
 using Service;
 using DataAccess;
+using Meetaroo.Services;
 
 namespace Meetaroo.Controllers
 {
@@ -44,9 +45,9 @@ namespace Meetaroo.Controllers
         [HttpPost]
         public  async Task<IActionResult> Index(IFormFile file){    
             var fileStream = new MemoryStream();
+            var user = await this.GetCurrentUser();
             await file.CopyToAsync(fileStream);
-            await uploadFileCommand.Execute(fileStream, file.FileName);
-
+            await uploadFileCommand.Execute(fileStream, file.FileName,user.Id);
             return RedirectToRoute(
                 "schemaBased",
                 new { schema = currentSchema.Name, controller = "Document", action = "index" }

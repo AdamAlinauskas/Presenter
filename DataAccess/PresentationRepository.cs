@@ -19,7 +19,7 @@ namespace DataAccess
         {
             this.currentSchema = currentSchema;
         }
-
+        
         public async Task<IList<PresentationDto>> All()
         {
             await ConnectAndSetSchema();
