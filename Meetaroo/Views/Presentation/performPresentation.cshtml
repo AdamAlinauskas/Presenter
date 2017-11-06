@@ -1,0 +1,20 @@
+
+
+<input type='number' id='pageNumber'></input>
+<input type='button' id='submit'>
+
+<script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
+<script>
+
+    let connection = new signalR.HubConnection('/ViewPresentation');
+    
+    document.querySelector('#submit').addEventListener("click",function(){
+        let page = document.querySelector('#pageNumber').value;
+        connection.invoke('SetCurrentPage',page,1);
+    });
+
+    //tell the server your group
+    connection.start()
+            .then(() => connection.invoke('JoinPresentation', '1'));
+</script>
+

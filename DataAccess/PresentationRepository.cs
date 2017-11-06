@@ -10,16 +10,17 @@ namespace DataAccess
     {
         Task<IList<PresentationDto>> All();
         Task Create(PresentationDto dto);
+        Task<PresentationDto> Get(long presentationId);
     }
     public class PresentationRepository : BaseRepository, IPresentationRepository
     {
         private readonly ICurrentSchema currentSchema;
 
-        public PresentationRepository(NpgsqlConnection connection, ICurrentSchema currentSchema): base(connection, currentSchema)
+        public PresentationRepository(NpgsqlConnection connection, ICurrentSchema currentSchema) : base(connection, currentSchema)
         {
             this.currentSchema = currentSchema;
         }
-        
+
         public async Task<IList<PresentationDto>> All()
         {
             await ConnectAndSetSchema();
@@ -36,7 +37,22 @@ namespace DataAccess
         public async Task Create(PresentationDto dto)
         {
             await ConnectAndSetSchema();
-            await connection.ExecuteAsync("INSERT INTO presentations(name, document_id, created_by) values(@Name, @DocumentId, @CreatedBy)",dto);
+            await connection.ExecuteAsync("INSERT INTO presentations(name, document_id, created_by) values(@Name, @DocumentId, @CreatedBy)", dto);
+        }
+
+        public async Task<PresentationDto> Get(long presentationId)
+        {
+            await ConnectAndSetSchema();
+            var presentation = (await connection.QuerySingleAsync<PresentationDto>(
+                @"SELECT presentations.id as Id, 
+                        presentations.name as Name,
+                        files.id as DocumentId,
+                        files.file_name as DocumentName,
+                        files.awsKey as awsKey               
+                  FROM presentations inner join files on files.id = presentations.document_id
+                  where presentations.id = @presentationId", new { presentationId }));
+            connection.Close();
+            return presentation;
         }
     }
 }

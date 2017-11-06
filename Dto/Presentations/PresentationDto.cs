@@ -7,5 +7,6 @@ namespace Dto
         public string DocumentName { get; set; }
         public long DocumentId { get; set; }
         public long CreatedBy {get;set;}
+        public string awsKey {get;set;}
     }
 }

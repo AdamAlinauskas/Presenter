@@ -33,7 +33,7 @@ namespace Meetaroo
         public IConfigurationRoot Configuration { get; set; }
 
         // public void Configure(IApplicationBuilder app){
-           
+
         // }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -59,6 +59,7 @@ namespace Meetaroo
             services.AddTransient<IRetrieveDocumentUrlQuery, RetrieveDocumentUrlQuery>();
             services.AddTransient<IRetrievePresentationListingQuery, RetrievePresentationListingQuery>();
             services.AddTransient<ICreatePresentationCommand, CreatePresentationCommand>();
+            services.AddTransient<IRetrievePresentationToViewQuery, RetrievePresentationToViewQuery>();
 
             //DAL
             services.AddTransient<IConversationRepository, ConversationRepository>();
@@ -172,7 +173,7 @@ namespace Meetaroo
 
             app.UseSignalR(routes =>
             {
-                routes.MapHub<Chat>("chat");
+                routes.MapHub<Presentation>("ViewPresentation");
             });
 
             if (env.IsDevelopment())

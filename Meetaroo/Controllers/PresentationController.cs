@@ -15,12 +15,14 @@ namespace Meetaroo.Controllers
         private readonly IRetrievePresentationListingQuery retrievePresentationListingQuery;
         private readonly ICurrentSchema currentSchema;
         private readonly ICreatePresentationCommand createPresentationCommand;
+        private readonly IRetrievePresentationToViewQuery retrievePresentationToViewQuery;
 
-        public PresentationController(IRetrievePresentationListingQuery retrievePresentationListingQuery, ICurrentSchema currentSchema, ICreatePresentationCommand createPresentationCommand)
+        public PresentationController(IRetrievePresentationListingQuery retrievePresentationListingQuery, ICurrentSchema currentSchema, ICreatePresentationCommand createPresentationCommand, IRetrievePresentationToViewQuery retrievePresentationToViewQuery)
         {
             this.retrievePresentationListingQuery = retrievePresentationListingQuery;
             this.currentSchema = currentSchema;
             this.createPresentationCommand = createPresentationCommand;
+            this.retrievePresentationToViewQuery = retrievePresentationToViewQuery;
         }
 
         public async Task<IActionResult> Index()
@@ -41,7 +43,14 @@ namespace Meetaroo.Controllers
             );
         }
 
-        public IActionResult ViewPresentation(){
+        public async Task<IActionResult> ViewPresentation(long Id)
+        {
+            var dto = await retrievePresentationToViewQuery.Fetch(Id);
+            return View(dto);
+        }
+
+        public IActionResult PerformPresentation()
+        {
             return View();
         }
     }
