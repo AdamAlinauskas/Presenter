@@ -13,15 +13,19 @@
 <script src="/scripts/presentations/presentation.js"></script>
 <script>
     window.onload = function(){
+        var isPresenter = @Model.IsPresenter.ToString().ToLower();
+
         var options =  {
             url: '@Html.Raw(@Model.Url)',
-            targetDiv: document.getElementById('presentation'),
+            targetDiv: window.document.getElementById('presentation'),
             presentationName: '@Model.PresentationName',
-            isPresenter: true,
-            presentationKey: '@Model.ViewPresentationKey'
+            hasNextPrevious: isPresenter,
         }
         
-        var presentation = new Presentation(options);
-        presentation.start();   
+        var pdfDocument = new PdfDocument(options);
+        pdfDocument.renderToView();
+
+        var presentation = new Presentation(pdfDocument,isPresenter,'@Model.ViewPresentationKey');
+        presentation.start();
     }
 </script>

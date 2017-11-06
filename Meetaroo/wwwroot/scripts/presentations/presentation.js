@@ -1,40 +1,24 @@
-/*
-options 
-
-url
-targetDiv
-presentationName
-isPresenter // Need to validate this somehow.
-*/
-
-var Presentation = function (options) {
+var PdfDocument = function (options) {
+    var me = this;
 
     var url = options.url;
     var targetDiv = options.targetDiv;
     var presentationName = options.presentationName;
-    var isPresenter = options.isPresenter;
+    var hasNextPrevious = options.hasNextPrevious;
     var presentationKey = options.presentationKey;
-    var connection = null;
+    var connection = null; 
+    this.onPageChange = null;
 
-    this.start = function(){
-        renderView();
-        joinPresenation();
-    }
+    me.render = null;
 
-    var joinPresenation = function(){
-        connection = new signalR.HubConnection('/ViewPresentation');
-        connection.start()
-                    .then(() => connection.invoke('JoinPresentation',presentationKey));
-    }
-
-    this.renderView = function () {
+    me.renderToView = function () {
         var canvas = document.createElement('canvas');
         canvas.className = 'pdf-canvas';
         var nextButton = null;
         var previousButton = null;
         var buttonAreaWithPageNumber = document.createElement("div");
-        
-        if (isPresenter) {
+
+        if (hasNextPrevious) {
             nextButton = document.createElement('button');
             nextButton.id = 'next';
             nextButton.innerText = "Next";
@@ -42,7 +26,7 @@ var Presentation = function (options) {
             previousButton = document.createElement('button');
             previousButton.id = 'previous';
             previousButton.innerText = "Previous";
-            
+
             buttonAreaWithPageNumber.append(previousButton);
             buttonAreaWithPageNumber.append(nextButton);
         }
@@ -56,11 +40,10 @@ var Presentation = function (options) {
         targetDiv.append(buttonAreaWithPageNumber);
         targetDiv.append(canvas);
 
-        RenderPdf(canvas,currentPageNumberArea,nextButton,previousButton);
-
+        RenderPdf(canvas, currentPageNumberArea, nextButton, previousButton);
     }
 
-    var RenderPdf = function (canvas,currentPageNumberArea,nextButton,previousButton) {
+    var RenderPdf = function (canvas, currentPageNumberArea, nextButton, previousButton) {
         // The workerSrc property shall be specified.
         PDFJS.workerSrc = '/scripts/pdfjs/pdf.worker.js';
 
@@ -76,11 +59,11 @@ var Presentation = function (options) {
         * param num Page number.
         */
         function renderPage(num) {
-            pageRendering = true;
-
-            if(isPresenter)
-                connection.invoke('SetCurrentPage',num, presentationKey);
-
+            pageRendering = true;                
+            pageNum = num;
+            if(me.onPageChange){
+                me.onPageChange(num);
+            }
             // Using promise to fetch the page
             pdfDoc.getPage(num).then(function (page) {
                 var viewport = page.getViewport(scale);
@@ -106,11 +89,11 @@ var Presentation = function (options) {
             });
 
             // Update page counters
-            updatePageCount();  
+            updatePageCount();
         }
 
-        function updatePageCount(){
-            currentPageNumberArea.textContent =  "Page "+pageNum+ " / "+ pdfDoc.numPages;
+        function updatePageCount() {
+            currentPageNumberArea.textContent = "Page " + pageNum + " / " + pdfDoc.numPages;
         }
 
         /**
@@ -125,6 +108,8 @@ var Presentation = function (options) {
             }
         }
 
+        me.render = queueRenderPage;
+
         /**
         * Displays previous page.
         */
@@ -136,7 +121,6 @@ var Presentation = function (options) {
             queueRenderPage(pageNum);
         }
 
-        
         if (previousButton)
             previousButton.addEventListener('click', onPrevPage);
 
@@ -152,7 +136,7 @@ var Presentation = function (options) {
             queueRenderPage(pageNum);
         }
 
-        
+
         if (nextButton)
             nextButton.addEventListener('click', onNextPage);
 
@@ -161,10 +145,42 @@ var Presentation = function (options) {
         */
         PDFJS.getDocument(url).then(function (pdfDoc_) {
             pdfDoc = pdfDoc_;
-            
+
             updatePageCount();
             // Initial/first page rendering
             renderPage(pageNum);
         });
+    }
+}
+
+var Presentation = function(pdfDocument,isPresenter,presentationKey){
+    var connection;
+
+    this.start = function(){
+        joinPresenation();
+        wireupCallbacks();
+    }
+    
+    var joinPresenation = function () {
+        connection = new signalR.HubConnection('/ViewPresentation');
+
+        //Not a presenter then follow along
+        if (!isPresenter) {
+            connection.on('setPage', pageNumber => {
+                console.log(pageNumber);
+                pdfDocument.render(pageNumber);
+            });
+        }
+
+        connection.start()
+            .then(() => connection.invoke('JoinPresentation', presentationKey));
+    }
+
+    var wireupCallbacks = function(){
+        if(isPresenter){
+            pdfDocument.onPageChange = function(page){
+                connection.invoke('SetCurrentPage', page, presentationKey);
+            }
+        }
     }
 }
