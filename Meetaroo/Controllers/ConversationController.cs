@@ -52,7 +52,8 @@ namespace Meetaroo.Controllers
 
         public async Task<JsonResult> GetMessages(long conversationId, long since)
         {
-            var messages = await repository.GetMessages(conversationId, since);
+            var user = await this.GetCurrentUser();
+            var messages = await repository.GetMessages(conversationId, since, user.Id);
 
             return new JsonResult(new {
                 messages,
@@ -61,6 +62,20 @@ namespace Meetaroo.Controllers
                     .FirstOrDefault()
                     ?.EventId ?? since
             });
+        }
+
+        public async Task<ActionResult> Boost(long id)
+        {
+            var user = await this.GetCurrentUser();
+            await repository.Boost(id, user.Id);
+            return new EmptyResult();
+        }
+
+        public async Task<ActionResult> RemoveBoost(long id)
+        {
+            var user = await this.GetCurrentUser();
+            await repository.RemoveBoost(id, user.Id);
+            return new EmptyResult();
         }
 
         private async Task<bool> CurrentUserIsMod(User user, long conversationId)

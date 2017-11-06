@@ -2,10 +2,19 @@ html {
     overflow:hidden;
 }
 
+.mt-boosted .icon {
+    color: yellow;
+    text-shadow: black 1px 1px 0, black -1px -1px 0, black 1px -1px 0, black -1px 1px 0
+}
+
 .mt-presentation {
     border-right: 1px solid lightgray;
     background-image: url('/images/background.svg');
     background-size: cover;
+}
+
+.mt-messages .columns.mt-author-line {
+    margin-bottom: 0;
 }
 
 .media.mt-media {

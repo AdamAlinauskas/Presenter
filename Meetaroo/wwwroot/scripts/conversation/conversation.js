@@ -10,7 +10,7 @@ window.onload = () => {
         if (!data.get('message')) return;
 
         fetch(
-            "Conversation/AddMessage",
+            'Conversation/AddMessage',
             {
                 method: 'POST',
                 body: data,
@@ -30,7 +30,7 @@ window.onload = () => {
         if (!data.get('message')) return;
 
         fetch(
-            "Conversation/AddReply",
+            'Conversation/AddReply',
             {
                 method: 'POST',
                 body: data,
@@ -40,6 +40,16 @@ window.onload = () => {
 
         messageInput.value = '';
         messageForm.classList.add('is-hidden');
+    }
+
+    function boost(messageId, button) {
+        return (event) => {
+            const isBoosted = button.classList.contains('mt-boosted');
+            const action = isBoosted ? 'RemoveBoost' : 'Boost';
+            const url = `Conversation/${action}/${messageId}`;
+            
+            fetch(url, { credentials: 'include' });
+        };
     }
 
     // This bit could be much better done by react, angular, whatever
@@ -79,6 +89,10 @@ window.onload = () => {
         elem.querySelector('.mt-author').innerText = message.author;
         elem.querySelector('.mt-message').innerText = message.text;
         elem.querySelector('.mt-author-picture').setAttribute('src', message.authorPicture);
+        if (!message.repliesToId) {
+            elem.querySelector('.mt-boost-count').innerText = message.boosts || '';
+            elem.querySelector('.mt-boost').classList.toggle('mt-boosted', message.boostedByCurrentUser);
+        }
     }
 
     function wireUpMessage(elem, message) {
@@ -91,7 +105,9 @@ window.onload = () => {
                 replyForm.classList.toggle('is-hidden');
             }
         } else {
-            elem.querySelector('.mt-reply').classList.add('is-hidden');
+            elem.querySelector('.mt-reply-button').classList.add('is-hidden');
+            const boostButton = elem.querySelector('.mt-boost');
+            boostButton.onclick = boost(message.messageId, boostButton);
         }
     }
 

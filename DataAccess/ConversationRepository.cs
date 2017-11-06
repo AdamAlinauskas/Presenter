@@ -13,10 +13,12 @@ namespace DataAccess
         Task<Conversation> GetConversation(long id);
         Task<IEnumerable<Conversation>> GetConversations();
         Task CreateConversation(string topic, long createdBy);
-        Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage);
+        Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage, long userId);
         Task AddMessage(long conversationId, string message, long id);
         Task AddReply(long conversationId, long messageId, string message, long createdBy);
         Task<bool> IsModerator(long userId, long conversationId);
+        Task Boost(long messageId, long userId);
+        Task RemoveBoost(long messageId, long userId);
     }
 
     public class ConversationRepository : BaseRepository, IConversationRepository
@@ -81,7 +83,7 @@ namespace DataAccess
             );
         }
 
-        public async Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage)
+        public async Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage, long userId)
         {
             await ConnectAndSetSchema();
             return await connection.QueryAsync<ViewMessageDto>(
@@ -92,15 +94,21 @@ namespace DataAccess
                     message.text AS Text,
                     author.name AS Author,
                     author.picture AS AuthorPicture,
-                    event.id AS EventId
-                FROM message_events AS event
-                INNER JOIN messages AS message ON event.message_id = message.id
-                INNER JOIN meetaroo_shared.users AS author ON message.created_by = author.id
+                    max(event.id) AS EventId,
+                    (SELECT count(*) FROM boosts WHERE boosts.message_id = message.id) AS Boosts,
+                    exists(
+                        SELECT 1 FROM boosts
+                        WHERE boosts.message_id = message.id AND boosts.created_by = @userId
+                    ) AS BoostedByCurrentUser
+                FROM message_events event
+                INNER JOIN messages message ON event.message_id = message.id
+                INNER JOIN meetaroo_shared.users author ON message.created_by = author.id
                 WHERE
                     event.id > @lastSeenMessage
                     AND message.conversation_id = @conversationId
+                GROUP BY message.id, author.id
                 ORDER BY message.created_at",
-                new { lastSeenMessage, conversationId }
+                new { lastSeenMessage, conversationId, userId }
             );
         }
 
@@ -172,6 +180,64 @@ namespace DataAccess
                 new { userId, conversationId }
             );
             return result.ismod;
+        }
+
+        // TODO AP : Add base method to run action in transaction
+
+        public async Task Boost(long messageId, long userId)
+        {
+            await ConnectAndSetSchema();
+
+            var transaction = connection.BeginTransaction();
+
+            try
+            {
+                await connection.ExecuteAsync(
+                    @"INSERT INTO boosts (message_id, created_by) VALUES (@messageId, @userId)
+                    ON CONFLICT DO NOTHING",
+                    new { messageId, userId }
+                );
+                await connection.ExecuteAsync(
+                    @"INSERT INTO
+                        message_events(message_id, event_type, created_by)
+                        VALUES (@messageId, 'boost_added', @userId)",
+                    new { messageId, userId }
+                );
+                await transaction.CommitAsync();
+            }
+            catch (System.Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        public async Task RemoveBoost(long messageId, long userId)
+        {
+            
+            await ConnectAndSetSchema();
+
+            var transaction = connection.BeginTransaction();
+
+            try
+            {
+                await connection.ExecuteAsync(
+                    @"DELETE FROM boosts WHERE message_id = @messageId AND created_by = @userId",
+                    new { messageId, userId }
+                );
+                await connection.ExecuteAsync(
+                    @"INSERT INTO
+                        message_events(message_id, event_type, created_by)
+                        VALUES (@messageId, 'boost_removed', @userId)",
+                    new { messageId, userId }
+                );
+                await transaction.CommitAsync();
+            }
+            catch (System.Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

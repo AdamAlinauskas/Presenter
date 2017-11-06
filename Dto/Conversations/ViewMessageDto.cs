@@ -9,5 +9,7 @@ namespace Dto
         public string Author { get; set; }
         public string AuthorPicture { get; set; }
         public long EventId { get; set; }
+        public int Boosts { get; set; }
+        public bool BoostedByCurrentUser { get; set; }
     }
 }
