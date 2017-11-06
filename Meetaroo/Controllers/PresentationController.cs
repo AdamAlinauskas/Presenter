@@ -49,9 +49,10 @@ namespace Meetaroo.Controllers
             return View(dto);
         }
 
-        public IActionResult PerformPresentation()
+        public async Task<IActionResult> PerformPresentation(long Id)
         {
-            return View();
+             var dto = await retrievePresentationToViewQuery.Fetch(Id);
+            return View(dto);
         }
     }
 }
