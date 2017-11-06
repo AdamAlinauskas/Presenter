@@ -89,8 +89,10 @@ window.onload = () => {
         elem.querySelector('.mt-author').innerText = message.author;
         elem.querySelector('.mt-message').innerText = message.text;
         elem.querySelector('.mt-author-picture').setAttribute('src', message.authorPicture);
-        elem.querySelector('.mt-boost-count').innerText = message.boosts || '';
-        elem.querySelector('.mt-boost').classList.toggle('mt-boosted', message.boostedByCurrentUser);
+        if (!message.repliesToId) {
+            elem.querySelector('.mt-boost-count').innerText = message.boosts || '';
+            elem.querySelector('.mt-boost').classList.toggle('mt-boosted', message.boostedByCurrentUser);
+        }
     }
 
     function wireUpMessage(elem, message) {
