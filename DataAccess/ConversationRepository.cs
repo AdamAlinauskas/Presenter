@@ -95,7 +95,7 @@ namespace DataAccess
                     author.name AS Author,
                     author.picture AS AuthorPicture,
                     max(event.id) AS EventId,
-                    count(boosts.id) AS Boosts,
+                    (SELECT count(*) FROM boosts WHERE boosts.message_id = message.id) AS Boosts,
                     exists(
                         SELECT 1 FROM boosts
                         WHERE boosts.message_id = message.id AND boosts.created_by = @userId
@@ -103,7 +103,6 @@ namespace DataAccess
                 FROM message_events event
                 INNER JOIN messages message ON event.message_id = message.id
                 INNER JOIN meetaroo_shared.users author ON message.created_by = author.id
-                LEFT JOIN boosts ON message.id = boosts.message_id
                 WHERE
                     event.id > @lastSeenMessage
                     AND message.conversation_id = @conversationId

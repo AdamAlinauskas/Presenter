@@ -42,9 +42,9 @@ window.onload = () => {
         messageForm.classList.add('is-hidden');
     }
 
-    function boost(messageId) {
+    function boost(messageId, button) {
         return (event) => {
-            const isBoosted = event.target.classList.contains('mt-boosted');
+            const isBoosted = button.classList.contains('mt-boosted');
             const action = isBoosted ? 'RemoveBoost' : 'Boost';
             const url = `Conversation/${action}/${messageId}`;
             
@@ -89,6 +89,8 @@ window.onload = () => {
         elem.querySelector('.mt-author').innerText = message.author;
         elem.querySelector('.mt-message').innerText = message.text;
         elem.querySelector('.mt-author-picture').setAttribute('src', message.authorPicture);
+        elem.querySelector('.mt-boost-count').innerText = message.boosts || '';
+        elem.querySelector('.mt-boost').classList.toggle('mt-boosted', message.boostedByCurrentUser);
     }
 
     function wireUpMessage(elem, message) {
@@ -102,7 +104,8 @@ window.onload = () => {
             }
         } else {
             elem.querySelector('.mt-reply-button').classList.add('is-hidden');
-            elem.querySelector('.mt-boost').onclick = boost(message.messageId);
+            const boostButton = elem.querySelector('.mt-boost');
+            boostButton.onclick = boost(message.messageId, boostButton);
         }
     }
 
