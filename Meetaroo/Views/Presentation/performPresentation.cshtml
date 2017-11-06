@@ -2,141 +2,26 @@
 @model Dto.ViewPresentationDto
 
 <style>
-        #the-canvas {
+        .pdf-canvas {
             border:1px solid black;
-        }
-        
+        }  
 </style>
 
-
-    <h1>@Model.PresentationName</h1>
-
-    <div>
-        <button id="prev">Previous</button> <button id="next">Next</button>
-
-        <h4>Page: <span id="page_num"></span> / <span id="page_count"></span></h4>
-     </div>   
-<div>
-    <canvas id="the-canvas"></canvas>
-</div>
-
-        <script src="/scripts/pdfjs/pdf.js"></script>
-
-        <script>
-            var url = '@Html.Raw(@Model.Url)';
-
-            // The workerSrc property shall be specified.
-            PDFJS.workerSrc = '/scripts/pdfjs/pdf.worker.js';
-
-            var pdfDoc = null,
-                pageNum = 1,
-                pageRendering = false,
-                pageNumPending = null,
-                scale = 1.0,
-                canvas = document.getElementById('the-canvas'),
-                ctx = canvas.getContext('2d');
-
-            /**
-            * Get page info from document, resize canvas accordingly, and render page.
-            * param num Page number.
-            */
-            function renderPage(num) {
-            pageRendering = true;
-            
-            
-            
-            connection.invoke('SetCurrentPage',num,'@Model.ViewPresentationKey');
-            
-            
-            // Using promise to fetch the page
-            pdfDoc.getPage(num).then(function(page) {
-                var viewport = page.getViewport(scale);
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                // Render PDF page into canvas context
-                var renderContext = {
-                canvasContext: ctx,
-                viewport: viewport
-                };
-                var renderTask = page.render(renderContext);
-
-                // Wait for rendering to finish
-                renderTask.promise.then(function() {
-                pageRendering = false;
-                if (pageNumPending !== null) {
-                    // New page rendering is pending
-                    renderPage(pageNumPending);
-                    pageNumPending = null;
-                }
-                });
-            });
-
-            // Update page counters
-            document.getElementById('page_num').textContent = pageNum;
-            }
-
-            /**
-            * If another page rendering in progress, waits until the rendering is
-            * finised. Otherwise, executes rendering immediately.
-            */
-            function queueRenderPage(num) {
-            if (pageRendering) {
-                pageNumPending = num;
-            } else {
-                renderPage(num);
-            }
-            }
-
-            /**
-            * Displays previous page.
-            */
-            function onPrevPage() {
-            if (pageNum <= 1) {
-                return;
-            }
-            pageNum--;
-            queueRenderPage(pageNum);
-            }
-            var previousButton = document.getElementById('prev');
-            if(previousButton)
-                previousButton.addEventListener('click', onPrevPage);
-
-            /**
-            * Displays next page.
-            */
-            function onNextPage() {
-            if (pageNum >= pdfDoc.numPages) {
-                return;
-            }
-            pageNum++;
-            queueRenderPage(pageNum);
-            }
-            
-            var nextButton = document.getElementById('next')
-            if(nextButton)
-                nextButton.addEventListener('click', onNextPage);
-
-            /**
-            * Asynchronously downloads PDF.
-            */
-            PDFJS.getDocument(url).then(function(pdfDoc_) {
-            pdfDoc = pdfDoc_;
-            document.getElementById('page_count').textContent = pdfDoc.numPages;
-
-            // Initial/first page rendering
-            renderPage(pageNum);
-            });
-
-
-        </script>
-
+<div id="presentation"></div>
+<script src="/scripts/pdfjs/pdf.js"></script>
 <script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
+<script src="/scripts/presentations/presentation.js"></script>
 <script>
-
-    let connection = new signalR.HubConnection('/ViewPresentation');
-
-    //tell the server your group
-    connection.start()
-            .then(() => connection.invoke('JoinPresentation','@Model.ViewPresentationKey'));
+    window.onload = function(){
+        var options =  {
+            url: '@Html.Raw(@Model.Url)',
+            targetDiv: document.getElementById('presentation'),
+            presentationName: '@Model.PresentationName',
+            isPresenter: true,
+            presentationKey: '@Model.ViewPresentationKey'
+        }
+        
+        var presentation = new Presentation(options);
+        presentation.start();   
+    }
 </script>
