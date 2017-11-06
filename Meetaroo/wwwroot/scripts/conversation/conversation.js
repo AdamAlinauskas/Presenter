@@ -45,7 +45,7 @@ window.onload = () => {
     function boost(messageId) {
         return (event) => {
             const isBoosted = event.target.classList.contains('mt-boosted');
-            const action = isBoosted ? 'Boost' : 'RemoveBoost';
+            const action = isBoosted ? 'RemoveBoost' : 'Boost';
             const url = `Conversation/${action}/${messageId}`;
             
             fetch(url, { credentials: 'include' });
