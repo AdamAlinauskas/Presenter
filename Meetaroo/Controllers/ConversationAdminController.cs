@@ -8,12 +8,12 @@ namespace Meetaroo.Controllers
 {
     [TypeFilterAttribute(typeof(RetrieveSchemaActionFilter))]
     [Authorize]
-    public class ConversationHubController : Controller
+    public class ConversationAdminController : Controller
     {
         private readonly ICurrentSchema currentSchema;
         private readonly IConversationRepository repository;
 
-        public ConversationHubController(
+        public ConversationAdminController(
             ICurrentSchema currentSchema,
             IConversationRepository repository
         )
@@ -35,7 +35,7 @@ namespace Meetaroo.Controllers
 
             return RedirectToRoute(
                 "schemaBased",
-                new { schema = currentSchema.Name, controller = "ConversationHub", action = "Index" }
+                new { schema = currentSchema.Name, controller = "ConversationAdmin", action = "Index" }
             );
         }
     }
