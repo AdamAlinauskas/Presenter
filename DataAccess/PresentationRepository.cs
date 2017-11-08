@@ -13,6 +13,7 @@ namespace DataAccess
         Task Create(PresentationDto dto);
         Task<PresentationDto> Get(long presentationId);
         Task UpdatePageNumber(long presenationId, int pageNumber);
+        Task<int> GetCurrentPageNumber(long presentationId);
     }
 
     public class PresentationRepository : BaseRepository, IPresentationRepository
@@ -58,11 +59,20 @@ namespace DataAccess
             return presentation;
         }
 
+        public async Task<int> GetCurrentPageNumber(long presentationId)
+        {
+            await ConnectAndSetSchema();
+            var page = (await connection.QuerySingleAsync<int>(
+                @"SELECT current_page_number FROM presentations where presentations.id = @presentationId", new { presentationId }));
+            connection.Close();
+            return page;
+        }
+
         public async Task UpdatePageNumber(long presentationId, int pageNumber)
         {
             Console.WriteLine($"Presentation ID:{presentationId}    Page Number: {pageNumber}");
             await ConnectAndSetSchema();
-            await connection.ExecuteAsync("UPDATE presentations SET current_page_number = @pageNumber where id = @presenationId ", new { pageNumber, presentationId });
+            await connection.ExecuteAsync("UPDATE presentations SET current_page_number = @pageNumber where presentations.id = @presentationId ", new { pageNumber, presentationId });
             connection.Close();
         }
     }

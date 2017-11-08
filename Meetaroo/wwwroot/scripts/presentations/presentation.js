@@ -6,7 +6,7 @@ var PdfDocument = function (options) {
     var presentationName = options.presentationName;
     var hasNextPrevious = options.hasNextPrevious;
     var presentationKey = options.presentationKey;
-    var connection = null; 
+    var connection = null;
     this.onPageChange = null;
 
     me.render = null;
@@ -61,9 +61,9 @@ var PdfDocument = function (options) {
         * param num Page number.
         */
         function renderPage(num) {
-            pageRendering = true;                
+            pageRendering = true;
             pageNum = num;
-            if(me.onPageChange){
+            if (me.onPageChange) {
                 me.onPageChange(num);
             }
             // Using promise to fetch the page
@@ -72,7 +72,7 @@ var PdfDocument = function (options) {
                 https://stackoverflow.com/questions/35987398/pdf-js-how-to-make-pdf-js-viewer-canvas-responsive/37870384#37870384
                 */
                 /*Sets the current page when the pdf is rendered.
-                We could re-render the PDF when the screen size changes*/ 
+                We could re-render the PDF when the screen size changes*/
                 var viewport = page.getViewport(1);
                 var scale = canvasContainer.clientWidth / viewport.width;
                 viewport = page.getViewport(scale);
@@ -162,14 +162,14 @@ var PdfDocument = function (options) {
     }
 }
 
-var Presentation = function(pdfDocument,isPresenter,presentationKey,presentationId,schema){
+var Presentation = function (pdfDocument, isPresenter, presentationKey, presentationId, schema) {
     var connection;
 
-    this.start = function(){
+    this.start = function () {
         joinPresenation();
         wireupCallbacks();
     }
-    
+
     var joinPresenation = function () {
         connection = new signalR.HubConnection('/ViewPresentation');
 
@@ -182,12 +182,12 @@ var Presentation = function(pdfDocument,isPresenter,presentationKey,presentation
         }
 
         connection.start()
-            .then(() => connection.invoke('JoinPresentation', presentationKey));
+            .then(() => connection.invoke('JoinPresentation', schema, presentationId, presentationKey));
     }
 
-    var wireupCallbacks = function(){
-        if(isPresenter){
-            pdfDocument.onPageChange = function(page){
+    var wireupCallbacks = function () {
+        if (isPresenter) {
+            pdfDocument.onPageChange = function (page) {
                 connection.invoke('SetCurrentPage', schema, presentationId, page, presentationKey);
             }
         }

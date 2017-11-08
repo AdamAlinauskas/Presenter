@@ -11,19 +11,23 @@ namespace Meetaroo
     {
         private readonly IUpdatePresentationCurrentPage updatePresentationCurrentPage;
         private readonly ICurrentSchema currentSchema;
+        private readonly IPresentationCurrentPageQuery presentationCurrentPage;
 
-        public Presentation(IUpdatePresentationCurrentPage updatePresentationCurrentPage, ICurrentSchema currentSchema)
+        public Presentation(IUpdatePresentationCurrentPage updatePresentationCurrentPage, ICurrentSchema currentSchema,IPresentationCurrentPageQuery presentationCurrentPage)
         {
             this.updatePresentationCurrentPage = updatePresentationCurrentPage;
             this.currentSchema = currentSchema;
+            this.presentationCurrentPage = presentationCurrentPage;
         }
 
-        public async Task JoinPresentation(string presentationId)
+        public async Task JoinPresentation(string schema, long presentationId, string presentationGroupId)
         {
-            Console.WriteLine("Join presentation " + presentationId);
+            currentSchema.Name = schema;
+            var currentPageNumber = await presentationCurrentPage.Fetch(presentationId);
             //Tell this client the current page number
-            //Clients.Client(Context.ConnectionId).InvokeAsync("SetPage",currentPage);
-            await Groups.AddAsync(Context.ConnectionId, presentationId);
+            await Clients.Client(Context.ConnectionId).InvokeAsync("SetPage",currentPageNumber);
+            
+            await Groups.AddAsync(Context.ConnectionId, presentationGroupId);
         }
 
         public async Task SetCurrentPage(string schema, long presentationId, int currentPage, string presentationGroupId)
