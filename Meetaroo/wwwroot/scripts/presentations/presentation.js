@@ -6,7 +6,7 @@ var PdfDocument = function (options) {
     var presentationName = options.presentationName;
     var hasNextPrevious = options.hasNextPrevious;
     var presentationKey = options.presentationKey;
-    var connection = null;
+    var connection = null; 
     this.onPageChange = null;
 
     me.render = null;
@@ -14,6 +14,8 @@ var PdfDocument = function (options) {
     me.renderToView = function () {
         var canvas = document.createElement('canvas');
         canvas.className = 'pdf-canvas';
+        var canvasContainer = document.createElement('div');
+        canvasContainer.append(canvas);
         var nextButton = null;
         var previousButton = null;
         var buttonAreaWithPageNumber = document.createElement("div");
@@ -38,12 +40,12 @@ var PdfDocument = function (options) {
 
         targetDiv.append(pageTitle);
         targetDiv.append(buttonAreaWithPageNumber);
-        targetDiv.append(canvas);
+        targetDiv.append(canvasContainer);
 
-        RenderPdf(canvas, currentPageNumberArea, nextButton, previousButton);
+        RenderPdf(canvasContainer, canvas, currentPageNumberArea, nextButton, previousButton);
     }
 
-    var RenderPdf = function (canvas, currentPageNumberArea, nextButton, previousButton) {
+    var RenderPdf = function (canvasContainer, canvas, currentPageNumberArea, nextButton, previousButton) {
         // The workerSrc property shall be specified.
         PDFJS.workerSrc = '/scripts/pdfjs/pdf.worker.js';
 
@@ -59,14 +61,21 @@ var PdfDocument = function (options) {
         * param num Page number.
         */
         function renderPage(num) {
-            pageRendering = true;
+            pageRendering = true;                
             pageNum = num;
-            if (me.onPageChange) {
+            if(me.onPageChange){
                 me.onPageChange(num);
             }
             // Using promise to fetch the page
             pdfDoc.getPage(num).then(function (page) {
-                var viewport = page.getViewport(scale);
+                /*Responsiveness from 
+                https://stackoverflow.com/questions/35987398/pdf-js-how-to-make-pdf-js-viewer-canvas-responsive/37870384#37870384
+                */
+                /*Sets the current page when the pdf is rendered.
+                We could re-render the PDF when the screen size changes*/ 
+                var viewport = page.getViewport(1);
+                var scale = canvasContainer.clientWidth / viewport.width;
+                viewport = page.getViewport(scale);
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
 
@@ -153,14 +162,14 @@ var PdfDocument = function (options) {
     }
 }
 
-var Presentation = function (pdfDocument, isPresenter, presentationKey, presentationId, schema) {
+var Presentation = function(pdfDocument,isPresenter,presentationKey,presentationId,schema){
     var connection;
 
-    this.start = function () {
+    this.start = function(){
         joinPresenation();
         wireupCallbacks();
     }
-
+    
     var joinPresenation = function () {
         connection = new signalR.HubConnection('/ViewPresentation');
 
@@ -176,9 +185,9 @@ var Presentation = function (pdfDocument, isPresenter, presentationKey, presenta
             .then(() => connection.invoke('JoinPresentation', presentationKey));
     }
 
-    var wireupCallbacks = function () {
-        if (isPresenter) {
-            pdfDocument.onPageChange = function (page) {
+    var wireupCallbacks = function(){
+        if(isPresenter){
+            pdfDocument.onPageChange = function(page){
                 connection.invoke('SetCurrentPage', schema, presentationId, page, presentationKey);
             }
         }
