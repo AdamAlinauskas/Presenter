@@ -1,0 +1,7 @@
+.pdf-canvas {
+    border:1px solid black;
+}  
+
+#canvas-container {
+    width: 95%;
+}
