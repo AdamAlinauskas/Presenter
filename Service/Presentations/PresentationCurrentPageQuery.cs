@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using DataAccess;
 
-namespace Service{
-
+namespace Service
+{
     public interface IPresentationCurrentPageQuery
     {
         Task<int> Fetch(long presentationId);

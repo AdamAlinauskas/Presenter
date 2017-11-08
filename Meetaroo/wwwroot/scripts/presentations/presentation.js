@@ -15,6 +15,7 @@ var PdfDocument = function (options) {
         var canvas = document.createElement('canvas');
         canvas.className = 'pdf-canvas';
         var canvasContainer = document.createElement('div');
+        canvasContainer.id = 'canvas-container';
         canvasContainer.append(canvas);
         var nextButton = null;
         var previousButton = null;
