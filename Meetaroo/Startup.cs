@@ -60,6 +60,7 @@ namespace Meetaroo
             services.AddTransient<IRetrievePresentationListingQuery, RetrievePresentationListingQuery>();
             services.AddTransient<ICreatePresentationCommand, CreatePresentationCommand>();
             services.AddTransient<IRetrievePresentationToViewQuery, RetrievePresentationToViewQuery>();
+            services.AddTransient<IUpdatePresentationCurrentPage, UpdatePresentationCurrentPage>();
 
             //DAL
             services.AddTransient<IConversationRepository, ConversationRepository>();
@@ -163,6 +164,8 @@ namespace Meetaroo
                         };
                         return services.BuildServiceProvider().GetService<ICreateProfileService>().EnsureExists(userProfile);
                     }
+
+
                 };
             });
         }

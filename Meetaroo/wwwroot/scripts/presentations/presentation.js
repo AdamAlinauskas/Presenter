@@ -6,7 +6,7 @@ var PdfDocument = function (options) {
     var presentationName = options.presentationName;
     var hasNextPrevious = options.hasNextPrevious;
     var presentationKey = options.presentationKey;
-    var connection = null; 
+    var connection = null;
     this.onPageChange = null;
 
     me.render = null;
@@ -59,9 +59,9 @@ var PdfDocument = function (options) {
         * param num Page number.
         */
         function renderPage(num) {
-            pageRendering = true;                
+            pageRendering = true;
             pageNum = num;
-            if(me.onPageChange){
+            if (me.onPageChange) {
                 me.onPageChange(num);
             }
             // Using promise to fetch the page
@@ -153,14 +153,14 @@ var PdfDocument = function (options) {
     }
 }
 
-var Presentation = function(pdfDocument,isPresenter,presentationKey){
+var Presentation = function (pdfDocument, isPresenter, presentationKey, presentationId, schema) {
     var connection;
 
-    this.start = function(){
+    this.start = function () {
         joinPresenation();
         wireupCallbacks();
     }
-    
+
     var joinPresenation = function () {
         connection = new signalR.HubConnection('/ViewPresentation');
 
@@ -176,10 +176,10 @@ var Presentation = function(pdfDocument,isPresenter,presentationKey){
             .then(() => connection.invoke('JoinPresentation', presentationKey));
     }
 
-    var wireupCallbacks = function(){
-        if(isPresenter){
-            pdfDocument.onPageChange = function(page){
-                connection.invoke('SetCurrentPage', page, presentationKey);
+    var wireupCallbacks = function () {
+        if (isPresenter) {
+            pdfDocument.onPageChange = function (page) {
+                connection.invoke('SetCurrentPage', schema, presentationId, page, presentationKey);
             }
         }
     }

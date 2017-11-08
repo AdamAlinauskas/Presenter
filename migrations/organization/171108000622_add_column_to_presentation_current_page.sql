@@ -1,0 +1,6 @@
+START TRANSACTION;
+
+ALTER TABLE Presentations
+ADD COLUMN current_page_number INT NOT NULL DEFAULT 1;
+
+COMMIT;

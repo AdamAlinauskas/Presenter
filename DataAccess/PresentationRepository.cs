@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
@@ -11,7 +12,9 @@ namespace DataAccess
         Task<IList<PresentationDto>> All();
         Task Create(PresentationDto dto);
         Task<PresentationDto> Get(long presentationId);
+        Task UpdatePageNumber(long presenationId, int pageNumber);
     }
+
     public class PresentationRepository : BaseRepository, IPresentationRepository
     {
         private readonly ICurrentSchema currentSchema;
@@ -53,6 +56,14 @@ namespace DataAccess
                   where presentations.id = @presentationId", new { presentationId }));
             connection.Close();
             return presentation;
+        }
+
+        public async Task UpdatePageNumber(long presentationId, int pageNumber)
+        {
+            Console.WriteLine($"Presentation ID:{presentationId}    Page Number: {pageNumber}");
+            await ConnectAndSetSchema();
+            await connection.ExecuteAsync("UPDATE presentations SET current_page_number = @pageNumber where id = @presenationId ", new { pageNumber, presentationId });
+            connection.Close();
         }
     }
 }

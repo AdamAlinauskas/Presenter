@@ -14,6 +14,9 @@
 <script>
     window.onload = function(){
         var isPresenter = @Model.IsPresenter.ToString().ToLower();
+        var presentationId = @Model.PresentationId;
+        var presentationKey = '@Model.ViewPresentationKey';
+        var schema = '@Model.Schema';
 
         var options =  {
             url: '@Html.Raw(@Model.Url)',
@@ -25,7 +28,7 @@
         var pdfDocument = new PdfDocument(options);
         pdfDocument.renderToView();
 
-        var presentation = new Presentation(pdfDocument,isPresenter,'@Model.ViewPresentationKey');
+        var presentation = new Presentation(pdfDocument,isPresenter,presentationKey,presentationId,schema);
         presentation.start();
     }
 </script>
