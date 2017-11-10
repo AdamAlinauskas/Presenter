@@ -46,7 +46,12 @@ window.onload = () => {
             const action = isBoosted ? 'RemoveBoost' : 'Boost';
             const url = `Conversation/${action}/${messageId}`;
             
-            fetch(url, { credentials: 'include' });
+            connection.invoke(
+                'BoostMessage',
+                conversationInfo.id,
+                conversationInfo.schema,
+                messageId
+            );
         };
     }
 

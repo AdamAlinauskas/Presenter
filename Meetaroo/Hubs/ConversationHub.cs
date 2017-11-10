@@ -47,9 +47,27 @@ namespace Meetaroo.Hubs
 
             var conversationId = long.Parse(conversationIdentifier);
             var messageId = await conversations.AddMessage(conversationId, text, user.Id);
+
+            await SendMessage(messageId, user.Id, conversationIdentifier);
+        }
+
+        public async Task BoostMessage(string conversationIdentifier, string schema, long messageId)
+        {
+            var user = await GetCurrentUser();
+            currentSchema.Name = schema;
+            Console.WriteLine($"Message boosted by {user.Name}");
+
+            var conversationId = long.Parse(conversationIdentifier);
+            await conversations.Boost(messageId, user.Id);
+            
+            await SendMessage(messageId, user.Id, conversationIdentifier);
+        }
+
+        private async Task SendMessage(long messageId, long userId, string conversationIdentifier)
+        {
             // Don't really need to fetch message if we have events for each type of action
             // But safer against desync issues
-            var message = await conversations.GetMessage(messageId, user.Id);
+            var message = await conversations.GetMessage(messageId, userId);
             await Clients.Group(conversationIdentifier).InvokeAsync(
                 "message",
                 // This is silly. The JSONifier from Controller lowercases all the properties,
