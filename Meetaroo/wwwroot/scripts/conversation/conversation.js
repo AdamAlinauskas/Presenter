@@ -1,24 +1,22 @@
 window.onload = () => {
     Notification.requestPermission();
+    let connection;
 
     // TODO AP : Can refactor these two methods into one
     const messageForm = document.getElementById('add-message');
     messageForm.onsubmit = (event) => {
         event.preventDefault();
 
-        const data = new FormData(messageForm);
-        if (!data.get('message')) return;
-
-        fetch(
-            'Conversation/AddMessage',
-            {
-                method: 'POST',
-                body: data,
-                credentials: 'include'
-            }
+        const messageBox = document.getElementById('mt-message');
+        const text = messageBox.value;
+        connection.invoke(
+            'PostMessage',
+            conversationInfo.id,
+            conversationInfo.schema,
+            text
         );
 
-        document.getElementById('message').value = '';
+        messageBox.value = '';
     };
 
     function addReply(event) {
@@ -111,27 +109,25 @@ window.onload = () => {
         }
     }
 
-    let lastSeenEvent = -1;
-    function receiveMessages() {
-        let success = true;
+    // -----------------------------
 
-        fetch(
-            `Conversation/GetMessages?conversationId=${conversationInfo.id}&since=${lastSeenEvent}`,
-            {
-                credentials: 'include'
-            }
-        ).then(
-            raw => raw.json().then(response => {
-                lastSeenEvent = response.lastEventId;
-                render(response.messages);
-                setTimeout(receiveMessages, 500);
-            })
-            ).catch(
-            (err) => {
-                console.log(err);
-                new Notification('Something went wrong');
-            }
-            );
-    };
-    setTimeout(receiveMessages, 500);
+    connection = new signalR.HubConnection('/JoinConversation');
+    connection.on('message', message => render([message]));
+    connection.start().then(() => connection.invoke('JoinConversation', conversationInfo.id));
+
+    fetch(
+        `Conversation/GetMessages?conversationId=${conversationInfo.id}&since=-1`,
+        {
+            credentials: 'include'
+        }
+    ).then(
+        raw => raw.json().then(response => {
+            render(response.messages);
+        })
+        ).catch(
+        (err) => {
+            console.log(err);
+            new Notification('Something went wrong');
+        }
+    );
 };

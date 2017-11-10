@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -50,6 +51,7 @@ namespace Meetaroo
 
             services.AddScoped<ICurrentSchema, CurrentSchema>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             //Service Layer
             services.AddTransient<IConfirmSchemaExists, ConfirmSchemaExists>();
@@ -171,10 +173,6 @@ namespace Meetaroo
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
 
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<Presentation>("ViewPresentation");
-            });
 
             if (env.IsDevelopment())
             {
@@ -184,6 +182,12 @@ namespace Meetaroo
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<Presentation>("ViewPresentation");
+                routes.MapHub<Meetaroo.Hubs.Conversation>("JoinConversation");
+            });
 
             app.UseMvc(routes =>
             {

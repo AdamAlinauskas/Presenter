@@ -28,6 +28,7 @@ namespace Meetaroo.Controllers
             var conversation = await repository.GetConversation(id);
             bool isMod = await CurrentUserIsMod(user, id);
             ViewBag.CurrentUserIsMod = isMod;
+            ViewBag.Schema = currentSchema.Name;
             return base.View(conversation);
         }
 

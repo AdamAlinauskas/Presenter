@@ -24,7 +24,7 @@
         <form id="add-message" class="columns is-mobile">
             <input type="hidden" name="conversationId" value="@Model.Id" />
             <div class="column">
-                <input id="message" name="message" placeholder="Message" class="input" autocomplete="off" />
+                <input id="mt-message" name="message" placeholder="Message" class="input" autocomplete="off" />
             </div>
             <div class="column is-narrow">
                 <input type="submit" value="Send" class="button is-primary"/>
@@ -79,10 +79,12 @@
     </div>
 </template>
 
-<script type="text/javascript">
+<script>
     window.conversationInfo = @Json.Serialize(new {
         id = Model.Id,
-        isMod = ViewBag.CurrentUserIsMod
+        isMod = ViewBag.CurrentUserIsMod,
+        schema = ViewBag.Schema
     });
 </script>
-<script type="text/javascript" src="/scripts/conversation/conversation.js"></script>
+<script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
+<script src="/scripts/conversation/conversation.js"></script>
