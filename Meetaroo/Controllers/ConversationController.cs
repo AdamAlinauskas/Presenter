@@ -32,25 +32,6 @@ namespace Meetaroo.Controllers
             return base.View(conversation);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> AddMessage(long conversationId, string message)
-        {
-            var user = await this.GetCurrentUser();
-            await repository.AddMessage(conversationId, message, user.Id);
-
-            return new EmptyResult();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> AddReply(long conversationId, long messageId, string message)
-        {
-            var user = await this.GetCurrentUser();
-            if (await CurrentUserIsMod(user, conversationId))
-                await repository.AddReply(conversationId, messageId, message, user.Id);
-
-            return new EmptyResult();
-        }
-
         public async Task<JsonResult> GetMessages(long conversationId, long since)
         {
             var user = await this.GetCurrentUser();
@@ -63,20 +44,6 @@ namespace Meetaroo.Controllers
                     .FirstOrDefault()
                     ?.EventId ?? since
             });
-        }
-
-        public async Task<ActionResult> Boost(long id)
-        {
-            var user = await this.GetCurrentUser();
-            await repository.Boost(id, user.Id);
-            return new EmptyResult();
-        }
-
-        public async Task<ActionResult> RemoveBoost(long id)
-        {
-            var user = await this.GetCurrentUser();
-            await repository.RemoveBoost(id, user.Id);
-            return new EmptyResult();
         }
 
         private async Task<bool> CurrentUserIsMod(User user, long conversationId)

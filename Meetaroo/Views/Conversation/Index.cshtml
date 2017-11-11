@@ -22,7 +22,6 @@
     <div class="column">
         <section id="messages" class="mt-messages"></section>
         <form id="add-message" class="columns is-mobile">
-            <input type="hidden" name="conversationId" value="@Model.Id" />
             <div class="column">
                 <input id="mt-message" name="message" placeholder="Message" class="input" autocomplete="off" />
             </div>
@@ -50,8 +49,6 @@
                 <!-- <small><span class="mt-reply-button"><a class="mt-reply">Reply</a> · </span><a class="mt-boost-button">Boost</a></small> -->
                 <small><span class="mt-reply-button"><a class="mt-reply">Reply</a></small>
                 <form class="columns is-mobile mt-reply-form is-hidden">
-                    <input type="hidden" name="conversationId" value="@Model.Id" />
-                    <input type="hidden" name="messageId" class="mt-message-id"/>
                     <div class="column">
                         <input name="message" placeholder="Message" class="input mt-message-input" autocomplete="off" />
                     </div>

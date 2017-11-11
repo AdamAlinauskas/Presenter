@@ -16,7 +16,7 @@ namespace DataAccess
         Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage, long userId);
         Task<ViewMessageDto> GetMessage(long messageId, long userId);
         Task<long> AddMessage(long conversationId, string message, long userId);
-        Task AddReply(long conversationId, long messageId, string message, long createdBy);
+        Task<long> AddReply(long conversationId, long messageId, string message, long createdBy);
         Task<bool> IsModerator(long userId, long conversationId);
         Task Boost(long messageId, long userId);
         Task RemoveBoost(long messageId, long userId);
@@ -164,14 +164,15 @@ namespace DataAccess
 
                 return messageResult.id;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                System.Console.Error.WriteLine(ex);
                 await transaction.RollbackAsync();
                 throw;
             }
         }
 
-        public async Task AddReply(long conversationId, long messageId, string message, long createdBy)
+        public async Task<long> AddReply(long conversationId, long messageId, string message, long createdBy)
         {
             await ConnectAndSetSchema();
             var transaction = connection.BeginTransaction();
@@ -193,9 +194,12 @@ namespace DataAccess
                 );
 
                 await transaction.CommitAsync();
+
+                return messageResult.id;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                System.Console.Error.WriteLine(ex);
                 await transaction.RollbackAsync();
                 throw;
             }

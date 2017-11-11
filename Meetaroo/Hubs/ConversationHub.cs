@@ -51,6 +51,18 @@ namespace Meetaroo.Hubs
             await SendMessage(messageId, user.Id, conversationIdentifier);
         }
 
+        public async Task AddReply(string conversationIdentifier, string schema, long messageId, string text)
+        {
+            var user = await GetCurrentUser();
+            currentSchema.Name = schema;
+            Console.WriteLine($"Reply posted to message {messageId} by {user.Name}: {text}");
+
+            var conversationId = long.Parse(conversationIdentifier);
+            var replyId = await conversations.AddReply(conversationId, messageId, text, user.Id);
+
+            await SendMessage(replyId, user.Id, conversationIdentifier);
+        }
+
         public async Task BoostMessage(string conversationIdentifier, string schema, long messageId)
         {
             var user = await GetCurrentUser();
@@ -59,6 +71,18 @@ namespace Meetaroo.Hubs
 
             var conversationId = long.Parse(conversationIdentifier);
             await conversations.Boost(messageId, user.Id);
+            
+            await SendMessage(messageId, user.Id, conversationIdentifier);
+        }
+
+        public async Task RemoveBoost(string conversationIdentifier, string schema, long messageId)
+        {
+            var user = await GetCurrentUser();
+            currentSchema.Name = schema;
+            Console.WriteLine($"Message de-boosted by {user.Name}");
+
+            var conversationId = long.Parse(conversationIdentifier);
+            await conversations.RemoveBoost(messageId, user.Id);
             
             await SendMessage(messageId, user.Id, conversationIdentifier);
         }
