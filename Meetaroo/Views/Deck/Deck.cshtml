@@ -1,0 +1,111 @@
+@model Dto.Deck.DeckDto
+
+@{
+    Layout = "~/Views/Layout.cshtml";
+}
+
+@section HeadContent {
+    <link rel="stylesheet" type="text/css" href="/styles/conversation.css"></style>
+    <style>
+            .pdf-canvas {
+                border:1px solid black;
+            }  
+    </style>
+}
+
+<div class="columns" style="margin:0; height:calc(100vh - 56px)">
+    <section class="mt-presentation column is-two-thirds">
+        <h1 class="title" style="margin: 30px 0 20px 0">@Model.Conversation.Topic</h1>
+        @if (!Model.Conversation.CurrentUserIsMod) {
+            <p>Moderated by @Model.Conversation.CreatedBy</p>
+        }
+        <div id="presentation"></div>
+    </section>
+
+    <div class="column">
+        <section id="messages" class="mt-messages"></section>
+        <form id="add-message" class="columns is-mobile">
+            <div class="column">
+                <input id="mt-message" name="message" placeholder="Message" class="input" autocomplete="off" />
+            </div>
+            <div class="column is-narrow">
+                <input type="submit" value="Send" class="button is-primary"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<template id="message-template">
+    <div class="media is-info mt-media">
+        <figure class="media-left">
+            <p class="image is-32x32">
+                <img src="" class="mt-author-picture">
+            </p>
+        </figure>
+        <div class="media-content">
+            <div class="content">
+                <div class="columns is-gapless mt-author-line">
+                    <strong class="mt-author column"></strong>
+                    <div class="mt-boost column is-narrow"><span class="mt-boost-count"></span><span class="icon"><i class="fa fa-rocket"></i></span></div>
+                </div>
+                <div class="mt-message"></div>
+                <!-- <small><span class="mt-reply-button"><a class="mt-reply">Reply</a> · </span><a class="mt-boost-button">Boost</a></small> -->
+                <small><span class="mt-reply-button"><a class="mt-reply">Reply</a></small>
+                <form class="columns is-mobile mt-reply-form is-hidden">
+                    <div class="column">
+                        <input name="message" placeholder="Message" class="input mt-message-input" autocomplete="off" />
+                    </div>
+                    <div class="column is-narrow">
+                        <input type="submit" value="Send" class="button is-primary"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+</div>
+
+<template id="message-reply-template">
+    <div class="media is-info mt-media">
+        <figure class="media-left">
+            <p class="image is-32x32">
+            <img src="" class="mt-author-picture">
+            </p>
+        </figure>
+        <div class="media-content">
+            <strong class="mt-author"></strong><br/>
+            <div class="mt-message"></div>
+        </div>
+    </div>
+</template>
+
+<script>
+    window.conversationInfo = @Json.Serialize(new {
+        id = Model.Conversation.Id,
+        isMod = Model.Conversation.CurrentUserIsMod,
+        schema = Model.Conversation.Schema
+    });
+</script>
+<script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
+<script src="/scripts/conversation/conversation.js"></script>
+<script src="/scripts/pdfjs/pdf.js"></script>
+<script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
+<script src="/scripts/presentations/presentation.js"></script>
+<script>
+    window.addEventListener('load', function(){
+        var isPresenter = @Model.Conversation.CurrentUserIsMod.ToString().ToLower();
+
+        var options =  {
+            url: '@Html.Raw(@Model.Presentation.Url)',
+            targetDiv: window.document.getElementById('presentation'),
+            presentationName: '@Model.Presentation.PresentationName',
+            hasNextPrevious: isPresenter,
+        }
+        
+        var pdfDocument = new PdfDocument(options);
+        pdfDocument.renderToView();
+
+        var presentation = new Presentation(pdfDocument,isPresenter,'@Model.Presentation.ViewPresentationKey');
+        presentation.start();
+    });
+</script>
