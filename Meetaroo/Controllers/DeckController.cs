@@ -33,19 +33,23 @@ namespace Meetaroo.Controllers
         public async Task<IActionResult> Present(long id = 1)
         {
             var user = await this.GetCurrentUser();
-
-            var conversation = await conversations.GetConversation(1);
+            System.Console.WriteLine($"Fetching presentation {id}");
+            var presentation = await retrievePresentationToViewQuery.Fetch(id);
+            long conversationId = presentation.ConversationId;
+            System.Console.WriteLine($"Fetching conversation {conversationId}");
+            var conversation = await conversations.GetConversation(conversationId);
             var conversationDto = new ConversationDto {
                 Id = conversation.Id,
                 Topic = conversation.Topic,
                 CreatedAt = conversation.CreatedAt,
                 CreatedBy = conversation.CreatedBy.Name,
-                CurrentUserIsMod = await CurrentUserIsMod(user, id),
+                CurrentUserIsMod = await CurrentUserIsMod(user, conversationId),
                 Schema = currentSchema.Name
             };
 
-            var viewModel = new DeckDto {
-                Presentation = await retrievePresentationToViewQuery.Fetch(id),
+            var viewModel = new DeckDto
+            {
+                Presentation = presentation,
                 Conversation = conversationDto
             };
             return View("Deck", viewModel);

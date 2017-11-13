@@ -8,5 +8,6 @@ namespace Dto
         public long PresentationId { get; set; }
         public string ViewPresentationKey => Schema + PresentationId;
         public bool IsPresenter { get; set; }
+        public long ConversationId { get; set; }
     }
 }

@@ -83,7 +83,9 @@
     window.conversationInfo = @Json.Serialize(new {
         id = Model.Conversation.Id,
         isMod = Model.Conversation.CurrentUserIsMod,
-        schema = Model.Conversation.Schema
+        schema = Model.Conversation.Schema,
+        // TODO AP : This should just be handled in the socket connection
+        getMessagesUrl = $"/{Model.Conversation.Schema}/Deck/GetMessages"
     });
 </script>
 <script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
