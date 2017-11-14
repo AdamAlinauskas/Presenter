@@ -14,6 +14,7 @@ using Service;
 
 namespace Meetaroo.Hubs
 {
+    // TODO : This needs authentication
     public class Conversation : Hub
     {
         private IServiceProvider services;

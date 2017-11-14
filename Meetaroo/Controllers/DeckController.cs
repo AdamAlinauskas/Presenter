@@ -30,7 +30,7 @@ namespace Meetaroo.Controllers
             this.currentSchema = currentSchema;
         }
 
-        public async Task<IActionResult> Present(long id = 1)
+        public async Task<IActionResult> Join(long id = 1)
         {
             var user = await this.GetCurrentUser();
             System.Console.WriteLine($"Fetching presentation {id}");
@@ -52,7 +52,7 @@ namespace Meetaroo.Controllers
                 Presentation = presentation,
                 Conversation = conversationDto
             };
-            return View("Deck", viewModel);
+            return View(viewModel);
         }
 
         public async Task<JsonResult> GetMessages(long conversationId, long since)
