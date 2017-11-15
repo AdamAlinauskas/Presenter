@@ -94,8 +94,11 @@
 <script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
 <script src="/scripts/presentations/presentation.js"></script>
 <script>
-    window.addEventListener('load', function(){
+    window.addEventListener('load', function() {
         var isPresenter = @Model.Conversation.CurrentUserIsMod.ToString().ToLower();
+        var presentationId = @Model.Presentation.PresentationId;
+        var presentationKey = '@Model.Presentation.ViewPresentationKey';
+        var schema = '@Model.Presentation.Schema';
 
         var options =  {
             url: '@Html.Raw(@Model.Presentation.Url)',
@@ -107,7 +110,7 @@
         var pdfDocument = new PdfDocument(options);
         pdfDocument.renderToView();
 
-        var presentation = new Presentation(pdfDocument,isPresenter,'@Model.Presentation.ViewPresentationKey');
+        var presentation = new Presentation(pdfDocument,isPresenter,presentationKey,presentationId,schema);
         presentation.start();
     });
 </script>

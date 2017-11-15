@@ -120,7 +120,7 @@ window.onload = () => {
     connection.start().then(() => connection.invoke('JoinConversation', conversationInfo.id));
 
     fetch(
-        `Conversation/GetMessages?conversationId=${conversationInfo.id}&since=-1`,
+        `/${conversationInfo.schema}/Deck/GetMessages?conversationId=${conversationInfo.id}&since=-1`,
         {
             credentials: 'include'
         }
