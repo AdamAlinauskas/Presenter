@@ -41,20 +41,28 @@ namespace DataAccess
         public async Task Create(PresentationDto dto)
         {
             await ConnectAndSetSchema();
-            await connection.ExecuteAsync("INSERT INTO presentations(name, document_id, created_by) values(@Name, @DocumentId, @CreatedBy)", dto);
+            await connection.ExecuteAsync(
+                @"INSERT INTO presentations (name, document_id, conversation_id, created_by)
+                VALUES (@Name, @DocumentId, @ConversationId, @CreatedBy)",
+                dto
+            );
         }
 
         public async Task<PresentationDto> Get(long presentationId)
         {
             await ConnectAndSetSchema();
             var presentation = (await connection.QuerySingleAsync<PresentationDto>(
-                @"SELECT presentations.id as Id, 
-                        presentations.name as Name,
-                        files.id as DocumentId,
-                        files.file_name as DocumentName,
-                        files.awsKey as awsKey               
-                  FROM presentations inner join files on files.id = presentations.document_id
-                  where presentations.id = @presentationId", new { presentationId }));
+                @"SELECT
+                    presentations.id AS Id, 
+                    presentations.name AS Name,
+                    files.id AS DocumentId,
+                    files.file_name AS DocumentName,
+                    files.awsKey AS awsKey,
+                    presentations.conversation_id AS ConversationId
+                FROM presentations INNER JOIN files ON files.id = presentations.document_id
+                WHERE presentations.id = @presentationId",
+                new { presentationId }
+               ));
             connection.Close();
             return presentation;
         }

@@ -1,4 +1,4 @@
-@model Domain.Conversation
+@model Dto.Deck.DeckDto
 
 @{
     Layout = "~/Views/Layout.cshtml";
@@ -6,25 +6,27 @@
 
 @section HeadContent {
     <link rel="stylesheet" type="text/css" href="/styles/conversation.css"></style>
+    <style>
+            .pdf-canvas {
+                border:1px solid black;
+            }  
+    </style>
 }
 
 <div class="columns" style="margin:0; height:calc(100vh - 56px)">
     <section class="mt-presentation column is-two-thirds">
-        <h1 class="title" style="margin: 60px 0 20px 0">@Model.Topic</h1>
-        @if (ViewBag.CurrentUserIsMod) {
-            <p>You are the moderator</p>
-        } else {
-            <p>Moderated by @Model.CreatedBy.Name</p>
+        <h1 class="title" style="margin: 30px 0 20px 0">@Model.Conversation.Topic</h1>
+        @if (!Model.Conversation.CurrentUserIsMod) {
+            <p>Moderated by @Model.Conversation.CreatedBy</p>
         }
-        <p>Presentation content goes here</p>
+        <div id="presentation"></div>
     </section>
 
     <div class="column">
         <section id="messages" class="mt-messages"></section>
         <form id="add-message" class="columns is-mobile">
-            <input type="hidden" name="conversationId" value="@Model.Id" />
             <div class="column">
-                <input id="message" name="message" placeholder="Message" class="input" autocomplete="off" />
+                <input id="mt-message" name="message" placeholder="Message" class="input" autocomplete="off" />
             </div>
             <div class="column is-narrow">
                 <input type="submit" value="Send" class="button is-primary"/>
@@ -50,8 +52,6 @@
                 <!-- <small><span class="mt-reply-button"><a class="mt-reply">Reply</a> · </span><a class="mt-boost-button">Boost</a></small> -->
                 <small><span class="mt-reply-button"><a class="mt-reply">Reply</a></small>
                 <form class="columns is-mobile mt-reply-form is-hidden">
-                    <input type="hidden" name="conversationId" value="@Model.Id" />
-                    <input type="hidden" name="messageId" class="mt-message-id"/>
                     <div class="column">
                         <input name="message" placeholder="Message" class="input mt-message-input" autocomplete="off" />
                     </div>
@@ -79,10 +79,35 @@
     </div>
 </template>
 
-<script type="text/javascript">
+<script>
     window.conversationInfo = @Json.Serialize(new {
-        id = Model.Id,
-        isMod = ViewBag.CurrentUserIsMod
+        id = Model.Conversation.Id,
+        isMod = Model.Conversation.CurrentUserIsMod,
+        schema = Model.Conversation.Schema,
+        // TODO AP : This should just be handled in the socket connection
+        getMessagesUrl = $"/{Model.Conversation.Schema}/Deck/GetMessages"
     });
 </script>
-<script type="text/javascript" src="/scripts/conversation/conversation.js"></script>
+<script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
+<script src="/scripts/conversation/conversation.js"></script>
+<script src="/scripts/pdfjs/pdf.js"></script>
+<script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
+<script src="/scripts/presentations/presentation.js"></script>
+<script>
+    window.addEventListener('load', function(){
+        var isPresenter = @Model.Conversation.CurrentUserIsMod.ToString().ToLower();
+
+        var options =  {
+            url: '@Html.Raw(@Model.Presentation.Url)',
+            targetDiv: window.document.getElementById('presentation'),
+            presentationName: '@Model.Presentation.PresentationName',
+            hasNextPrevious: isPresenter,
+        }
+        
+        var pdfDocument = new PdfDocument(options);
+        pdfDocument.renderToView();
+
+        var presentation = new Presentation(pdfDocument,isPresenter,'@Model.Presentation.ViewPresentationKey');
+        presentation.start();
+    });
+</script>

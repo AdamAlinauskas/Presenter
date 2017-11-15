@@ -12,10 +12,11 @@ namespace DataAccess
     {
         Task<Conversation> GetConversation(long id);
         Task<IEnumerable<Conversation>> GetConversations();
-        Task CreateConversation(string topic, long createdBy);
+        Task<long> CreateConversation(string topic, long createdBy);
         Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage, long userId);
-        Task AddMessage(long conversationId, string message, long id);
-        Task AddReply(long conversationId, long messageId, string message, long createdBy);
+        Task<ViewMessageDto> GetMessage(long messageId, long userId);
+        Task<long> AddMessage(long conversationId, string message, long userId);
+        Task<long> AddReply(long conversationId, long messageId, string message, long createdBy);
         Task<bool> IsModerator(long userId, long conversationId);
         Task Boost(long messageId, long userId);
         Task RemoveBoost(long messageId, long userId);
@@ -74,13 +75,15 @@ namespace DataAccess
             return result.First();
         }
 
-        public async Task CreateConversation(string topic, long createdBy) {
+        public async Task<long> CreateConversation(string topic, long createdBy) {
             await ConnectAndSetSchema();
-            await connection.ExecuteAsync(
+            var result = await connection.QueryAsync(
                 @"INSERT INTO conversations (topic, created_by)
-                VALUES (@topic, @createdBy)",
+                VALUES (@topic, @createdBy)
+                RETURNING id",
                 new { topic, createdBy }
             );
+            return (long) result.First().id;
         }
 
         public async Task<IEnumerable<ViewMessageDto>> GetMessages(long conversationId, long lastSeenMessage, long userId)
@@ -112,7 +115,33 @@ namespace DataAccess
             );
         }
 
-        public async Task AddMessage(long conversationId, string message, long createdBy)
+        public async Task<ViewMessageDto> GetMessage(long messageId, long userId)
+        {
+            await ConnectAndSetSchema();
+            return await connection.QueryFirstAsync<ViewMessageDto>(
+                @"SELECT
+                    message.id AS MessageId,
+                    replies_to AS RepliesToId,
+                    message.created_at AS CreatedAt,
+                    message.text AS Text,
+                    author.name AS Author,
+                    author.picture AS AuthorPicture,
+                    max(event.id) AS EventId,
+                    (SELECT count(*) FROM boosts WHERE boosts.message_id = message.id) AS Boosts,
+                    exists(
+                        SELECT 1 FROM boosts
+                        WHERE boosts.message_id = message.id AND boosts.created_by = @userId
+                    ) AS BoostedByCurrentUser
+                FROM message_events event
+                INNER JOIN messages message ON event.message_id = message.id
+                INNER JOIN meetaroo_shared.users author ON message.created_by = author.id
+                WHERE message.id = @messageId
+                GROUP BY message.id, author.id",
+                new { messageId, userId }
+            );
+        }
+
+        public async Task<long> AddMessage(long conversationId, string message, long createdBy)
         {
             await ConnectAndSetSchema();
             var transaction = connection.BeginTransaction();
@@ -134,15 +163,18 @@ namespace DataAccess
                 );
 
                 await transaction.CommitAsync();
+
+                return messageResult.id;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                System.Console.Error.WriteLine(ex);
                 await transaction.RollbackAsync();
                 throw;
             }
         }
 
-        public async Task AddReply(long conversationId, long messageId, string message, long createdBy)
+        public async Task<long> AddReply(long conversationId, long messageId, string message, long createdBy)
         {
             await ConnectAndSetSchema();
             var transaction = connection.BeginTransaction();
@@ -164,9 +196,12 @@ namespace DataAccess
                 );
 
                 await transaction.CommitAsync();
+
+                return messageResult.id;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                System.Console.Error.WriteLine(ex);
                 await transaction.RollbackAsync();
                 throw;
             }
@@ -176,7 +211,8 @@ namespace DataAccess
         {
             await ConnectAndSetSchema();
             var result = await connection.QueryFirstAsync<dynamic>(
-                "SELECT created_by = @userId AS ismod FROM conversations WHERE id = @conversationId",
+                @"SELECT created_by = @userId AS ismod
+                FROM conversations WHERE id = @conversationId",
                 new { userId, conversationId }
             );
             return result.ismod;

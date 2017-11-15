@@ -1,54 +1,57 @@
 window.onload = () => {
     Notification.requestPermission();
+    let connection;
 
-    // TODO AP : Can refactor these two methods into one
+    // TODO AP : Can refactor send message and reply methods into one
     const messageForm = document.getElementById('add-message');
     messageForm.onsubmit = (event) => {
         event.preventDefault();
 
-        const data = new FormData(messageForm);
-        if (!data.get('message')) return;
-
-        fetch(
-            'Conversation/AddMessage',
-            {
-                method: 'POST',
-                body: data,
-                credentials: 'include'
-            }
+        const messageBox = document.getElementById('mt-message');
+        const text = messageBox.value;
+        connection.invoke(
+            'PostMessage',
+            conversationInfo.id,
+            conversationInfo.schema,
+            text
         );
 
-        document.getElementById('message').value = '';
+        messageBox.value = '';
     };
 
-    function addReply(event) {
-        event.preventDefault();
-        var messageForm = event.target;
-        var messageInput = messageForm.querySelector('.mt-message-input');
+    function addReply(messageId) {
+        return function (event) {
+            event.preventDefault();
+            const messageForm = event.target;
+            const messageInput = messageForm.querySelector('.mt-message-input');
+            const message = messageInput.value;
+            
+            if (!message) return;
 
-        const data = new FormData(messageForm);
-        if (!data.get('message')) return;
+            connection.invoke(
+                'AddReply',
+                conversationInfo.id,
+                conversationInfo.schema,
+                messageId,
+                message
+            );
 
-        fetch(
-            'Conversation/AddReply',
-            {
-                method: 'POST',
-                body: data,
-                credentials: 'include'
-            }
-        );
-
-        messageInput.value = '';
-        messageForm.classList.add('is-hidden');
+            messageInput.value = '';
+            messageForm.classList.add('is-hidden');
+        }
     }
 
     function boost(messageId, button) {
         return (event) => {
             const isBoosted = button.classList.contains('mt-boosted');
-            const action = isBoosted ? 'RemoveBoost' : 'Boost';
-            const url = `Conversation/${action}/${messageId}`;
+            const action = isBoosted ? 'RemoveBoost' : 'BoostMessage';
             
-            fetch(url, { credentials: 'include' });
+            connection.invoke(
+                action,
+                conversationInfo.id,
+                conversationInfo.schema,
+                messageId
+            );
         };
     }
 
@@ -97,9 +100,8 @@ window.onload = () => {
 
     function wireUpMessage(elem, message) {
         if (conversationInfo.isMod) {
-            elem.querySelector('.mt-message-id').value = message.messageId;
             var replyForm = elem.querySelector('.mt-reply-form');
-            replyForm.onsubmit = addReply;
+            replyForm.onsubmit = addReply(message.messageId);
             elem.querySelector('.mt-reply').onclick = (event) => {
                 event.preventDefault();
                 replyForm.classList.toggle('is-hidden');
@@ -111,27 +113,25 @@ window.onload = () => {
         }
     }
 
-    let lastSeenEvent = -1;
-    function receiveMessages() {
-        let success = true;
+    // -----------------------------
 
-        fetch(
-            `Conversation/GetMessages?conversationId=${conversationInfo.id}&since=${lastSeenEvent}`,
-            {
-                credentials: 'include'
-            }
-        ).then(
-            raw => raw.json().then(response => {
-                lastSeenEvent = response.lastEventId;
-                render(response.messages);
-                setTimeout(receiveMessages, 500);
-            })
-            ).catch(
-            (err) => {
-                console.log(err);
-                new Notification('Something went wrong');
-            }
-            );
-    };
-    setTimeout(receiveMessages, 500);
+    connection = new signalR.HubConnection('/JoinConversation');
+    connection.on('message', message => render([message]));
+    connection.start().then(() => connection.invoke('JoinConversation', conversationInfo.id));
+
+    fetch(
+        `Conversation/GetMessages?conversationId=${conversationInfo.id}&since=-1`,
+        {
+            credentials: 'include'
+        }
+    ).then(
+        raw => raw.json().then(response => {
+            render(response.messages);
+        })
+        ).catch(
+        (err) => {
+            console.log(err);
+            new Notification('Something went wrong');
+        }
+    );
 };

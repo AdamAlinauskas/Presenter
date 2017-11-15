@@ -8,5 +8,6 @@ namespace Dto
         public long DocumentId { get; set; }
         public long CreatedBy {get;set;}
         public string awsKey {get;set;}
+        public long ConversationId { get; set; }
     }
 }
