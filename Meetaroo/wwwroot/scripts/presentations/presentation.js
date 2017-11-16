@@ -194,3 +194,36 @@ var Presentation = function (pdfDocument, isPresenter, presentationKey, presenta
         }
     }
 }
+
+
+class Analytics{
+    
+    constructor(presenationId ){
+        this.presentationId = presenationId;
+        this.analyticsId = 7;
+
+        //this feels hacky but can't use => in the body of the class
+        this.createAnalyticsRecord = (position) => {
+            let latitude = 0;
+            let longitude = 0;
+            if (navigator.geolocation) {
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+                console.log("lat "+latitude +" long "+ longitude  );
+                console.log("analyticsid " + this.analyticsId);
+            }
+        }
+    }
+
+    init(){
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(this.createAnalyticsRecord);
+        } 
+        else{
+            this.createAnalyticsRecord(null);
+        }
+    }
+}
+
+
+

@@ -110,6 +110,10 @@
         var pdfDocument = new PdfDocument(options);
         pdfDocument.renderToView();
 
+        var analytics = new Analytics();
+        analytics.init();
+
+
         var presentation = new Presentation(pdfDocument,isPresenter,presentationKey,presentationId,schema);
         presentation.start();
     });
