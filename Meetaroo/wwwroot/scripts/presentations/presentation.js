@@ -198,8 +198,9 @@ var Presentation = function (pdfDocument, isPresenter, presentationKey, presenta
 
 class Analytics{
     
-    constructor(presenationId ){
+    constructor(presenationId,trackPresentationUrl){
         this.presentationId = presenationId;
+        this.trackPresentationUrl = trackPresentationUrl;
         this.analyticsId = 7;
 
         //this feels hacky but can't use => in the body of the class
@@ -210,8 +211,8 @@ class Analytics{
                 latitude = position.coords.latitude;
                 longitude = position.coords.longitude;
                 console.log("lat "+latitude +" long "+ longitude  );
-                console.log("analyticsid " + this.analyticsId);
             }
+            $.post(this.trackPresentationUrl,{PresenationId:presenationId }, (data)=>{console.log(data.analyticsId) })
         }
     }
 
