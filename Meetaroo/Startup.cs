@@ -199,10 +199,6 @@ namespace Meetaroo
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}"
                 );
-                routes.MapRoute(
-                    name: "schemaBased",
-                    template: "{schema}/{controller=Home}/{action=Index}/{id?}"
-                );
             });
 
             // This is the "right" way to use a configuration, but it doesn't appear to be working
