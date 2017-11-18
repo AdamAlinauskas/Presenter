@@ -20,7 +20,8 @@
             @foreach(var org in Model)
             {
                 <li>@org.id : @org.display_name 
-                    <a href="/Document">Documents</a> | <a href="/Presentation">Presentations</a>
+                    <a href="//@(org.schema_name).@(ViewData["host"])/Document">Documents</a> |
+                    <a href="//@(org.schema_name).@(ViewData["host"])/Presentation">Presentations</a>
                 </li>
             }
         </ul>

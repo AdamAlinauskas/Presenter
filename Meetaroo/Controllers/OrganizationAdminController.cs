@@ -1,37 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
-using System.Data.Common;
-using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using System.Linq;
-using System;
 using Migrator;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Amazon.S3;
-using Amazon.S3.Transfer;
-using Amazon;
-using System.IO;
-using Amazon.S3.Model;
+using DataAccess;
 
 namespace Meetaroo.Controllers
 {
+    // TODO : This should use repos, DTOs, the works.
+    [Authorize]
+    [TypeFilter(typeof(RetrieveSchemaActionFilter))]
     public class OrganizationAdminController : Controller
     {
         NpgsqlConnection connection;
+        ICurrentSchema currentSchema;
 
-        public OrganizationAdminController(NpgsqlConnection connection)
+        public OrganizationAdminController(NpgsqlConnection connection, ICurrentSchema currentSchema)
         {
             this.connection = connection;
+            this.currentSchema = currentSchema;
         }
 
-        [Authorize]
         public async Task<IActionResult> Index()
         {
             await connection.OpenAsync();
 
             var result = await connection.QueryAsync("SELECT id, display_name, schema_name FROM Organizations");
+            ViewData["host"] = currentSchema.Host;
             return View(result);
         }
 
