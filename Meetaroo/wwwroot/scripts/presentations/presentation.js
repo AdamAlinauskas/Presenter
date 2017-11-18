@@ -207,7 +207,7 @@ class Analytics{
         this.createAnalyticsRecord = (position) => {
             let latitude = 0;
             let longitude = 0;
-            if (navigator.geolocation) {
+            if (position) {
                 latitude = position.coords.latitude;
                 longitude = position.coords.longitude;
                 console.log("lat "+latitude +" long "+ longitude  );
@@ -217,14 +217,11 @@ class Analytics{
     }
 
     init(){
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(this.createAnalyticsRecord);
+        if (navigator.geolocation && location.protocol == 'https:') {
+            navigator.geolocation.getCurrentPosition(this.createAnalyticsRecord);  
         } 
         else{
             this.createAnalyticsRecord(null);
         }
     }
 }
-
-
-

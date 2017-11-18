@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Meetaroo.Controllers{
     
-    //[TypeFilterAttribute(typeof(RetrieveSchemaActionFilter))]
+    [TypeFilterAttribute(typeof(RetrieveSchemaActionFilter))]
     [Authorize]
     public class AnalyticsController : Controller{
         
