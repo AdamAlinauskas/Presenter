@@ -42,7 +42,7 @@
                 </div>
             </div>
 
-            <p>Your site will be at: <span id="mt-schema-display" class="tag is-light is-medium">&nbsp;</span>.meetaroo.com</p>
+            <p>Your site will be at: <span id="mt-schema-display" class="tag is-light is-medium">&nbsp;</span>.@(ViewData["host"])</p>
             
             @Html.Hidden("schemaName", "", new { id = "mt-schema" })
         }
