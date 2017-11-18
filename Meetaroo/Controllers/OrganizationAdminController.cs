@@ -13,12 +13,10 @@ namespace Meetaroo.Controllers
     public class OrganizationAdminController : Controller
     {
         NpgsqlConnection connection;
-        ICurrentSchema currentSchema;
 
-        public OrganizationAdminController(NpgsqlConnection connection, ICurrentSchema currentSchema)
+        public OrganizationAdminController(NpgsqlConnection connection)
         {
             this.connection = connection;
-            this.currentSchema = currentSchema;
         }
 
         [HttpPost]
@@ -33,7 +31,7 @@ namespace Meetaroo.Controllers
             );
             MigrateOrg(schemaName);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         private void MigrateOrg(string schemaName)

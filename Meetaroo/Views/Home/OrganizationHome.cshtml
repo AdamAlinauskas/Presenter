@@ -1,29 +1,47 @@
 @model Dto.PresentationListingDto
-<h1>Presentations</h1>
 
-<form method="post">
-    Name <input name='Name'/> 
-    <select name='DocumentId'>
-        @foreach(var item in Model.Documents)
-        {
-            <option value="@item.Id">@item.FileName</option>
-        }
-    </select> 
-
-    <input type="submit" value="Create">
-    
-</form>
-
-<table>
-    <th>Name</th>
-    <th>Document</th>
-@foreach(var presentation in Model.Presentations)
-{
-    <tr>
-        <td>@presentation.Name</td>
-        <td>@presentation.DocumentName</td>
-        <td><a href="/Deck/Join/@presentation.Id">Join</a></td>
-    </tr>
+@{
+    Layout = "~/Views/Layout.cshtml";
 }
 
-</table>
+
+<section class="section">
+<div class="container">
+    <h1 class="title">Presentations</h1>
+    <ul class="menu-list">
+    @foreach(var presentation in Model.Presentations)
+    {
+        <li>
+            <a href="/Deck/Join/@presentation.Id">@presentation.Name</a>
+        </li>
+    }
+    </ul>
+</div>
+</section>
+
+<hr/>
+
+
+<section class="section">
+<div class="container">
+    <h3 class="title is-4">Create a new presentation</h3>
+    <form  method="post">
+        <div class="field is-grouped">
+            <p class="control is-expanded">
+                <input class="input" name='Name' placeholder="Presentation name"/> 
+            </p>
+            <p class="control">
+            <select class="select" name='DocumentId'>
+                @foreach(var item in Model.Documents)
+                {
+                    <option value="@item.Id">@item.FileName</option>
+                }
+            </select>
+            </p>
+            <p class="control">
+            <input class="button is-primary" type="submit" value="Create">
+            </p>
+        </div>
+    </form>
+</div>
+</section>
