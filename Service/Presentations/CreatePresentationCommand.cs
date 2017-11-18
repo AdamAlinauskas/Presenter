@@ -26,6 +26,7 @@ namespace Service
         {
             var conversationId = await conversations.CreateConversation(dto.Name, dto.CreatedBy);
             dto.ConversationId = conversationId;
+
             await presentationRepository.Create(dto);
         }
     }

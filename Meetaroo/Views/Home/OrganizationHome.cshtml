@@ -12,7 +12,7 @@
     @foreach(var presentation in Model.Presentations)
     {
         <li>
-            <a href="/Deck/Join/@presentation.Id">@presentation.Name</a>
+            <a class="has-text-primary" href="/Deck/Join/@presentation.Id">@presentation.Name</a>
         </li>
     }
     </ul>
@@ -25,23 +25,42 @@
 <section class="section">
 <div class="container">
     <h3 class="title is-4">Create a new presentation</h3>
-    <form  method="post">
-        <div class="field is-grouped">
-            <p class="control is-expanded">
-                <input class="input" name='Name' placeholder="Presentation name"/> 
-            </p>
-            <p class="control">
-            <select class="select" name='DocumentId'>
-                @foreach(var item in Model.Documents)
-                {
-                    <option value="@item.Id">@item.FileName</option>
-                }
-            </select>
-            </p>
-            <p class="control">
-            <input class="button is-primary" type="submit" value="Create">
-            </p>
-        </div>
-    </form>
+    <div class="columns">
+        <form method="post" enctype="multipart/form-data" action="/Presentation" class="column is-half">
+            <div class="field">
+                <p class="control">
+                    <input class="input" name='Name' placeholder="Presentation title"/> 
+                </p>
+            </div>
+            <div class="field">
+                <div class="file has-name is-fullwidth">
+                    <label class="file-label">
+                        <input class="file-input" type="file" name="file" id="mt-file"/>
+                        <span class="file-cta">
+                            <span class="file-icon">
+                                <i class="fa fa-upload"></i>
+                            </span>
+                            <span class="file-label">
+                                Choose a file &hellip;
+                            </span>
+                        </span>
+                        <span class="file-name" id="mt-filename"></span>
+                    </label>
+                </div>
+            </div>
+            <article class="message">
+                <div class="message-body">
+                    <strong>Future direction:</strong> Allow more customization of presentation, including the addition of additional resources.
+                </div>
+            </article>
+            <div class="field">
+                <p class="control">
+                <input class="button is-primary" type="submit" value="Create" disabled id="mt-create-presentation">
+                </p>
+            </div>
+        </form>
+    </div>
 </div>
 </section>
+
+<script src="/scripts/home/organization.js"></script>
