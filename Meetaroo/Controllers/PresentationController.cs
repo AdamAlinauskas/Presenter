@@ -37,10 +37,7 @@ namespace Meetaroo.Controllers
             var user = await this.GetCurrentUser();
             dto.CreatedBy = user.Id;
             await createPresentationCommand.Execute(dto);
-            return RedirectToRoute(
-                "schemaBased",
-                new { schema = currentSchema.Name, controller = "Presentation", action = "index" }
-            );
+            return RedirectToAction("Index", "Presentation");
         }
     }
 }

@@ -48,10 +48,7 @@ namespace Meetaroo.Controllers
             var user = await this.GetCurrentUser();
             await file.CopyToAsync(fileStream);
             await uploadFileCommand.Execute(fileStream, file.FileName,user.Id);
-            return RedirectToRoute(
-                "schemaBased",
-                new { schema = currentSchema.Name, controller = "Document", action = "index" }
-            ); 
+            return RedirectToAction("Index", "Document");
         }
 
         public async Task<IActionResult> View(long id){

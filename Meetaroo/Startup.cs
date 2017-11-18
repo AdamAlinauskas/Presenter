@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Amazon.S3;
 using DataAccess;
 using Domain;
+using Meetaroo.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -33,17 +34,13 @@ namespace Meetaroo
 
         public IConfigurationRoot Configuration { get; set; }
 
-        // public void Configure(IApplicationBuilder app){
-
-        // }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR();
 
-            // TODO AP : Use Configuration loaded from appSettings.json and environment for these strings
+            // TODO AP : Use Configuration loaded from appSettings.json for these strings
             var dbHost = Environment.GetEnvironmentVariable("DATABASE_HOST");
             var connectionString = string.Format("Server={0};Database=meetaroo;Username=meetaroo;Password=x1Y6Dfb4ElF7C6JbEo170raDSaQRcb71;Search Path=meetaroo_shared", dbHost);
 
@@ -84,7 +81,6 @@ namespace Meetaroo
         {
             services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
             services.AddAWSService<IAmazonS3>();
-            //services.AddAWSService<IAmazonDynamoDB>(); don't thnk we are using that.
         }
 
         private void ConfigureAuth(IServiceCollection services)
@@ -96,7 +92,10 @@ namespace Meetaroo
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
-            .AddCookie()
+            .AddCookie(options => {
+                // options.Cookie.Domain = ".findecks.test";
+                options.CookieManager = new CookieManager();
+            })
             .AddOpenIdConnect("Auth0", options =>
             {
                 // Set the authority to your Auth0 domain
@@ -176,8 +175,6 @@ namespace Meetaroo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -199,20 +196,7 @@ namespace Meetaroo
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}"
                 );
-                routes.MapRoute(
-                    name: "schemaBased",
-                    template: "{schema}/{controller=Home}/{action=Index}/{id?}"
-                );
             });
-
-            // This is the "right" way to use a configuration, but it doesn't appear to be working
-            var builder = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .AddJsonFile("appsettings.json");
-            Configuration = builder.Build();
-
-            // Get values like this:
-            //var dbHost = Configuration.GetValue("DATABASE_HOST", "localhost");
         }
     }
 }
