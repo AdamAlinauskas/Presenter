@@ -1,13 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Dto.Organizations;
 using Npgsql;
 
 namespace DataAccess{
     public interface IOrganizationRepository
     {
         Task<bool> DoesSchemaExist(string schemaName);
+        Task<IEnumerable<OrganizationSummaryDto>> FetchAll();
     }
 
     public class OrganizationRepository : IOrganizationRepository
@@ -27,6 +30,12 @@ namespace DataAccess{
             connection.Close();
             
             return result > 0;     
+        }
+
+        public async Task<IEnumerable<OrganizationSummaryDto>> FetchAll()
+        {
+            await connection.OpenAsync();
+            return await connection.QueryAsync<OrganizationSummaryDto>("SELECT display_name AS name, schema_name AS schema FROM organizations");
         }
     }
 }

@@ -61,6 +61,7 @@ namespace Meetaroo
             services.AddTransient<IRetrievePresentationToViewQuery, RetrievePresentationToViewQuery>();
             services.AddTransient<IUpdatePresentationCurrentPage, UpdatePresentationCurrentPage>();
             services.AddTransient<IPresentationCurrentPageQuery, PresentationCurrentPageQuery>();
+            services.AddTransient<IRetrieveOrganizationsQuery, RetrieveOrganizationsQuery>();
 
             //DAL
             services.AddTransient<IConversationRepository, ConversationRepository>();

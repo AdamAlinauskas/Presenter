@@ -12,23 +12,15 @@ namespace Meetaroo.Controllers
     [Authorize]
     public class PresentationController : Controller
     {
-        private readonly IRetrievePresentationListingQuery retrievePresentationListingQuery;
         private readonly ICurrentSchema currentSchema;
         private readonly ICreatePresentationCommand createPresentationCommand;
         private readonly IRetrievePresentationToViewQuery retrievePresentationToViewQuery;
 
-        public PresentationController(IRetrievePresentationListingQuery retrievePresentationListingQuery, ICurrentSchema currentSchema, ICreatePresentationCommand createPresentationCommand, IRetrievePresentationToViewQuery retrievePresentationToViewQuery)
+        public PresentationController(ICurrentSchema currentSchema, ICreatePresentationCommand createPresentationCommand, IRetrievePresentationToViewQuery retrievePresentationToViewQuery)
         {
-            this.retrievePresentationListingQuery = retrievePresentationListingQuery;
             this.currentSchema = currentSchema;
             this.createPresentationCommand = createPresentationCommand;
             this.retrievePresentationToViewQuery = retrievePresentationToViewQuery;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var dto = await retrievePresentationListingQuery.Fetch();
-            return View(dto);
         }
 
         [HttpPost]

@@ -8,7 +8,6 @@ using DataAccess;
 
 namespace Meetaroo.Controllers
 {
-    // TODO : This should use repos, DTOs, the works.
     [Authorize]
     [TypeFilter(typeof(RetrieveSchemaActionFilter))]
     public class OrganizationAdminController : Controller
@@ -22,18 +21,10 @@ namespace Meetaroo.Controllers
             this.currentSchema = currentSchema;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            await connection.OpenAsync();
-
-            var result = await connection.QueryAsync("SELECT id, display_name, schema_name FROM Organizations");
-            ViewData["host"] = currentSchema.Host;
-            return View(result);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create(string schemaName, string displayName)
         {
+            // TODO : This should use OrganizationRepository
             await connection.OpenAsync();
 
             await connection.ExecuteAsync(
