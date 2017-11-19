@@ -4,6 +4,8 @@ namespace Dto
     {
         public long? PresentationId { get; set; }
         public long? DocumentId { get; set; }
-        public long CreatedBy {get;set;}
+        public long CreatedBy { get; set; }
+        public string IpAddress { get; set; }
+        
     }
 }
