@@ -61,6 +61,7 @@ namespace Meetaroo
             services.AddTransient<IRetrievePresentationToViewQuery, RetrievePresentationToViewQuery>();
             services.AddTransient<IUpdatePresentationCurrentPage, UpdatePresentationCurrentPage>();
             services.AddTransient<IPresentationCurrentPageQuery, PresentationCurrentPageQuery>();
+            services.AddTransient<ICreateUserAnalyticsSessionCommand, CreateUserAnalyticsSessionCommand>();
 
             //DAL
             services.AddTransient<IConversationRepository, ConversationRepository>();
@@ -68,6 +69,7 @@ namespace Meetaroo
             services.AddTransient<IOrganizationRepository, OrganizationRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPresentationRepository, PresentationRepository>();
+            services.AddTransient<IUserAnalyticsSessionRepository, UserAnalyticsSessionRepository>();
 
             ConfigureAuth(services);
 

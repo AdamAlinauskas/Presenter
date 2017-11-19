@@ -198,8 +198,8 @@ var Presentation = function (pdfDocument, isPresenter, presentationKey, presenta
 
 class Analytics{
     
-    constructor(presenationId,trackPresentationUrl){
-        this.presentationId = presenationId;
+    constructor(presentationId,trackPresentationUrl){
+        this.presentationId = presentationId;
         this.trackPresentationUrl = trackPresentationUrl;
         this.analyticsId = 7;
 
@@ -212,7 +212,7 @@ class Analytics{
                 longitude = position.coords.longitude;
                 console.log("lat "+latitude +" long "+ longitude  );
             }
-            $.post(this.trackPresentationUrl,{PresenationId:presenationId }, (data)=>{console.log(data.analyticsId) })
+            $.post(this.trackPresentationUrl,{presentationId:presentationId }, (data)=>{console.log(data.analyticsId) })
         }
     }
 

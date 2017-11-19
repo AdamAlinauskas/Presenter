@@ -1,28 +1,33 @@
 using System;
+using System.Threading.Tasks;
+using Dto;
+using Meetaroo.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Service;
 
-namespace Meetaroo.Controllers{
-    
+namespace Meetaroo.Controllers
+{
+
     [TypeFilterAttribute(typeof(RetrieveSchemaActionFilter))]
     [Authorize]
-    public class AnalyticsController : Controller{
-        
-        [HttpPost]
-        public JsonResult TrackFor(TrackRequestDto dto)
+    public class AnalyticsController : Controller
+    {
+        private readonly ICreateUserAnalyticsSessionCommand createUserAnalyticsSessionCommand;
+
+        public AnalyticsController(ICreateUserAnalyticsSessionCommand createUserAnalyticsSessionCommand)
         {
-            Console.WriteLine($"track for presenation id : {dto.PresenationId}");
-            return Json(new TrackResponseDto{AnalyticsId = 22});
+            this.createUserAnalyticsSessionCommand = createUserAnalyticsSessionCommand;
         }
-    }
 
-
-    public class TrackRequestDto{
-        public long? PresenationId{get;set;}
-        public long? DocumentId {get;set;}
-    }
-
-    public class TrackResponseDto{
-        public long AnalyticsId {get;set;}
+        [HttpPost]
+        public async Task<JsonResult> TrackFor(TrackRequestDto dto)
+        {
+            var user = await this.GetCurrentUser();
+            var createdBy = user.Id;
+            dto.CreatedBy = createdBy;
+            var analyticsId = await createUserAnalyticsSessionCommand.Execute(dto);
+            return Json(new TrackResponseDto { AnalyticsId = analyticsId });
+        }
     }
 }

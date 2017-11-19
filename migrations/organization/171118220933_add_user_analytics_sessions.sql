@@ -3,17 +3,16 @@ START TRANSACTION;
 CREATE TABLE user_analytics_sessions (
     id bigserial PRIMARY KEY,
     presentation_id bigint REFERENCES presentations(id),
-    file_id bigint REFERENCES files(id),
-    user_id bigint NOT NULL,
+    document_id bigint REFERENCES files(id),
     created_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
     created_by bigint NOT NULL,
     longitude numeric,
     latitude numeric,
     country text,
     ip_address text,
-    CONSTRAINT chk_user_analytics_sessions CHECK ( (presentation_id IS NOT NULL AND file_id IS NULL) 
+    CONSTRAINT chk_user_analytics_sessions CHECK ( (presentation_id IS NOT NULL AND document_id IS NULL) 
                                             or 
-                                            (file_id IS NOT NULL AND presentation_id IS NULL) )
+                                            (document_id IS NOT NULL AND presentation_id IS NULL) )
 );
 
 CREATE TABLE page_analytics (
