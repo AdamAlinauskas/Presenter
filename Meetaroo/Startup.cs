@@ -171,6 +171,8 @@ namespace Meetaroo
 
                 };
             });
+
+            services.AddDataProtection(options => { options.ApplicationDiscriminator = "findecks_web"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
