@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title>findecks</title>
+        <title>@(ViewData.ContainsKey("OrganizationName") ? ViewData["OrganizationName"] + " - " : "") FinDecks</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.0/css/bulma.min.css">
         <link rel="icon" href="/images/findecks.png">
@@ -10,11 +10,19 @@
     </head>
     <body>
         <nav class="navbar is-dark">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="/">
+                    <img src="/images/findecks.png" width="28" height="28" alt="FinDecks" />
+                </a>
+                <div class="navbar-item">
+                    @(ViewData.ContainsKey("OrganizationName") ? ViewData["OrganizationName"] : "FinDecks")
+                </div>
+            </div>
             <div class="navbar-menu">
-                <div class="navbar-start">
+                <div class="navbar-end">
                     @if (@User.Identity.IsAuthenticated) {
                         <div class="navbar-item has-dropdown is-hoverable">
-                            <a class="navbar-link">Logged in as @User.Identity.Name</a>
+                            <a class="navbar-link">@User.Identity.Name</a>
                             <div class="navbar-dropdown">
                                 <a class="navbar-item" href="/Account/Logout">Log out</a>
                             </div>

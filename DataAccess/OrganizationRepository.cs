@@ -11,6 +11,7 @@ namespace DataAccess{
     {
         Task<bool> DoesSchemaExist(string schemaName);
         Task<IEnumerable<OrganizationSummaryDto>> FetchAll();
+        OrganizationSummaryDto Fetch(string schemaName);
     }
 
     public class OrganizationRepository : IOrganizationRepository
@@ -30,6 +31,15 @@ namespace DataAccess{
             connection.Close();
             
             return result > 0;     
+        }
+
+        public OrganizationSummaryDto Fetch(string schemaName)
+        {
+            connection.Open();
+            return connection.QueryFirst<OrganizationSummaryDto>(
+                "SELECT display_name AS name, schema_name AS schema FROM organizations WHERE schema_name = @schemaName",
+                new { schemaName }
+            );
         }
 
         public async Task<IEnumerable<OrganizationSummaryDto>> FetchAll()
