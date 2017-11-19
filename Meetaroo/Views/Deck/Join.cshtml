@@ -92,6 +92,7 @@
 <script src="/scripts/conversation/conversation.js"></script>
 <script src="/scripts/pdfjs/pdf.js"></script>
 <script src="/scripts/signalr/signalr-client-1.0.0-alpha2-final.js"></script>
+<script src="/scripts/jquery/jquery-3.2.1.min.js"></script>
 <script src="/scripts/presentations/presentation.js"></script>
 <script>
     window.addEventListener('load', function() {
@@ -99,6 +100,7 @@
         var presentationId = @Model.Presentation.PresentationId;
         var presentationKey = '@Model.Presentation.ViewPresentationKey';
         var schema = '@Model.Presentation.Schema';
+        var trackForUrl = '@Url.Action("TrackFor","Analytics")';
 
         var options =  {
             url: '@Html.Raw(@Model.Presentation.Url)',
@@ -109,6 +111,12 @@
         
         var pdfDocument = new PdfDocument(options);
         pdfDocument.renderToView();
+
+        
+
+        var analytics = new Analytics(presentationId,trackForUrl);
+        analytics.init();
+
 
         var presentation = new Presentation(pdfDocument,isPresenter,presentationKey,presentationId,schema);
         presentation.start();

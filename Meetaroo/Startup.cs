@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,9 @@ namespace Meetaroo
             services.AddScoped<ICurrentSchema, CurrentSchema>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            
+            //Web services
+            services.AddTransient<IRetrieveIpAddress, RetrieveIpAddress>();
 
             //Service Layer
             services.AddTransient<IConfirmSchemaExists, ConfirmSchemaExists>();
@@ -61,6 +65,7 @@ namespace Meetaroo
             services.AddTransient<IRetrievePresentationToViewQuery, RetrievePresentationToViewQuery>();
             services.AddTransient<IUpdatePresentationCurrentPage, UpdatePresentationCurrentPage>();
             services.AddTransient<IPresentationCurrentPageQuery, PresentationCurrentPageQuery>();
+            services.AddTransient<ICreateUserAnalyticsSessionCommand, CreateUserAnalyticsSessionCommand>();
             services.AddTransient<IRetrieveOrganizationsQuery, RetrieveOrganizationsQuery>();
 
             //DAL
@@ -69,6 +74,7 @@ namespace Meetaroo
             services.AddTransient<IOrganizationRepository, OrganizationRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPresentationRepository, PresentationRepository>();
+            services.AddTransient<IUserAnalyticsSessionRepository, UserAnalyticsSessionRepository>();
 
             ConfigureAuth(services);
 
@@ -182,6 +188,11 @@ namespace Meetaroo
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions{
+                 ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                    ForwardedHeaders.XForwardedProto
+            });
 
             app.UseStaticFiles();
 
