@@ -25,8 +25,8 @@ namespace DataAccess
         {
             await ConnectAndSetSchema();
             var id = await connection.QuerySingleAsync<long>(
-                @"INSERT INTO user_analytics_sessions (presentation_id, document_id, created_by)
-                VALUES (@PresentationId, @DocumentId, @CreatedBy) RETURNING id;
+                @"INSERT INTO user_analytics_sessions (presentation_id, document_id, created_by, ip_address)
+                VALUES (@PresentationId, @DocumentId, @CreatedBy, @IpAddress) RETURNING id;
                 ",
                 dto
             );

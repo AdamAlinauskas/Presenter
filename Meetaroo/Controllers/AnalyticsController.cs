@@ -30,10 +30,10 @@ namespace Meetaroo.Controllers
         public async Task<JsonResult> TrackFor(TrackRequestDto dto)
         {
             var user = await this.GetCurrentUser();
-            var createdBy = user.Id;
-            dto.CreatedBy = createdBy;
-            var analyticsId = await createUserAnalyticsSessionCommand.Execute(dto);
+            dto.CreatedBy = user.Id;
             dto.IpAddress = retrieveIpAddress.GetRequestIp();
+            var analyticsId = await createUserAnalyticsSessionCommand.Execute(dto);
+            
             return Json(new TrackResponseDto { AnalyticsId = analyticsId });
         }
     }
