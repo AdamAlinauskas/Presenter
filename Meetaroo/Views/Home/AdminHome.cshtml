@@ -7,10 +7,12 @@
 <section class="section">
     <div class="container">
         <h1 class="title">Organization Administration</h1>
-        <h2 class="subtitle">
-            This page won't be accessible to regular users, not even account admins.<br/>
-            For now, this gives us a way of quickly creating and switching between organizations.
-        </h2>
+            <article class="message">
+                <div class="message-body">
+                This page won't be accessible to regular users, not even account admins.<br/>
+                For now, this gives us a way of quickly creating and switching between organizations.
+                </div>
+            </article>
     </div>
 </section>
 
@@ -19,7 +21,7 @@
         <ul class="menu-list">
             @foreach(var org in Model.Organizations)
             {
-                <li><a href="//@(org.Schema).@(Model.Host)">@org.Name</a></li>
+                <li><a class="has-text-primary" href="//@(org.Schema).@(Model.Host)">@org.Name</a></li>
             }
         </ul>
     </div>
