@@ -31,7 +31,7 @@ namespace Meetaroo.Controllers
                     : await RenderAdminHome();
             }
 
-            return View();
+            return RedirectToAction("Login", "Account");
         }
 
         public async Task<IActionResult> RenderAdminHome()
