@@ -66,6 +66,7 @@ namespace Meetaroo
             services.AddTransient<IUpdatePresentationCurrentPage, UpdatePresentationCurrentPage>();
             services.AddTransient<IPresentationCurrentPageQuery, PresentationCurrentPageQuery>();
             services.AddTransient<ICreateUserAnalyticsSessionCommand, CreateUserAnalyticsSessionCommand>();
+            services.AddTransient<IRetrieveOrganizationsQuery, RetrieveOrganizationsQuery>();
 
             //DAL
             services.AddTransient<IConversationRepository, ConversationRepository>();
@@ -176,6 +177,8 @@ namespace Meetaroo
 
                 };
             });
+
+            services.AddDataProtection(options => { options.ApplicationDiscriminator = "findecks_web"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

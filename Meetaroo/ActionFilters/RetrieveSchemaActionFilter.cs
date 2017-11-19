@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using DataAccess;
 using Service;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 
 public class RetrieveSchemaActionFilter : ActionFilterAttribute
 {   
@@ -37,6 +38,15 @@ public class RetrieveSchemaActionFilter : ActionFilterAttribute
 
             currentSchema.Name = schemaName;
             currentSchema.Host = parts.Groups["host"].Value;
+
+            var controller = context.Controller as Controller;
+            if (controller != null)
+            {
+                // TODO : This is a great candidate for caching
+                var organizations = serviceProvider.GetService<IOrganizationRepository>();
+                var organization = organizations.Fetch(schemaName);
+                controller.ViewData["OrganizationName"] = organization.Name;
+            }
         }
         else 
         {

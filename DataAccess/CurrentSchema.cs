@@ -6,6 +6,7 @@ namespace DataAccess{
     {
         string Name {get;set;}
         string Host {get;set;}
+        bool HasSchema { get; }
     }
 
     public class CurrentSchema : ICurrentSchema
@@ -23,5 +24,7 @@ namespace DataAccess{
         }
 
         public string Host {get;set;}
+
+        public bool HasSchema => name != null;
     }
 }

@@ -1,4 +1,4 @@
-@model System.Collections.Generic.IEnumerable<dynamic>
+@model Dto.Organizations.OrganizationListDto
 
 @{
     Layout = "~/Views/Layout.cshtml";
@@ -7,27 +7,27 @@
 <section class="section">
     <div class="container">
         <h1 class="title">Organization Administration</h1>
-        <h2 class="subtitle">
-            This page won't be accessible to regular users, not even account admins.<br/>
-            For now, this gives us a way of quickly creating and switching between organizations.
-        </h2>
+            <article class="message">
+                <div class="message-body">
+                This page won't be accessible to regular users, not even account admins.<br/>
+                For now, this gives us a way of quickly creating and switching between organizations.
+                </div>
+            </article>
     </div>
 </section>
 
 <section class="section">
     <div class="container">
-        <ul>
-            @foreach(var org in Model)
+        <ul class="menu-list">
+            @foreach(var org in Model.Organizations)
             {
-                <li>@org.id : @org.display_name 
-                    <a href="//@(org.schema_name).@(ViewData["host"])/Document">Documents</a> |
-                    <a href="//@(org.schema_name).@(ViewData["host"])/Presentation">Presentations</a>
-                </li>
+                <li><a class="has-text-primary" href="//@(org.Schema).@(Model.Host)">@org.Name</a></li>
             }
         </ul>
     </div>
 </section>
 
+<hr/>
 
 <section class="section">
     <div class="container">
@@ -42,7 +42,7 @@
                 </div>
             </div>
 
-            <p>Your site will be at: <span id="mt-schema-display" class="tag is-light is-medium">&nbsp;</span>.@(ViewData["host"])</p>
+            <p>Your site will be at: <span id="mt-schema-display" class="tag is-light is-medium">&nbsp;</span>.@(Model.Host)</p>
             
             @Html.Hidden("schemaName", "", new { id = "mt-schema" })
         }
