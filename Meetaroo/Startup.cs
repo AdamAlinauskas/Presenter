@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -23,17 +25,19 @@ namespace Meetaroo
 {
     public class Startup
     {
+        public IConfigurationRoot Configuration { get; set; }
+        private readonly string environmentName;
+
         public Startup(IHostingEnvironment env)
         {
+            environmentName = env.EnvironmentName;
             var builder = new ConfigurationBuilder()
-            .SetBasePath(env.ContentRootPath)
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-            .AddEnvironmentVariables();
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
+                .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
-
-        public IConfigurationRoot Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -81,7 +85,6 @@ namespace Meetaroo
             services.AddMvc();
 
             AddAws(services);
-
         }
 
         private void AddAws(IServiceCollection services)
@@ -126,7 +129,6 @@ namespace Meetaroo
                 {
                     NameClaimType = "name"
                 };
-
 
                 // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
                 // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
@@ -211,6 +213,11 @@ namespace Meetaroo
                     template: "{controller=Home}/{action=Index}/{id?}"
                 );
             });
+
+            if (environmentName == "Release")
+            {
+                app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
+            }
         }
     }
 }

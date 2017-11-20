@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Npgsql;
 using Service;
 
@@ -36,8 +37,14 @@ namespace Meetaroo.Controllers
 
         public IActionResult HealthCheck()
         {
+            StringValues values;
+            
+            
+            var proto = Request.Headers.TryGetValue("Proto", out values) ? values[0] : "none";
+            var forwardedProto = Request.Headers.TryGetValue("X-Forwarded-Proto", out values) ? values[0] : "none";
+
             return new ContentResult {
-                Content = "Health check okay",
+                Content = $"Health check okay\nProtocol: ${proto}\nForwarded protocol: ${proto}",
                 ContentType = "text",
                 StatusCode = 200
             };
