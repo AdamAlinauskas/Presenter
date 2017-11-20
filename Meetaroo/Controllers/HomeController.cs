@@ -34,6 +34,15 @@ namespace Meetaroo.Controllers
             return RedirectToAction("Login", "Account");
         }
 
+        public IActionResult HealthCheck()
+        {
+            return new ContentResult {
+                Content = "Health check okay",
+                ContentType = "text",
+                StatusCode = 200
+            };
+        }
+
         public async Task<IActionResult> RenderAdminHome()
         {
             var dto = await organizations.Fetch();
