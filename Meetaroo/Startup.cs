@@ -69,6 +69,7 @@ namespace Meetaroo
             services.AddTransient<ICreateUserAnalyticsSessionCommand, CreateUserAnalyticsSessionCommand>();
             services.AddTransient<IRetrieveOrganizationsQuery, RetrieveOrganizationsQuery>();
             services.AddTransient<IRetrieveLocationFromIpAddress,RetrieveLocationFromIpAddress>();
+            services.AddTransient<IRetrieveLocation, RetrieveLocation>();
 
             //DAL
             services.AddTransient<IConversationRepository, ConversationRepository>();

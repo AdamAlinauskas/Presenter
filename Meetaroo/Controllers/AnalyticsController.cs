@@ -22,13 +22,14 @@ namespace Meetaroo.Controllers
     {
         private readonly ICreateUserAnalyticsSessionCommand createUserAnalyticsSessionCommand;
         private readonly IRetrieveIpAddress retrieveIpAddress;
-        private readonly IRetrieveLocationFromIpAddress retrieveLocationFromIpAddress;
+        private readonly IRetrieveLocation retrieveLocation;
 
-        public AnalyticsController(ICreateUserAnalyticsSessionCommand createUserAnalyticsSessionCommand, IRetrieveIpAddress retrieveIpAddress, IRetrieveLocationFromIpAddress retrieveLocationFromIpAddress)
+
+        public AnalyticsController(ICreateUserAnalyticsSessionCommand createUserAnalyticsSessionCommand, IRetrieveIpAddress retrieveIpAddress, IRetrieveLocation retrieveLocation)
         {
             this.createUserAnalyticsSessionCommand = createUserAnalyticsSessionCommand;
             this.retrieveIpAddress = retrieveIpAddress;
-            this.retrieveLocationFromIpAddress = retrieveLocationFromIpAddress;
+            this.retrieveLocation = retrieveLocation;
         }
 
         [HttpPost]
@@ -37,43 +38,10 @@ namespace Meetaroo.Controllers
             var user = await this.GetCurrentUser();
             dto.CreatedBy = user.Id;
             dto.IpAddress = retrieveIpAddress.GetRequestIp();
-           // dto.Location = retrieveLocationFromIpAddress.Fetch(dto.IpAddress);
 
             var analyticsId = await createUserAnalyticsSessionCommand.Execute(dto);
-            
+
             return Json(new TrackResponseDto { AnalyticsId = analyticsId });
-        }
-    }
-
-    public class LocationDto{
-        public string City{get;set;}
-        public string Country {get;set;}
-        public Continent Contient { get; internal set; }
-        public string IspOrganizationName { get; internal set; }
-    }
-
-    public interface IRetrieveLocationFromIpAddress{
-        LocationDto Fetch(string ipAddress);
-    }
-
-    public class RetrieveLocationFromIpAddress : IRetrieveLocationFromIpAddress{
-        private readonly IHostingEnvironment hostingEnvironment;
-
-        public RetrieveLocationFromIpAddress(IHostingEnvironment hostingEnvironment)
-        {
-            this.hostingEnvironment = hostingEnvironment;
-        }
-        public LocationDto Fetch(string ipAddress){
-            ipAddress = "68.147.135.54";
-             using (var reader = new DatabaseReader("/usr/local/share/findecks/GeoLite2-City.mmdb"))
-            {
-                var cityResult = reader.City(ipAddress);
-                var cityName = cityResult.City.Name;
-                var countryName = cityResult.Country.Name;
-                var continent = cityResult.Continent;
-                Console.WriteLine($"Continent: {continent} Country: {countryName} City: {cityName} ");
-                return new LocationDto{Country= countryName, City = cityName, Contient = continent};
-            }
         }
     }
 }
