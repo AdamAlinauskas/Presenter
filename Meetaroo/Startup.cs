@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -26,15 +27,13 @@ namespace Meetaroo
     public class Startup
     {
         public IConfigurationRoot Configuration { get; set; }
-        private readonly string environmentName;
 
         public Startup(IHostingEnvironment env)
         {
-            environmentName = env.EnvironmentName;
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
@@ -174,9 +173,14 @@ namespace Meetaroo
                             Identifier = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value
                         };
                         return services.BuildServiceProvider().GetService<ICreateProfileService>().EnsureExists(userProfile);
+                    },
+                    OnRedirectToIdentityProvider = context => {
+                        var builder = new UriBuilder(context.ProtocolMessage.RedirectUri);
+                        builder.Scheme = "https";
+                        builder.Port = -1;
+                        context.ProtocolMessage.RedirectUri = builder.ToString();
+                        return Task.FromResult(0);
                     }
-
-
                 };
             });
 
@@ -213,11 +217,6 @@ namespace Meetaroo
                     template: "{controller=Home}/{action=Index}/{id?}"
                 );
             });
-
-            if (environmentName == "Release")
-            {
-                app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
-            }
         }
     }
 }
