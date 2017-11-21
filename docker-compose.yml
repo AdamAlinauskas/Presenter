@@ -33,3 +33,9 @@ services:
       - ./migrations:/srv/migrations
     depends_on:
       - "db"
+  redirector:
+    image: nginx:alpine
+    volumes:
+     - ./redirector.nginx.conf:/etc/nginx/nginx.conf
+    ports:
+     - "8080:80"
