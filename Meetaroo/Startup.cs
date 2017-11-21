@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Amazon.S3;
 using DataAccess;
 using Domain;
+using Meetaroo.Controllers;
 using Meetaroo.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -67,6 +68,7 @@ namespace Meetaroo
             services.AddTransient<IPresentationCurrentPageQuery, PresentationCurrentPageQuery>();
             services.AddTransient<ICreateUserAnalyticsSessionCommand, CreateUserAnalyticsSessionCommand>();
             services.AddTransient<IRetrieveOrganizationsQuery, RetrieveOrganizationsQuery>();
+            services.AddTransient<IRetrieveLocationFromIpAddress,RetrieveLocationFromIpAddress>();
 
             //DAL
             services.AddTransient<IConversationRepository, ConversationRepository>();

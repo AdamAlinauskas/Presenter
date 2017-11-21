@@ -31,5 +31,6 @@ services:
       - DATABASE_HOST=db
     volumes:
       - ./migrations:/srv/migrations
+      - /usr/local/share/findecks:/usr/local/share/findecks
     depends_on:
       - "db"
