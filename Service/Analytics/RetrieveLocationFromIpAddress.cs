@@ -18,10 +18,10 @@ namespace Service{
 
         public LocationDto Fetch(string ipAddress)
         {
-            ipAddress = "68.147.135.54";
             try{
                 using (var reader = new DatabaseReader("/usr/local/share/findecks/GeoLite2-City.mmdb"))
                 {
+                    
                     var cityResult = reader.City(ipAddress);
                     var cityName = cityResult.City.Name;
                     var countryName = cityResult.Country.Name;
