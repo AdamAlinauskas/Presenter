@@ -1,24 +1,34 @@
+using System.Threading.Tasks;
 using Dto;
 
 namespace Service
 {
     public interface IRetrieveLocation
     {
-        LocationDto Fetch(TrackRequestDto dto);
+        Task<LocationDto> Fetch(TrackRequestDto dto);
     }
 
     public class RetrieveLocation : IRetrieveLocation
     {
         private readonly IRetrieveLocationFromIpAddress retrievelocationFromIpAddress;
+        private readonly IRetrieveLocationFromGpsData retrieveLocationFromGpsData;
 
-        public RetrieveLocation(IRetrieveLocationFromIpAddress retrievelocationFromIpAddress)
+        public RetrieveLocation(IRetrieveLocationFromIpAddress retrievelocationFromIpAddress, IRetrieveLocationFromGpsData retrieveLocationFromGpsData)
         {
             this.retrievelocationFromIpAddress = retrievelocationFromIpAddress;
+            this.retrieveLocationFromGpsData = retrieveLocationFromGpsData;
         }
 
-        public LocationDto Fetch(TrackRequestDto dto)
+        public async Task<LocationDto> Fetch(TrackRequestDto dto)
         {
-            return retrievelocationFromIpAddress.Fetch(dto.IpAddress);
+            var locationFromIp = retrievelocationFromIpAddress.Fetch(dto.IpAddress);
+
+            if(dto.Latitude != null && dto.Longitude != null){
+                var locationFromGPS = await retrieveLocationFromGpsData.Fetch(50.919515,-113.932079d);
+                locationFromIp.Country = locationFromGPS.Country;
+                locationFromIp.City = locationFromGPS.City;
+            }
+            return locationFromIp;
         }
     }
 }

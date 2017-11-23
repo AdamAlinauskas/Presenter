@@ -22,7 +22,7 @@ namespace Service
 
         public async Task<long> Execute(TrackRequestDto dto)
         {
-            dto.Location = retrieveLocation.Fetch(dto);
+            dto.Location = await retrieveLocation.Fetch(dto);
             return await userAnalyticsSessionRepository.CreateForEitherDocumentOrPresentation(dto);
         }
     }

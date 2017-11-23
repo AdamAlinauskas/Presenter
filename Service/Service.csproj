@@ -12,5 +12,6 @@
     <PackageReference Include="awssdk.core" Version="3.3.18.1" />
     <PackageReference Include="AWSSDK.S3" Version="3.3.11.2" />
     <PackageReference Include="MaxMind.GeoIP2" Version="2.9.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 </Project>

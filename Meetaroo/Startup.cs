@@ -70,6 +70,7 @@ namespace Meetaroo
             services.AddTransient<IRetrieveOrganizationsQuery, RetrieveOrganizationsQuery>();
             services.AddTransient<IRetrieveLocationFromIpAddress,RetrieveLocationFromIpAddress>();
             services.AddTransient<IRetrieveLocation, RetrieveLocation>();
+            services.AddTransient<IRetrieveLocationFromGpsData,RetrieveLocationFromGpsData>();
 
             //DAL
             services.AddTransient<IConversationRepository, ConversationRepository>();

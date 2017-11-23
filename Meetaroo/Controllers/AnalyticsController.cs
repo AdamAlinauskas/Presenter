@@ -35,6 +35,7 @@ namespace Meetaroo.Controllers
         [HttpPost]
         public async Task<JsonResult> TrackFor(TrackRequestDto dto)
         {
+            Console.WriteLine($"Lat: {dto.Latitude} long: {dto.Longitude}");
             var user = await this.GetCurrentUser();
             dto.CreatedBy = user.Id;
             dto.IpAddress = retrieveIpAddress.GetRequestIp();
