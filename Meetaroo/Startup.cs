@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -9,13 +10,11 @@ using Meetaroo.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -27,9 +26,11 @@ namespace Meetaroo
     public class Startup
     {
         public IConfigurationRoot Configuration { get; set; }
+        private IHostingEnvironment env;
 
         public Startup(IHostingEnvironment env)
         {
+            this.env = env;
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -102,7 +103,6 @@ namespace Meetaroo
                 options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie(options => {
-                // options.Cookie.Domain = ".findecks.test";
                 options.CookieManager = new CookieManager();
             })
             .AddOpenIdConnect("Auth0", options =>
@@ -175,10 +175,13 @@ namespace Meetaroo
                         return services.BuildServiceProvider().GetService<ICreateProfileService>().EnsureExists(userProfile);
                     },
                     OnRedirectToIdentityProvider = context => {
-                        var builder = new UriBuilder(context.ProtocolMessage.RedirectUri);
-                        builder.Scheme = "https";
-                        builder.Port = -1;
-                        context.ProtocolMessage.RedirectUri = builder.ToString();
+                        if (env.IsProduction())
+                        {
+                            var builder = new UriBuilder(context.ProtocolMessage.RedirectUri);
+                            builder.Scheme = "https";
+                            builder.Port = -1;
+                            context.ProtocolMessage.RedirectUri = builder.ToString();
+                        }
                         return Task.FromResult(0);
                     }
                 };

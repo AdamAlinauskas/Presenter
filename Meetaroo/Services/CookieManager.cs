@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace Meetaroo.Services
 {
+    // Just like the ChunkedCookieManager, but chops the client subdomain off the cookie domain
+    // Without this, the user would have to log into each client seperately
     public class CookieManager : ICookieManager
     {
         private ChunkingCookieManager manager;
