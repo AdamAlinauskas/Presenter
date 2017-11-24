@@ -205,14 +205,14 @@ class Analytics{
 
         //this feels hacky but can't use => in the body of the class
         this.createAnalyticsRecord = (position) => {
-            let latitude = 0;
-            let longitude = 0;
+            let latitude = null;
+            let longitude = null;
             if (position) {
                 latitude = position.coords.latitude;
                 longitude = position.coords.longitude;
                 console.log("lat "+latitude +" long "+ longitude  );
             }
-            $.post(this.trackPresentationUrl,{presentationId:presentationId }, (data)=>{console.log(data.analyticsId) })
+            $.post(this.trackPresentationUrl,{presentationId:presentationId,Latitude:latitude,Longitude: longitude  }, (data)=>{console.log(data.analyticsId) })
         }
     }
 

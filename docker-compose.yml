@@ -32,6 +32,7 @@ services:
     volumes:
       - ./migrations:/srv/migrations
       - ./keys:/usr/local/share/findecks_keys
+      - /usr/local/share/findecks:/usr/local/share/findecks
     depends_on:
       - "db"
   redirector:
