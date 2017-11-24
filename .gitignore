@@ -265,3 +265,4 @@ __pycache__/
 # VS Code
 .vscode/temp.sql
 .vscode/last.sql
+/keys

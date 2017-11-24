@@ -31,6 +31,7 @@ services:
       - DATABASE_HOST=db
     volumes:
       - ./migrations:/srv/migrations
+      - ./keys:/usr/local/share/findecks_keys
     depends_on:
       - "db"
   redirector:

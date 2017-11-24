@@ -187,7 +187,9 @@ namespace Meetaroo
                 };
             });
 
-            services.AddDataProtection(options => { options.ApplicationDiscriminator = "findecks_web"; });
+            services
+                .AddDataProtection(options => { options.ApplicationDiscriminator = "findecks_web"; })
+                .PersistKeysToFileSystem(new DirectoryInfo("/usr/local/share/findecks_keys"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
