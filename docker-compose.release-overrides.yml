@@ -4,11 +4,6 @@ services:
   meetaroo:
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
-    ports:
-      - "80:80"
-  db:
-    volumes:
-      - /dev/sda1/data:/var/lib/postgresql/data
   redirector:
     image: nginx:alpine
     volumes:
