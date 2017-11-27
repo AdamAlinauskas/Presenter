@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  meetaroo:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+  ssl_terminator:
+    image: nginx:alpine
+    volumes:
+     - /home/andy/exp/nginx/ssl_termination_proxy.conf:/etc/nginx/nginx.conf:ro
+     - /home/andy/exp/ssl:/usr/local/share/findecks
+    ports:
+     - "443:443"
+    depends_on:
+     - "meetaroo"

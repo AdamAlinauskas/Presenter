@@ -9,3 +9,9 @@ services:
   db:
     volumes:
       - /dev/sda1/data:/var/lib/postgresql/data
+  redirector:
+    image: nginx:alpine
+    volumes:
+     - ./redirector.nginx.conf:/etc/nginx/nginx.conf
+    ports:
+     - "8080:80"

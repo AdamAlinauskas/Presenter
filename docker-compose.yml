@@ -24,6 +24,8 @@ services:
       - "db"
   meetaroo:
     image: meetaroo
+    ports:
+      - "80:80"
     build:
       context: ./Meetaroo
       dockerfile: Dockerfile
@@ -35,9 +37,3 @@ services:
       - /usr/local/share/findecks:/usr/local/share/findecks
     depends_on:
       - "db"
-  redirector:
-    image: nginx:alpine
-    volumes:
-     - ./redirector.nginx.conf:/etc/nginx/nginx.conf
-    ports:
-     - "8080:80"

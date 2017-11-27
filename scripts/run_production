@@ -1,0 +1,9 @@
+#!/bin/sh
+
+(
+  cd ..
+  set -e
+  git pull
+  docker-compose -f docker-compose.ci.build.yml up
+  docker-compose -f docker-compose.yml -f docker-compose.release-overrides.yml up --build -d
+)
