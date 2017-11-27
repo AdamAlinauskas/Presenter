@@ -25,8 +25,8 @@ namespace DataAccess
         {
             await ConnectAndSetSchema();
             var id = await connection.QuerySingleAsync<long>(
-                @"INSERT INTO user_analytics_sessions (presentation_id, document_id, created_by, ip_address, continent, country, city)
-                VALUES (@PresentationId, @DocumentId, @CreatedBy, @IpAddress, @Continent, @Country, @City) RETURNING id;",
+                @"INSERT INTO user_analytics_sessions (presentation_id, document_id, created_by, ip_address, continent, country, city, latitude, longitude)
+                VALUES (@PresentationId, @DocumentId, @CreatedBy, @IpAddress, @Continent, @Country, @City, @Latitude, @Longitude) RETURNING id;",
                 new
                 {
                     dto.PresentationId,
@@ -35,7 +35,9 @@ namespace DataAccess
                     dto.IpAddress,
                     dto.Location.Continent,
                     dto.Location.Country,
-                    dto.Location.City
+                    dto.Location.City,
+                    dto.Latitude,
+                    dto.Longitude
                 }
             );
             connection.Close();

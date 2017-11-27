@@ -202,23 +202,26 @@ class Analytics{
         this.presentationId = presentationId;
         this.trackPresentationUrl = trackPresentationUrl;
         this.analyticsId = 7;
+    }
 
-        //this feels hacky but can't use => in the body of the class
-        this.createAnalyticsRecord = (position) => {
-            let latitude = null;
-            let longitude = null;
-            if (position) {
-                latitude = position.coords.latitude;
-                longitude = position.coords.longitude;
-                console.log("lat "+latitude +" long "+ longitude  );
-            }
-            $.post(this.trackPresentationUrl,{presentationId:presentationId,Latitude:latitude,Longitude: longitude  }, (data)=>{console.log(data.analyticsId) })
+    createAnalyticsRecord(position){
+        let latitude = null;
+        let longitude = null;
+        if (position) {
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+            console.log("lat "+latitude +" long "+ longitude  );
         }
+        $.post(
+            this.trackPresentationUrl,
+            {presentationId: this.presentationId, Latitude: latitude, Longitude: longitude},
+            (data) => { console.log(data.analyticsId) }
+        )
     }
 
     init(){
-        if (navigator.geolocation && location.protocol == 'https:') {
-            navigator.geolocation.getCurrentPosition(this.createAnalyticsRecord);  
+        if (navigator.geolocation && window.isSecureContext) {
+            navigator.geolocation.getCurrentPosition(this.createAnalyticsRecord.bind(this));  
         } 
         else{
             this.createAnalyticsRecord(null);

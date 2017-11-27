@@ -23,8 +23,8 @@ namespace Service
         {
             var locationFromIp = retrievelocationFromIpAddress.Fetch(dto.IpAddress);
 
-            if(dto.Latitude != null && dto.Longitude != null){
-                var locationFromGPS = await retrieveLocationFromGpsData.Fetch(50.919515,-113.932079d);
+            if(dto.Latitude.HasValue && dto.Longitude.HasValue){
+                var locationFromGPS = await retrieveLocationFromGpsData.Fetch(dto.Latitude.Value, dto.Longitude.Value);
                 locationFromIp.Country = locationFromGPS.Country;
                 locationFromIp.City = locationFromGPS.City;
             }
