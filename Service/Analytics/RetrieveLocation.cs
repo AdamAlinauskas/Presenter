@@ -21,14 +21,18 @@ namespace Service
 
         public async Task<LocationDto> Fetch(TrackRequestDto dto)
         {
-            var locationFromIp = retrievelocationFromIpAddress.Fetch(dto.IpAddress);
+            var location = retrievelocationFromIpAddress.Fetch(dto.IpAddress);
 
-            if(dto.Latitude.HasValue && dto.Longitude.HasValue){
+            if(dto.Latitude.HasValue && dto.Longitude.HasValue)
+            {
+                location.Latitude = dto.Latitude;
+                location.Longitude = dto.Longitude;
+
                 var locationFromGPS = await retrieveLocationFromGpsData.Fetch(dto.Latitude.Value, dto.Longitude.Value);
-                locationFromIp.Country = locationFromGPS.Country;
-                locationFromIp.City = locationFromGPS.City;
+                location.Country = locationFromGPS.Country;
+                location.City = locationFromGPS.City;
             }
-            return locationFromIp;
+            return location;
         }
     }
 }
