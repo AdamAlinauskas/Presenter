@@ -1,0 +1,29 @@
+@model dynamic
+
+@{
+    Layout = "~/Views/Layout.cshtml";
+}
+
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <h3 class="title is-4">
+          Views per day
+        </h3>
+        <div id="mt-views-per-day" style="width:100%;height:600px"></div>
+      </div>
+      <div class="column">
+        <h3 class="title is-4">
+          Viewer location
+        </h3>
+        <div id="mt-user-map" style="width:100%;height:600px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="/scripts/stats/stats.js"></script>
+
+</script>
