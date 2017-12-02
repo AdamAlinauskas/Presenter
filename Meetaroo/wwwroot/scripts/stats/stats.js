@@ -1,7 +1,10 @@
 'use strict';
 
-const primaryColour = '#202d3d';
+// const primaryColour = '#202d3d'; // Actual colour from logo
+const primaryColour = '#233d5e'; // More vibrant blue
 const secondaryColour = '#9dd513';
+const colour3 = '#21B5A2';
+const colour4 = '#EBE422';
 
 // Bar ------------------------------------------
 const viewsGraph = document.getElementById('mt-views-per-day')
@@ -31,10 +34,10 @@ Plotly.plot(
     [{
         type: 'scattergeo',
         mode: 'markers',
-        lat: [36, 47, 42, 27, 31, 40],
-        lon: [-117, -123, -74, -81, -102, -111],
+        lat: [36, 47, 42, 27, 31, 40, 51, 47],
+        lon: [-117, -123, -74, -81, -102, -111, -117, -72],
         marker: {
-            size: [30, 25, 30, 15, 10, 10],
+            size: [30, 25, 30, 15, 10, 10, 20, 23],
             color: secondaryColour,
             opacity: 0.9
         }
@@ -46,8 +49,29 @@ Plotly.plot(
             lataxis: { 'range': [10, 70] },
             lonaxis: { 'range': [-130, -55] },
             showland: true,
+            countrycolor: '#fff',
+            coastlinecolor: '#fff',
             landcolor: primaryColour
         }
+    },
+    { displayModeBar: false }
+);
+
+// Pie ------------------------------------------
+const viewerTypes = document.getElementById('mt-viewer-type');
+Plotly.plot(
+    viewerTypes,
+    [{
+        type: 'pie',
+        hole: .6,
+        values: [107, 52, 41],
+        labels: ['Retail', 'Institutional', 'Other'],
+        marker: {
+            colors: [primaryColour, secondaryColour, colour3]
+        }
+    }],
+    {
+        margin: { l: 0, r: 0, t: 10 }
     },
     { displayModeBar: false }
 );
