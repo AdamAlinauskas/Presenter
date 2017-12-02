@@ -8,5 +8,6 @@
 
     # Let's assume we have dotnet on development machine
     dotnet restore ./Meetaroo.no_docker.sln && dotnet publish ./Meetaroo.no_docker.sln -c Debug -o ./obj/Docker/publish
+    docker-compose -f docker-compose.yml -f docker-compose.development-overrides.yml down
     docker-compose -f docker-compose.yml -f docker-compose.development-overrides.yml up --build $1
 )
