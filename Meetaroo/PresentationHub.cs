@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using DataAccess;
+using Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Service;
@@ -12,12 +13,14 @@ namespace Meetaroo
         private readonly IUpdatePresentationCurrentPage updatePresentationCurrentPage;
         private readonly ICurrentSchema currentSchema;
         private readonly IPresentationCurrentPageQuery presentationCurrentPage;
+        private readonly IUpdatePresentationStatusCommand updatePresentationStatusCommand;
 
-        public Presentation(IUpdatePresentationCurrentPage updatePresentationCurrentPage, ICurrentSchema currentSchema,IPresentationCurrentPageQuery presentationCurrentPage)
+        public Presentation(IUpdatePresentationCurrentPage updatePresentationCurrentPage, ICurrentSchema currentSchema, IPresentationCurrentPageQuery presentationCurrentPage, IUpdatePresentationStatusCommand updatePresentationStatusCommand)
         {
             this.updatePresentationCurrentPage = updatePresentationCurrentPage;
             this.currentSchema = currentSchema;
             this.presentationCurrentPage = presentationCurrentPage;
+            this.updatePresentationStatusCommand = updatePresentationStatusCommand;
         }
 
         public async Task JoinPresentation(string schema, long presentationId, string presentationGroupId)
@@ -25,8 +28,8 @@ namespace Meetaroo
             currentSchema.Name = schema;
             var currentPageNumber = await presentationCurrentPage.Fetch(presentationId);
             //Tell this client the current page number
-            await Clients.Client(Context.ConnectionId).InvokeAsync("SetPage",currentPageNumber);
-            
+            await Clients.Client(Context.ConnectionId).InvokeAsync("SetPage", currentPageNumber);
+
             await Groups.AddAsync(Context.ConnectionId, presentationGroupId);
         }
 
@@ -41,10 +44,11 @@ namespace Meetaroo
             await Clients.Group(presentationGroupId).InvokeAsync("SetPage", currentPage);
         }
 
-        public async Task ChangePresentationStatusToStarted(string schema, long presentationId, string presentationGroupId){
-            //execute command to change the status of the presentaiton
-            //tell client status has changed
-            await Clients.Group(presentationGroupId).InvokeAsync("StatusChangedTo", (int)Domain.PresentationStatus.InProgress);
+        public async Task ChangePresentationStatusToStarted(string schema, long presentationId, string presentationGroupId)
+        {
+            currentSchema.Name = schema;
+            await updatePresentationStatusCommand.Execute(presentationId, PresentationStatus.InProgress);
+            await Clients.Group(presentationGroupId).InvokeAsync("StatusChangedTo", (int)PresentationStatus.InProgress);
         }
     }
 }

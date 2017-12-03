@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
+using Domain;
 using Dto;
 using Npgsql;
 
@@ -14,6 +15,7 @@ namespace DataAccess
         Task<PresentationDto> Get(long presentationId);
         Task UpdatePageNumber(long presenationId, int pageNumber);
         Task<int> GetCurrentPageNumber(long presentationId);
+        Task UpdateStatus(long presentationId, PresentationStatus status);
     }
 
     public class PresentationRepository : BaseRepository, IPresentationRepository
@@ -83,6 +85,13 @@ namespace DataAccess
             await ConnectAndSetSchema();
             await connection.ExecuteAsync("UPDATE presentations SET current_page_number = @pageNumber where presentations.id = @presentationId ", new { pageNumber, presentationId });
             connection.Close();
+        }
+
+        public async Task UpdateStatus(long presentationId, PresentationStatus status)
+        {
+             await ConnectAndSetSchema();
+             await connection.ExecuteAsync("UPDATE presentations SET status = @status where presentations.id = @presentationId", new {presentationId,status = (int)status});
+             connection.Close();
         }
     }
 }
