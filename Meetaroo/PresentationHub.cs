@@ -40,6 +40,12 @@ namespace Meetaroo
             //tell all the clients
             await Clients.Group(presentationGroupId).InvokeAsync("SetPage", currentPage);
         }
+
+        public async Task ChangePresentationStatusToStarted(string schema, long presentationId, string presentationGroupId){
+            //execute command to change the status of the presentaiton
+            //tell client status has changed
+            await Clients.Group(presentationGroupId).InvokeAsync("StatusChangedTo", (int)Domain.PresentationStatus.InProgress);
+        }
     }
 }
 

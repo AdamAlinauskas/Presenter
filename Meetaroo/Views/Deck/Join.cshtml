@@ -28,7 +28,7 @@ The status is: @Model.Presentation.Status
         }
         <div id="presentation"></div>
         <div id="presentation-will-start-shortly-area" class="fd-hidden">The presentation will be starting shortly</div>
-        <div id="start-presentation-area">
+        <div id="start-presentation-area" class="fd-hidden">
             <button id="start-presentation">Start Presenation</button>
         </div>
     </section>
@@ -125,7 +125,7 @@ The status is: @Model.Presentation.Status
             hasNextPrevious: isPresenter,
         }
         
-        window.pdfDocument = new PdfDocument(pdfOptions);
+        var pdfDocument = new PdfDocument(pdfOptions);
         var renderHidden = presentationStatus == 1 ? true : false;
         pdfDocument.renderToView(renderHidden);
             

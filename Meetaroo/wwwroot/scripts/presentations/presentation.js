@@ -9,13 +9,13 @@ var PdfDocument = function (options) {
     var connection = null;
     this.onPageChange = null;
 
-    me.showPdf = function(){
+    me.showPdf = function () {
         $(targetDiv).show();
         me.reRenderCurrentPage();//re-render to fit div.
     }
 
     me.renderToView = function (renderHidden) {
-        if(renderHidden){
+        if (renderHidden) {
             $(targetDiv).hide();
         }
 
@@ -127,7 +127,7 @@ var PdfDocument = function (options) {
 
         me.render = queueRenderPage;
 
-        me.reRenderCurrentPage = function(){
+        me.reRenderCurrentPage = function () {
             queueRenderPage(pageNum);
         }
 
@@ -177,9 +177,22 @@ var PdfDocument = function (options) {
 var Presentation = function (options) {
     var connection;
 
-    //if(!options.isPresenter && options.presenationStatus == 1){
-       // $(options.presentationWillStartShortlyArea).removeClass('fd-hidden');
-    //}
+    if (options.presentationStatus == 1) {
+        if (options.isPresenter) {
+            $(options.startPresentationArea).removeClass('fd-hidden');
+        }
+        else {
+            $(options.presentationWillStartShortlyArea).removeClass('fd-hidden');
+        }
+    }
+
+    $(options.startPresentationButton).click(function(){
+        connection.invoke('ChangePresentationStatusToStarted',options.schema, options.presentationId, options.presentationKey);
+    });
+
+    //ChangePresentationStatusToStarted
+    //
+
 
     this.start = function () {
         joinPresenation();
@@ -189,13 +202,21 @@ var Presentation = function (options) {
     var joinPresenation = function () {
         connection = new signalR.HubConnection('/ViewPresentation');
 
-            connection.on('setPage', pageNumber => {
-                //Not a presenter then follow along
-                if (!options.isPresenter) {
-                        console.log(pageNumber);
-                        options.pdfDocument.render(pageNumber);
-                }
-            });        
+        connection.on('setPage', pageNumber => {
+            //Not a presenter then follow along
+            if (!options.isPresenter) {
+                console.log(pageNumber);
+                options.pdfDocument.render(pageNumber);
+            }
+        });
+
+        connection.on('StatusChangedTo', newStatus => {
+            if(newStatus == 2){
+                $(options.startPresentationArea).addClass('fd-hidden');
+                $(options.presentationWillStartShortlyArea).addClass('fd-hidden');
+                options.pdfDocument.showPdf();
+            }
+        });
 
         connection.start()
             .then(() => connection.invoke('JoinPresentation', options.schema, options.presentationId, options.presentationKey));
@@ -211,34 +232,34 @@ var Presentation = function (options) {
 }
 
 
-class Analytics{
-    
-    constructor(presentationId,trackPresentationUrl){
+class Analytics {
+
+    constructor(presentationId, trackPresentationUrl) {
         this.presentationId = presentationId;
         this.trackPresentationUrl = trackPresentationUrl;
-        this.analyticsId = 7;
+        this.analyticsId = 0;
     }
 
-    createAnalyticsRecord(position){
+    createAnalyticsRecord(position) {
         let latitude = null;
         let longitude = null;
         if (position) {
             latitude = position.coords.latitude;
             longitude = position.coords.longitude;
-            console.log("lat "+latitude +" long "+ longitude  );
+            console.log("lat " + latitude + " long " + longitude);
         }
         $.post(
             this.trackPresentationUrl,
-            {presentationId: this.presentationId, Latitude: latitude, Longitude: longitude},
-            (data) => { console.log(data.analyticsId); this.analyticsId = data.analyticsId }
+            { presentationId: this.presentationId, Latitude: latitude, Longitude: longitude },
+            (data) => { console.log(data.analyticsId); this.analyticsId = data.analyticsId; }
         )
     }
 
-    init(){
+    init() {
         if (navigator.geolocation && window.isSecureContext) {
-            navigator.geolocation.getCurrentPosition(this.createAnalyticsRecord.bind(this));  
-        } 
-        else{
+            navigator.geolocation.getCurrentPosition(this.createAnalyticsRecord.bind(this));
+        }
+        else {
             this.createAnalyticsRecord(null);
         }
     }
