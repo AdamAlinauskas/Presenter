@@ -177,23 +177,6 @@ var PdfDocument = function (options) {
 var Presentation = function (options) {
     var connection;
 
-    if (options.presentationStatus == 1) {
-        if (options.isPresenter) {
-            $(options.startPresentationArea).removeClass('fd-hidden');
-        }
-        else {
-            $(options.presentationWillStartShortlyArea).removeClass('fd-hidden');
-        }
-    }
-
-    $(options.startPresentationButton).click(function(){
-        connection.invoke('ChangePresentationStatusToStarted',options.schema, options.presentationId, options.presentationKey);
-    });
-
-    //ChangePresentationStatusToStarted
-    //
-
-
     this.start = function () {
         joinPresenation();
         wireupCallbacks();
@@ -229,6 +212,23 @@ var Presentation = function (options) {
             }
         }
     }
+
+    var init = function(){
+        if (options.presentationStatus == 1) {
+            if (options.isPresenter) {
+                $(options.startPresentationArea).removeClass('fd-hidden');
+            }
+            else {
+                $(options.presentationWillStartShortlyArea).removeClass('fd-hidden');
+            }
+        }
+    
+        $(options.startPresentationButton).click(function(){
+            connection.invoke('ChangePresentationStatusToStarted',options.schema, options.presentationId, options.presentationKey);
+        });
+    }
+
+    init();
 }
 
 
