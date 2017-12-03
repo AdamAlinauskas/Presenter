@@ -230,7 +230,7 @@ class Analytics{
         $.post(
             this.trackPresentationUrl,
             {presentationId: this.presentationId, Latitude: latitude, Longitude: longitude},
-            (data) => { console.log(data.analyticsId) }
+            (data) => { console.log(data.analyticsId); this.analyticsId = data.analyticsId }
         )
     }
 
