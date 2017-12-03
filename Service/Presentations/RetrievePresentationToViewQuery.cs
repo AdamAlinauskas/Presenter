@@ -32,7 +32,8 @@ namespace Service
                 Schema = currentSchema.Name,
                 Url = url,
                 PresentationName = presentation.Name,
-                ConversationId = presentation.ConversationId
+                ConversationId = presentation.ConversationId,
+                Status = presentation.Status
             };
             return dto;
         }

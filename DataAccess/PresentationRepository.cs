@@ -58,7 +58,8 @@ namespace DataAccess
                     files.id AS DocumentId,
                     files.file_name AS DocumentName,
                     files.awsKey AS awsKey,
-                    presentations.conversation_id AS ConversationId
+                    presentations.conversation_id AS ConversationId,
+                    status
                 FROM presentations INNER JOIN files ON files.id = presentations.document_id
                 WHERE presentations.id = @presentationId",
                 new { presentationId }

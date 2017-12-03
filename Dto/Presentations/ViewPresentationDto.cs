@@ -9,5 +9,6 @@ namespace Dto
         public string ViewPresentationKey => Schema + PresentationId;
         public bool IsPresenter { get; set; }
         public long ConversationId { get; set; }
+        public int Status { get; set; }
     }
 }

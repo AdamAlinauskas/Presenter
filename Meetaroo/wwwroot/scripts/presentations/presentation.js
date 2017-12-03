@@ -9,9 +9,16 @@ var PdfDocument = function (options) {
     var connection = null;
     this.onPageChange = null;
 
-    me.render = null;
+    me.showPdf = function(){
+        $(targetDiv).show();
+        me.reRenderCurrentPage();//re-render to fit div.
+    }
 
-    me.renderToView = function () {
+    me.renderToView = function (renderHidden) {
+        if(renderHidden){
+            $(targetDiv).hide();
+        }
+
         var canvas = document.createElement('canvas');
         canvas.className = 'pdf-canvas';
         var canvasContainer = document.createElement('div');
@@ -120,6 +127,10 @@ var PdfDocument = function (options) {
 
         me.render = queueRenderPage;
 
+        me.reRenderCurrentPage = function(){
+            queueRenderPage(pageNum);
+        }
+
         /**
         * Displays previous page.
         */
@@ -163,8 +174,12 @@ var PdfDocument = function (options) {
     }
 }
 
-var Presentation = function (pdfDocument, isPresenter, presentationKey, presentationId, schema) {
+var Presentation = function (pdfDocument, isPresenter, presentationKey, presentationId, schema,presenationStatus,presentationWillStartShortlyArea) {
     var connection;
+
+    if(!isPresenter && presenationStatus == 1){
+        $(presentationWillStartShortlyArea).removeClass('fd-hidden');
+    }
 
     this.start = function () {
         joinPresenation();
@@ -174,13 +189,13 @@ var Presentation = function (pdfDocument, isPresenter, presentationKey, presenta
     var joinPresenation = function () {
         connection = new signalR.HubConnection('/ViewPresentation');
 
-        //Not a presenter then follow along
-        if (!isPresenter) {
             connection.on('setPage', pageNumber => {
-                console.log(pageNumber);
-                pdfDocument.render(pageNumber);
-            });
-        }
+                //Not a presenter then follow along
+                if (!isPresenter) {
+                        console.log(pageNumber);
+                        pdfDocument.render(pageNumber);
+                }
+            });        
 
         connection.start()
             .then(() => connection.invoke('JoinPresentation', schema, presentationId, presentationKey));

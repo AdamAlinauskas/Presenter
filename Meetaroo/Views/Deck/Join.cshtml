@@ -9,9 +9,16 @@
     <style>
             .pdf-canvas {
                 border:1px solid black;
-            }  
+            }
+
+            .fd-hidden{
+                display:none;
+            }
+              
     </style>
 }
+
+The status is: @Model.Presentation.Status
 
 <div class="columns" style="margin:0; height:calc(100vh - 56px)">
     <section class="mt-presentation column is-two-thirds">
@@ -20,6 +27,7 @@
             <p>Moderated by @Model.Conversation.CreatedBy</p>
         }
         <div id="presentation"></div>
+        <div id="presentation-will-start-shortly-area" class="fd-hidden">The presentation will be starting shortly</div>
     </section>
 
     <div class="column">
@@ -95,30 +103,33 @@
 <script src="/scripts/jquery/jquery-3.2.1.min.js"></script>
 <script src="/scripts/presentations/presentation.js"></script>
 <script>
+    
     window.addEventListener('load', function() {
         var isPresenter = @Model.Conversation.CurrentUserIsMod.ToString().ToLower();
         var presentationId = @Model.Presentation.PresentationId;
         var presentationKey = '@Model.Presentation.ViewPresentationKey';
         var schema = '@Model.Presentation.Schema';
         var trackForUrl = '@Url.Action("TrackFor","Analytics")';
+        var presentationStatus = @Model.Presentation.Status;
+        var presentationWillStartShortlyArea = document.getElementById('presentation-will-start-shortly-area');
 
-        var options =  {
+        var pdfOptions =  {
             url: '@Html.Raw(@Model.Presentation.Url)',
             targetDiv: window.document.getElementById('presentation'),
             presentationName: '@Model.Presentation.PresentationName',
             hasNextPrevious: isPresenter,
         }
         
-        var pdfDocument = new PdfDocument(options);
-        pdfDocument.renderToView();
-
-        
+        window.pdfDocument = new PdfDocument(pdfOptions);
+        var renderHidden = presentationStatus == 1 ? true : false;
+        pdfDocument.renderToView(renderHidden);
+            
 
         var analytics = new Analytics(presentationId,trackForUrl);
         analytics.init();
 
-
-        var presentation = new Presentation(pdfDocument,isPresenter,presentationKey,presentationId,schema);
+        //options needed here
+        var presentation = new Presentation(pdfDocument,isPresenter,presentationKey,presentationId,schema,presentationStatus,presentationWillStartShortlyArea);
         presentation.start();
     });
 </script>
