@@ -28,6 +28,9 @@ The status is: @Model.Presentation.Status
         }
         <div id="presentation"></div>
         <div id="presentation-will-start-shortly-area" class="fd-hidden">The presentation will be starting shortly</div>
+        <div id="start-presenation-area">
+            <button id="start-presentation">Start Presenation</button>
+        </div>
     </section>
 
     <div class="column">
@@ -112,6 +115,8 @@ The status is: @Model.Presentation.Status
         var trackForUrl = '@Url.Action("TrackFor","Analytics")';
         var presentationStatus = @Model.Presentation.Status;
         var presentationWillStartShortlyArea = document.getElementById('presentation-will-start-shortly-area');
+        var startPresenationArea = document.getElementById('start-presenation-area');
+        var startPresenationButton = document.getElementById('start-presentation');
 
         var pdfOptions =  {
             url: '@Html.Raw(@Model.Presentation.Url)',
@@ -122,14 +127,26 @@ The status is: @Model.Presentation.Status
         
         window.pdfDocument = new PdfDocument(pdfOptions);
         var renderHidden = presentationStatus == 1 ? true : false;
-        pdfDocument.renderToView(renderHidden);
+        pdfDocument.renderToView(false);
             
 
         var analytics = new Analytics(presentationId,trackForUrl);
         analytics.init();
 
         //options needed here
-        var presentation = new Presentation(pdfDocument,isPresenter,presentationKey,presentationId,schema,presentationStatus,presentationWillStartShortlyArea);
+        //Should only join presentation when PDF has loaded. Promise would be a good way to do this.
+
+        var presentationOptions = {
+            pdfDocument: pdfDocument,
+            isPresenter: isPresenter,
+            presenationKey: presentationKey,
+            presentationId: presentationId,
+            schema: schema,
+            presentationStatus: presentationStatus,
+            presentationWillStartShortlyArea: presentationWillStartShortlyArea
+        }
+
+        var presentation = new Presentation(presentationOptions);
         presentation.start();
     });
 </script>

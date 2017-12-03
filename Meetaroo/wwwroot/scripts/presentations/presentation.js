@@ -174,12 +174,12 @@ var PdfDocument = function (options) {
     }
 }
 
-var Presentation = function (pdfDocument, isPresenter, presentationKey, presentationId, schema,presenationStatus,presentationWillStartShortlyArea) {
+var Presentation = function (options) {
     var connection;
 
-    if(!isPresenter && presenationStatus == 1){
-        $(presentationWillStartShortlyArea).removeClass('fd-hidden');
-    }
+    //if(!options.isPresenter && options.presenationStatus == 1){
+       // $(options.presentationWillStartShortlyArea).removeClass('fd-hidden');
+    //}
 
     this.start = function () {
         joinPresenation();
@@ -191,20 +191,20 @@ var Presentation = function (pdfDocument, isPresenter, presentationKey, presenta
 
             connection.on('setPage', pageNumber => {
                 //Not a presenter then follow along
-                if (!isPresenter) {
+                if (!options.isPresenter) {
                         console.log(pageNumber);
-                        pdfDocument.render(pageNumber);
+                        options.pdfDocument.render(pageNumber);
                 }
             });        
 
         connection.start()
-            .then(() => connection.invoke('JoinPresentation', schema, presentationId, presentationKey));
+            .then(() => connection.invoke('JoinPresentation', options.schema, options.presentationId, options.presentationKey));
     }
 
     var wireupCallbacks = function () {
-        if (isPresenter) {
-            pdfDocument.onPageChange = function (page) {
-                connection.invoke('SetCurrentPage', schema, presentationId, page, presentationKey);
+        if (options.isPresenter) {
+            options.pdfDocument.onPageChange = function (page) {
+                connection.invoke('SetCurrentPage', options.schema, options.presentationId, page, options.presentationKey);
             }
         }
     }
