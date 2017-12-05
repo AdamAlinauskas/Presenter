@@ -83,6 +83,7 @@ namespace Meetaroo
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPresentationRepository, PresentationRepository>();
             services.AddTransient<IUserAnalyticsSessionRepository, UserAnalyticsSessionRepository>();
+            services.AddTransient<IStatsRepository, StatsRepository>();
 
             ConfigureAuth(services);
 

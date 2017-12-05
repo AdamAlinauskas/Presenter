@@ -16,16 +16,21 @@ namespace Meetaroo.Controllers
     public class StatsController : Controller
     {
         private readonly ICurrentSchema currentSchema;
+        private readonly IStatsRepository stats;
 
         public StatsController(
-            ICurrentSchema currentSchema
+            ICurrentSchema currentSchema,
+            IStatsRepository statsRepository
          ) {
             this.currentSchema = currentSchema;
+            this.stats = statsRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var model = await stats.ViewsPerDay();
+
+            return View(model);
         }
     }
 }
