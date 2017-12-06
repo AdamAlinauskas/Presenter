@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace Dto.Stats
 {
-    public class ViewsPerDay
+    public class ViewsOverTime
     {
-        public IEnumerable<DayViewSample> Samples { get; set; }
+        public IEnumerable<DayViewSample> ViewsPerDay { get; set; }
+        // Future... Views per month, or per 30 days for rolled up stats
     }
 
     public class DayViewSample

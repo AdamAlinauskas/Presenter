@@ -26,11 +26,15 @@ namespace Meetaroo.Controllers
             this.stats = statsRepository;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public async Task<JsonResult> ViewsPerDay()
         {
             var model = await stats.ViewsPerDay();
-
-            return View(model);
+            return new JsonResult(model);
         }
     }
 }

@@ -1,5 +1,3 @@
-@model Dto.Stats.ViewsPerDay
-
 @{
     Layout = "~/Views/Layout.cshtml";
 }
@@ -88,9 +86,6 @@
   </div>
 </section>
 
-<script>
-  window.model = @(Json.Serialize(Model));
-</script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="/scripts/stats/stats.js"></script>
 

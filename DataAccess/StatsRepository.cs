@@ -8,7 +8,7 @@ namespace DataAccess
 {
     public interface IStatsRepository
     {
-        Task<ViewsPerDay> ViewsPerDay();
+        Task<ViewsOverTime> ViewsPerDay();
     }
 
     public class StatsRepository : BaseRepository, IStatsRepository
@@ -17,7 +17,7 @@ namespace DataAccess
         {
         }
 
-        public async Task<ViewsPerDay> ViewsPerDay() {
+        public async Task<ViewsOverTime> ViewsPerDay() {
             await ConnectAndSetSchema();
 
             var samples = await connection.QueryAsync<DayViewSample>(@"
@@ -29,8 +29,8 @@ namespace DataAccess
                 ORDER BY date;"
             );
 
-            return new ViewsPerDay{
-                Samples = samples
+            return new ViewsOverTime{
+                ViewsPerDay = samples
             };
         }
     }
