@@ -8,10 +8,15 @@ var PdfDocument = function (options) {
     var presentationKey = options.presentationKey;
     var connection = null;
     this.onPageChange = null;
+    this.onRenderLastPage = null;
 
     me.showPdf = function () {
         $(targetDiv).show();
         me.reRenderCurrentPage();//re-render to fit div.
+    }
+
+    me.hidePdf = function(){
+        $(targetDiv).hide();
     }
 
     me.renderToView = function (renderHidden) {
@@ -69,6 +74,11 @@ var PdfDocument = function (options) {
         * param num Page number.
         */
         function renderPage(num) {
+
+            if(num == pdfDoc.numPages && me.onRenderLastPage){
+                me.onRenderLastPage();
+            }
+
             pageRendering = true;
             pageNum = num;
             if (me.onPageChange) {
@@ -199,6 +209,15 @@ var Presentation = function (options) {
                 $(options.presentationWillStartShortlyArea).addClass('fd-hidden');
                 options.pdfDocument.showPdf();
             }
+            if(newStatus == 3){
+                //record duration
+                if(options.isPresenter){
+                    
+                }
+                else{
+                    options.pdfDocument.hidePdf();
+                }
+            }
         });
 
         connection.start()
@@ -207,8 +226,13 @@ var Presentation = function (options) {
 
     var wireupCallbacks = function () {
         if (options.isPresenter) {
+            
             options.pdfDocument.onPageChange = function (page) {
                 connection.invoke('SetCurrentPage', options.schema, options.presentationId, page, options.presentationKey);
+            }
+
+            options.pdfDocument.onRenderLastPage = function(){
+                $(options.stopPresentationArea).removeClass('fd-hidden');
             }
         }
     }
@@ -223,9 +247,16 @@ var Presentation = function (options) {
             }
         }
     
-        $(options.startPresentationButton).click(function(){
-            connection.invoke('ChangePresentationStatusToStarted',options.schema, options.presentationId, options.presentationKey);
-        });
+        if(options.isPresenter){
+            $(options.startPresentationButton).click(function(){
+                connection.invoke('ChangePresentationStatusToStarted',options.schema, options.presentationId, options.presentationKey);
+            });
+
+            $(options.stopPresentationButton).click(function(){
+                connection.invoke('ChangePresentationStatusToPostPresentation',options.schema, options.presentationId, options.presentationKey);
+            });
+
+        }
     }
 
     init();

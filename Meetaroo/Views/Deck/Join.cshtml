@@ -29,7 +29,10 @@ The status is: @Model.Presentation.Status
         <div id="presentation"></div>
         <div id="presentation-will-start-shortly-area" class="fd-hidden">The presentation will be starting shortly</div>
         <div id="start-presentation-area" class="fd-hidden">
-            <button id="start-presentation">Start Presenation</button>
+            <button id="start-presentation-button">Start Presenation</button>
+        </div>
+        <div id='stop-presentation-area' class="fd-hidden">
+            <button id='stop-presentation-button'>Complete Presentation</button>
         </div>
     </section>
 
@@ -116,7 +119,9 @@ The status is: @Model.Presentation.Status
         var presentationStatus = @Model.Presentation.Status;
         var presentationWillStartShortlyArea = document.getElementById('presentation-will-start-shortly-area');
         var startPresentationArea = document.getElementById('start-presentation-area');
-        var startPresentationButton = document.getElementById('start-presentation');
+        var startPresentationButton = document.getElementById('start-presentation-button');
+        var stopPresentationArea = document.getElementById('stop-presentation-area');
+        var stopPresentationButton = document.getElementById('stop-presentation-button')
 
         var pdfOptions =  {
             url: '@Html.Raw(@Model.Presentation.Url)',
@@ -142,7 +147,9 @@ The status is: @Model.Presentation.Status
             presentationStatus: presentationStatus,
             presentationWillStartShortlyArea: presentationWillStartShortlyArea,
             startPresentationArea: startPresentationArea,
-            startPresentationButton: startPresentationButton
+            startPresentationButton: startPresentationButton,
+            stopPresentationArea: stopPresentationArea,
+            stopPresentationButton: stopPresentationButton
         }
 
         var presentation = new Presentation(presentationOptions);

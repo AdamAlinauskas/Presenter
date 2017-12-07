@@ -50,6 +50,15 @@ namespace Meetaroo
             await updatePresentationStatusCommand.Execute(presentationId, PresentationStatus.InProgress);
             await Clients.Group(presentationGroupId).InvokeAsync("StatusChangedTo", (int)PresentationStatus.InProgress);
         }
+
+        public async Task ChangePresentationStatusToPostPresentation(string schema, long presentationId, string presentationGroupId)
+        {
+            currentSchema.Name = schema;
+            await updatePresentationStatusCommand.Execute(presentationId, PresentationStatus.PostPresentation);
+            await Clients.Group(presentationGroupId).InvokeAsync("StatusChangedTo", (int)PresentationStatus.PostPresentation);
+        }
+
+        
     }
 }
 
