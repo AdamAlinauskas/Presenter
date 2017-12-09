@@ -21,7 +21,7 @@ namespace Meetaroo.Controllers
         public StatsController(
             ICurrentSchema currentSchema,
             IStatsRepository statsRepository
-         ) {
+        ) {
             this.currentSchema = currentSchema;
             this.stats = statsRepository;
         }
@@ -34,6 +34,12 @@ namespace Meetaroo.Controllers
         public async Task<JsonResult> ViewsPerDay()
         {
             var model = await stats.ViewsPerDay();
+            return new JsonResult(model);
+        }
+
+        public async Task<JsonResult> GeographicViews()
+        {
+            var model = await stats.GeographicViews();
             return new JsonResult(model);
         }
     }

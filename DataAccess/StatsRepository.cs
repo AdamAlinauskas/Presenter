@@ -9,6 +9,7 @@ namespace DataAccess
     public interface IStatsRepository
     {
         Task<ViewsOverTime> ViewsPerDay();
+        Task<GeographicViews> GeographicViews();
     }
 
     public class StatsRepository : BaseRepository, IStatsRepository
@@ -26,11 +27,41 @@ namespace DataAccess
                     count(*) AS views
                 FROM user_analytics_sessions
                 GROUP BY date
-                ORDER BY date;"
+                ORDER BY date"
             );
 
             return new ViewsOverTime{
                 ViewsPerDay = samples
+            };
+        }
+
+        public async Task<GeographicViews> GeographicViews()
+        {
+            await ConnectAndSetSchema();
+
+            var samples = await connection.QueryAsync<GeographicViewSample>(@"
+                WITH bounds AS (
+                    SELECT
+                        max(latitude) AS maxLatitude,
+                        min(latitude) AS minLatitude,
+                        max(longitude) AS maxLongitude,
+                        min(longitude) AS minLongitude
+                    FROM user_analytics_sessions
+                )
+                SELECT
+                    width_bucket(latitude, bounds.minLatitude, bounds.maxLatitude, 10) AS latBin,
+                    width_bucket(longitude, bounds.minLongitude, bounds.maxLongitude, 10) AS longBin,
+                    avg(latitude) AS centroidLat,
+                    avg(longitude) AS centroidLong,
+                    count(*) AS views
+                FROM user_analytics_sessions, bounds
+                WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+                GROUP BY latBin, longBin
+            ");
+
+            return new GeographicViews
+            {
+                Samples = samples
             };
         }
     }

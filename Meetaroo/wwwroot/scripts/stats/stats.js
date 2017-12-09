@@ -5,6 +5,7 @@ const primaryColour = '#233d5e'; // More vibrant blue
 const secondaryColour = '#9dd513';
 const colour3 = '#21B5A2';
 const colour4 = '#EBE422';
+const d3 = Plotly.d3;
 
 class Plots
 {
@@ -30,17 +31,25 @@ class Plots
         );
     }
 
-    showMap() {
+    showMap(model) {
+        const views = model.samples.map(sample => sample.views);
+        const sizeScale = d3.scale
+            .linear()
+            .domain([d3.min(views), d3.max(views)])
+            .range([5, 30]);
+
         const userMap = document.getElementById('mt-user-map');
         Plotly.plot(
             userMap,
             [{
                 type: 'scattergeo',
                 mode: 'markers',
-                lat: [36, 47, 42, 27, 31, 40, 51, 47],
-                lon: [-117, -123, -74, -81, -102, -111, -117, -72],
+                lat: model.samples.map(sample => sample.centroidLat),
+                lon: model.samples.map(sample => sample.centroidLong),
+                text: views.map(sample => sample + sample === 1 ? ' viewer' : ' viewers'),
+                hoverinfo: 'text',
                 marker: {
-                    size: [30, 25, 30, 15, 10, 10, 20, 23],
+                    size: views.map(sizeScale),
                     color: secondaryColour,
                     opacity: 0.9
                 }
@@ -83,6 +92,7 @@ class Plots
 }
 
 const plots = new Plots();
+
 fetch('/stats/viewsPerDay', { credentials: 'include' })
     .then(result => result.json()
         .then(result => plots.showViewsPerDay(result))
@@ -90,4 +100,11 @@ fetch('/stats/viewsPerDay', { credentials: 'include' })
     .catch(e => {
         console.error(e);
     });
-  
+
+fetch('/stats/geographicViews', { credentials: 'include' })
+    .then(result => result.json()
+        .then(result => plots.showMap(result))
+    )
+    .catch(e => {
+        console.error(e);
+    });
