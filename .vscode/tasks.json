@@ -6,11 +6,11 @@
     "tasks": [
         {
             "taskName": "build",
-            "command": "scripts/run_dev",
+            "command": "${workspaceFolder}/scripts/run_dev",
             "args": ["-d"],
             "showOutput": "always",
             "options": {
-                "cwd": "scripts"
+                "cwd": "${workspaceFolder}/scripts"
             }
         }
     ]
