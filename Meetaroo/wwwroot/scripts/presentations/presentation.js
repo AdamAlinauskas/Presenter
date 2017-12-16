@@ -209,14 +209,14 @@ var Presentation = function (options) {
         });
 
         connection.on('StatusChangedTo', newStatus => {
-            displayForStatus(newStatus);
+            statusChanged(newStatus);
         });
 
         connection.start()
             .then(() => connection.invoke('JoinPresentation', options.schema, options.presentationId, options.presentationKey));
     }
 
-    var displayForStatus = function (newStatus) {
+    var statusChanged = function (newStatus) {
         if (newStatus == 1) {
             hideAllAreas();
             if (options.isPresenter) {
@@ -230,11 +230,15 @@ var Presentation = function (options) {
         if (newStatus == 2) {
             hideAllAreas();
             options.pdfDocument.showPdf();
+            if (options.inProgressStartedCallBack)
+                options.inProgressStartedCallBack();
         }
 
         if (newStatus == 3) {
             hideAllAreas();
             //record duration
+            if (options.presentationCompleteCallBack)
+                options.presentationCompleteCallBack();
             if (options.isPresenter) {
                 options.pdfDocument.hidePdf();
                 $(options.presentationIsCompleteArea).removeClass('fd-hidden');
@@ -266,7 +270,7 @@ var Presentation = function (options) {
     }
 
     var init = function () {
-        displayForStatus(options.presentationStatus);
+        statusChanged(options.presentationStatus);
 
         if (options.isPresenter) {
             $(options.startPresentationButton).click(function () {
@@ -280,6 +284,8 @@ var Presentation = function (options) {
     }
 
     init();
+
+
 }
 
 
@@ -313,5 +319,17 @@ class Analytics {
         else {
             this.createAnalyticsRecord(null);
         }
+    }
+
+    stopRecordingDuration() {
+        if (this.start == null)
+            return;
+        var end = new Date();
+        var duration = end - this.start;
+        alert(duration);
+    }
+
+    startRecordingDuration() {
+        this.start = new Date();
     }
 }
