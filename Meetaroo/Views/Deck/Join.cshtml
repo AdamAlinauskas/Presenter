@@ -135,8 +135,7 @@ The status is: @Model.Presentation.Status
         var pdfDocument = new PdfDocument(pdfOptions);
         var renderHidden = presentationStatus == 1 ? true : false;
 
-        var analytics = new Analytics(presentationId,trackForUrl);
-        analytics.init();
+        
         
         var presentationOptions = {
             pdfDocument: pdfDocument,
@@ -149,13 +148,15 @@ The status is: @Model.Presentation.Status
             startPresentationArea: startPresentationArea,
             startPresentationButton: startPresentationButton,
             stopPresentationArea: stopPresentationArea,
-            stopPresentationButton: stopPresentationButton
+            stopPresentationButton: stopPresentationButton,
+            presentationIsCompleteArea: presentationIsCompleteArea
         }
 
         var presentation = new Presentation(presentationOptions);
-        
+        var analytics = new Analytics(presentationId,trackForUrl);
         /*Start presentation after document has loaded*/
         pdfDocument.renderToView(renderHidden).then(function(){
+            analytics.init();
             presentation.start();
         });
         
