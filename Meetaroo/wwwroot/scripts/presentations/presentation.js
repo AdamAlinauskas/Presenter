@@ -19,6 +19,7 @@ var PdfDocument = function (options) {
         $(targetDiv).hide();
     }
 
+    /*returns promoise */
     me.renderToView = function (renderHidden) {
         if (renderHidden) {
             $(targetDiv).hide();
@@ -55,9 +56,10 @@ var PdfDocument = function (options) {
         targetDiv.append(buttonAreaWithPageNumber);
         targetDiv.append(canvasContainer);
 
-        RenderPdf(canvasContainer, canvas, currentPageNumberArea, nextButton, previousButton);
+        return RenderPdf(canvasContainer, canvas, currentPageNumberArea, nextButton, previousButton);
     }
 
+    /*Returns a promoise*/
     var RenderPdf = function (canvasContainer, canvas, currentPageNumberArea, nextButton, previousButton) {
         // The workerSrc property shall be specified.
         PDFJS.workerSrc = '/scripts/pdfjs/pdf.worker.js';
@@ -74,6 +76,9 @@ var PdfDocument = function (options) {
         * param num Page number.
         */
         function renderPage(num) {
+
+            if(pdfDoc == null)
+                return;
 
             if(num == pdfDoc.numPages && me.onRenderLastPage){
                 me.onRenderLastPage();
@@ -174,7 +179,7 @@ var PdfDocument = function (options) {
         /**
         * Asynchronously downloads PDF.
         */
-        PDFJS.getDocument(url).then(function (pdfDoc_) {
+        return PDFJS.getDocument(url).then(function (pdfDoc_) {
             pdfDoc = pdfDoc_;
 
             updatePageCount();

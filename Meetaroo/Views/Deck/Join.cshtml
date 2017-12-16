@@ -28,6 +28,7 @@ The status is: @Model.Presentation.Status
         }
         <div id="presentation"></div>
         <div id="presentation-will-start-shortly-area" class="fd-hidden">The presentation will be starting shortly</div>
+        <div id="presentation-is-complete-area" class="fd-hidden">The presentation is complete</div>
         <div id="start-presentation-area" class="fd-hidden">
             <button id="start-presentation-button">Start Presenation</button>
         </div>
@@ -121,7 +122,8 @@ The status is: @Model.Presentation.Status
         var startPresentationArea = document.getElementById('start-presentation-area');
         var startPresentationButton = document.getElementById('start-presentation-button');
         var stopPresentationArea = document.getElementById('stop-presentation-area');
-        var stopPresentationButton = document.getElementById('stop-presentation-button')
+        var stopPresentationButton = document.getElementById('stop-presentation-button');
+        var presentationIsCompleteArea = document.getElementById('presentation-is-complete-area');
 
         var pdfOptions =  {
             url: '@Html.Raw(@Model.Presentation.Url)',
@@ -132,12 +134,10 @@ The status is: @Model.Presentation.Status
         
         var pdfDocument = new PdfDocument(pdfOptions);
         var renderHidden = presentationStatus == 1 ? true : false;
-        pdfDocument.renderToView(renderHidden);
-            
+
         var analytics = new Analytics(presentationId,trackForUrl);
         analytics.init();
-
-        //Should only join presentation when PDF has loaded. Promise would be a good way to do this.
+        
         var presentationOptions = {
             pdfDocument: pdfDocument,
             isPresenter: isPresenter,
@@ -153,6 +153,11 @@ The status is: @Model.Presentation.Status
         }
 
         var presentation = new Presentation(presentationOptions);
-        presentation.start();
+        
+        /*Start presentation after document has loaded*/
+        pdfDocument.renderToView(renderHidden).then(function(){
+            presentation.start();
+        });
+        
     });
 </script>
