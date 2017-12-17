@@ -47,7 +47,11 @@ function fetchViews() {
         });
 }
 
-const timeUntilRemoveView = 4000;
+const timeUntilAnimateOut = 5000;
+const timeUntilRemoveView = timeUntilAnimateOut + 1000;
+const labelWidth = 150;
+const iconRadius = 20;
+const iconDiameter = iconRadius * 2;
 function displayViews(views) {
     views.samples.forEach(view => {
         lastViewId = Math.max(lastViewId, view.id);
@@ -61,28 +65,57 @@ function displayViews(views) {
             .call(g => {
                 setTimeout(g.remove.bind(g), timeUntilRemoveView);
             });
-        const circle = g.append('circle')
-            .attr('r', 1)
-            .attr('fill', secondaryColour);
-        circle.append('animate')
-            .attr('id', `anim${view.id}`)
-            .attr('attributeName', 'r')
-            .attr('attributeType', 'XML')
-            .attr('from', 1)
-            .attr('to', 30)
-            .attr('dur', '.7s')
-            .attr('repeatCount', 0)
-            .attr('fill', 'freeze')
-            .attr('begin', 'indefinite')
-            .call(anim => anim.node().beginElement());
-        g.append('animate')
-            .attr('attributeName', 'opacity')
-            .attr('attributeType', 'XML')
-            .attr('from', 1)
-            .attr('to', 0)
-            .attr('dur', '1s')
-            .attr('repeatCount', 0)
-            .attr('begin', `anim${view.id}.begin+3.1s`);
+        g.append('clipPath')
+            .attr('id', `label-clip-${view.id}`)
+            .append('rect')
+                .classed('animated', true)
+                .classed('slideInLeft', true)
+                .attr('x', 0)
+                .attr('y', -iconRadius)
+                .attr('height', iconRadius)
+                .attr('width', labelWidth)
+                .attr('preserveAspectRatio', 'xMidYMid slice')
+                .call(elem => {
+                    setTimeout(() => elem.classed('slideOutLeft', true), timeUntilAnimateOut);
+                })
+        g.append('rect')
+            .attr('clip-path', `url(#label-clip-${view.id})`)
+            .attr('x', 0)
+            .attr('y', -iconRadius)
+            .attr('height', iconRadius)
+            .attr('width', labelWidth)
+            .attr('fill', secondaryColour)
+        g.append('text')
+            .attr('clip-path', `url(#label-clip-${view.id})`)
+            .text(view.name)
+            .classed('view-label', true)
+            .attr('x', iconRadius)
+            .attr('y', -5)
+            .attr('fill', 'white')
+        g.append('circle')
+            .attr('r', iconRadius)
+            .attr('fill', secondaryColour)
+            .classed('animated', true)
+            .classed('zoomIn', true)
+            .call(elem => {
+                setTimeout(() => elem.classed('zoomOut', true), timeUntilAnimateOut);
+            });
+        g.append('clipPath')
+            .attr('id', `profile-clip-${view.id}`)
+            .append('circle')
+                .attr('r', iconRadius - 2)
+        g.append('image')
+            .attr('clip-path', `url(#profile-clip-${view.id})`)
+            .attr('x', -20)
+            .attr('y', -20)
+            .attr('width', iconDiameter)
+            .attr('height', iconDiameter)
+            .attr('href', 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png')
+            .classed('animated', true)
+            .classed('zoomIn', true)
+            .call(elem => {
+                setTimeout(() => elem.classed('zoomOut', true), timeUntilAnimateOut);
+            });
     });
 }
 
