@@ -75,7 +75,8 @@ namespace DataAccess
                     session.id AS id,
                     session.latitude AS lat,
                     session.longitude AS long,
-                    viewer.name AS name
+                    viewer.name AS name,
+                    viewer.picture AS picture
                 FROM user_analytics_sessions session
                     INNER JOIN meetaroo_shared.users viewer ON session.created_by = viewer.id
                 WHERE

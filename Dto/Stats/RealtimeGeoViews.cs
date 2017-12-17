@@ -14,5 +14,6 @@ namespace Dto.Stats
         public float Lat { get; set; }
         public float Long { get; set; }
         public string Name { get; set; }
+        public string Picture { get; set; }
     }
 }

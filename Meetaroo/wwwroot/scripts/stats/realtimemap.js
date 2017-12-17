@@ -47,7 +47,7 @@ function fetchViews() {
         });
 }
 
-const timeUntilAnimateOut = 5000;
+const timeUntilAnimateOut = 9000;
 const timeUntilRemoveView = timeUntilAnimateOut + 1000;
 const labelWidth = 150;
 const iconRadius = 20;
@@ -68,30 +68,37 @@ function displayViews(views) {
         g.append('clipPath')
             .attr('id', `label-clip-${view.id}`)
             .append('rect')
-                .classed('animated', true)
-                .classed('slideInLeft', true)
+                .classed('animated slideInLeft', true)
                 .attr('x', 0)
                 .attr('y', -iconRadius)
                 .attr('height', iconRadius)
                 .attr('width', labelWidth)
                 .attr('preserveAspectRatio', 'xMidYMid slice')
                 .call(elem => {
-                    setTimeout(() => elem.classed('slideOutLeft', true), timeUntilAnimateOut);
+                    setTimeout(() => elem.classed('slideOutLeft', true), timeUntilAnimateOut - 750);
                 })
         g.append('rect')
             .attr('clip-path', `url(#label-clip-${view.id})`)
+            .classed('animated fadeIn', true)
             .attr('x', 0)
             .attr('y', -iconRadius)
             .attr('height', iconRadius)
             .attr('width', labelWidth)
             .attr('fill', secondaryColour)
+            .call(elem => {
+                setTimeout(() => elem.classed('fadeOut', true), timeUntilAnimateOut - 500);
+            })
         g.append('text')
             .attr('clip-path', `url(#label-clip-${view.id})`)
+            .classed('animated fadeIn', true)
             .text(view.name)
             .classed('view-label', true)
             .attr('x', iconRadius)
             .attr('y', -5)
-            .attr('fill', 'white')
+            .attr('fill', primaryColour)
+            .call(elem => {
+                setTimeout(() => elem.classed('fadeOut', true), timeUntilAnimateOut - 500);
+            })
         g.append('circle')
             .attr('r', iconRadius)
             .attr('fill', secondaryColour)
@@ -110,9 +117,8 @@ function displayViews(views) {
             .attr('y', -20)
             .attr('width', iconDiameter)
             .attr('height', iconDiameter)
-            .attr('href', 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png')
-            .classed('animated', true)
-            .classed('zoomIn', true)
+            .attr('href', view.picture)
+            .classed('animated zoomIn', true)
             .call(elem => {
                 setTimeout(() => elem.classed('zoomOut', true), timeUntilAnimateOut);
             });
