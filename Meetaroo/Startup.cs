@@ -76,6 +76,7 @@ namespace Meetaroo
             services.AddTransient<IRetrieveLocation, RetrieveLocation>();
             services.AddTransient<IRetrieveLocationFromGpsData,RetrieveLocationFromGpsData>();
             services.AddTransient<IUpdatePresentationStatusCommand, UpdatePresentationStatusCommand>();
+            services.AddTransient<IUpdateAnalyticsDurationCommand,UpdateAnalyticsDurationCommand>();
 
             //DAL
             services.AddTransient<IConversationRepository, ConversationRepository>();

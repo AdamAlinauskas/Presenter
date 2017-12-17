@@ -10,7 +10,9 @@ namespace DataAccess
     public interface IUserAnalyticsSessionRepository
     {
         Task<long> CreateForEitherDocumentOrPresentation(TrackRequestDto dto);
+        Task UpdateDuration(long analyticsId, decimal duration);
     }
+    
 
     public class UserAnalyticsSessionRepository : BaseRepository, IUserAnalyticsSessionRepository
     {
@@ -42,6 +44,12 @@ namespace DataAccess
             );
             connection.Close();
             return id;
+        }
+
+        public async Task UpdateDuration(long analyticsId, decimal duration)
+        {
+            await ConnectAndSetSchema();
+            await connection.ExecuteAsync(@"Update user_analytics_sessions set duration=@duration where id=@Id", new { duration, Id = analyticsId });
         }
     }
 }

@@ -193,6 +193,7 @@ var Presentation = function (options) {
     var connection;
 
     this.start = function () {
+        statusChanged(options.presentationStatus);
         joinPresenation();
         wireupCallbacks();
     }
@@ -229,7 +230,9 @@ var Presentation = function (options) {
 
         if (newStatus == 2) {
             hideAllAreas();
-            options.pdfDocument.showPdf();
+            if (options.pdfDocument != null) {
+                options.pdfDocument.showPdf();
+            }
             if (options.inProgressStartedCallBack)
                 options.inProgressStartedCallBack();
         }
@@ -254,6 +257,7 @@ var Presentation = function (options) {
         $(options.presentationWillStartShortlyArea).addClass('fd-hidden');
         $(options.presentationIsCompleteArea).addClass('fd-hidden');
         $(options.startPresentationArea).addClass('fd-hidden');
+        $(options.stopPresentationArea).addClass('fd-hidden');
     }
 
     var wireupCallbacks = function () {
@@ -270,7 +274,7 @@ var Presentation = function (options) {
     }
 
     var init = function () {
-        statusChanged(options.presentationStatus);
+        //statusChanged(options.presentationStatus);
 
         if (options.isPresenter) {
             $(options.startPresentationButton).click(function () {
@@ -291,10 +295,11 @@ var Presentation = function (options) {
 
 class Analytics {
 
-    constructor(presentationId, trackPresentationUrl) {
+    constructor(presentationId, trackPresentationUrl, updateSessionDurationUrl) {
         this.presentationId = presentationId;
         this.trackPresentationUrl = trackPresentationUrl;
         this.analyticsId = 0;
+        this.updateSessionDurationUrl = updateSessionDurationUrl;
     }
 
     createAnalyticsRecord(position) {
@@ -326,7 +331,11 @@ class Analytics {
             return;
         var end = new Date();
         var duration = end - this.start;
-        alert(duration);
+        $.post(
+            this.updateSessionDurationUrl,
+            { analyticsId: this.analyticsId, duration: duration },
+            (data) => { }
+        )
     }
 
     startRecordingDuration() {

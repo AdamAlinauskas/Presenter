@@ -117,6 +117,7 @@ The status is: @Model.Presentation.Status
         var presentationKey = '@Model.Presentation.ViewPresentationKey';
         var schema = '@Model.Presentation.Schema';
         var trackForUrl = '@Url.Action("TrackFor","Analytics")';
+        var updateSessionDurationUrl = '@Url.Action("UpdateDuration","Analytics")'
         var presentationStatus = @Model.Presentation.Status;
         var presentationWillStartShortlyArea = document.getElementById('presentation-will-start-shortly-area');
         var startPresentationArea = document.getElementById('start-presentation-area');
@@ -135,7 +136,7 @@ The status is: @Model.Presentation.Status
         var pdfDocument = new PdfDocument(pdfOptions);
         var renderHidden = presentationStatus == 1 ? true : false;
 
-        var analytics = new Analytics(presentationId,trackForUrl);
+        var analytics = new Analytics(presentationId,trackForUrl,updateSessionDurationUrl);
 
         var presentationOptions = {
             pdfDocument: pdfDocument,
@@ -150,8 +151,8 @@ The status is: @Model.Presentation.Status
             stopPresentationArea: stopPresentationArea,
             stopPresentationButton: stopPresentationButton,
             presentationIsCompleteArea: presentationIsCompleteArea,
-            inProgressStartedCallBack: analytics.startRecordingDuration,
-            presentationCompleteCallBack: analytics.stopRecordingDuration
+            inProgressStartedCallBack: ()=>analytics.startRecordingDuration(),
+            presentationCompleteCallBack: ()=>analytics.stopRecordingDuration()
         }
 
          var presentation = new Presentation(presentationOptions);

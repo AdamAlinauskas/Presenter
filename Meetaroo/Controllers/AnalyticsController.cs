@@ -23,13 +23,14 @@ namespace Meetaroo.Controllers
         private readonly ICreateUserAnalyticsSessionCommand createUserAnalyticsSessionCommand;
         private readonly IRetrieveIpAddress retrieveIpAddress;
         private readonly IRetrieveLocation retrieveLocation;
+        private readonly IUpdateAnalyticsDurationCommand updateAnalyticsDurationCommand;
 
-
-        public AnalyticsController(ICreateUserAnalyticsSessionCommand createUserAnalyticsSessionCommand, IRetrieveIpAddress retrieveIpAddress, IRetrieveLocation retrieveLocation)
+        public AnalyticsController(ICreateUserAnalyticsSessionCommand createUserAnalyticsSessionCommand, IRetrieveIpAddress retrieveIpAddress, IRetrieveLocation retrieveLocation, IUpdateAnalyticsDurationCommand updateAnalyticsDurationCommand)
         {
             this.createUserAnalyticsSessionCommand = createUserAnalyticsSessionCommand;
             this.retrieveIpAddress = retrieveIpAddress;
             this.retrieveLocation = retrieveLocation;
+            this.updateAnalyticsDurationCommand = updateAnalyticsDurationCommand;
         }
 
         [HttpPost]
@@ -43,6 +44,13 @@ namespace Meetaroo.Controllers
             var analyticsId = await createUserAnalyticsSessionCommand.Execute(dto);
 
             return Json(new TrackResponseDto { AnalyticsId = analyticsId });
+        }
+
+        public async Task<JsonResult> UpdateDuration(UpdateAnalyticsDurationRequestDto dto)
+        {
+            Console.WriteLine($"Update Duration for session id: {dto.AnalyticsId} with duration of {dto.Duration}");
+            await updateAnalyticsDurationCommand.Execute(dto);
+            return Json(new {});
         }
     }
 }
