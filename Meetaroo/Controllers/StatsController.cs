@@ -48,6 +48,10 @@ namespace Meetaroo.Controllers
             return View();
         }
 
+        // TODO AP : This should be a message hub
+        // Before doing that, though, we need a good way of triggering hub actions from
+        // outside the hub. Some kind of message bus, I suspect. Would rather not have
+        // other services be directly aware of the message hubs.
         public async Task<JsonResult> RealtimeStats(long id = 0)
         {
             return new JsonResult(await stats.GeoViewsSince(id));
