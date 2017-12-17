@@ -18,18 +18,24 @@ namespace Service{
 
         public LocationDto Fetch(string ipAddress)
         {
-            try{
+            try
+            {
                 using (var reader = new DatabaseReader("/usr/local/share/findecks/GeoLite2-City.mmdb"))
                 {
-                    
                     var cityResult = reader.City(ipAddress);
-                    var cityName = cityResult.City.Name;
-                    var countryName = cityResult.Country.Name;
-                    var continent = cityResult.Continent.Name;
-                    return new LocationDto { Country = countryName, City = cityName, Continent = continent };
+
+                    return new LocationDto {
+                        City = cityResult.City.Name,
+                        Country = cityResult.Country.Name,
+                        Continent = cityResult.Continent.Name,
+                        Latitude = cityResult.Location.Latitude,
+                        Longitude = cityResult.Location.Longitude
+                    };
                 }
             }
-            catch{
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Could not fetch address from IP\n${ex.Message}");
                 return new LocationDto();
             }
         }

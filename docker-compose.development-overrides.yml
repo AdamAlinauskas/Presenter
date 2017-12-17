@@ -13,3 +13,16 @@ services:
      - "443:443"
     depends_on:
      - "meetaroo"
+  db:
+    ports:
+     - "5432:5432"
+  # pgAdmin README:
+  # 1. Get the IP address from `docker inspect meetaroo_pgadmin_1`
+  # 2. Log in with the credentials below
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+     - PGADMIN_DEFAULT_EMAIL=dev@findecks.com
+     - PGADMIN_DEFAULT_PASSWORD=meetaroo
+    volumes:
+     - ./pgadmin/pgadmin4.db:/var/lib/pgadmin/pgadmin4.db

@@ -6,11 +6,12 @@
     "tasks": [
         {
             "taskName": "build",
-            "args": [
-                "${workspaceRoot}/Migrator/Migrator.csproj"
-            ],
-            "isBuildCommand": true,
-            "problemMatcher": "$msCompile"
+            "command": "${workspaceFolder}/scripts/run_dev",
+            "args": ["-d"],
+            "showOutput": "always",
+            "options": {
+                "cwd": "${workspaceFolder}/scripts"
+            }
         }
     ]
 }

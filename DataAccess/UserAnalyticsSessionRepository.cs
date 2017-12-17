@@ -38,8 +38,8 @@ namespace DataAccess
                     dto.Location.Continent,
                     dto.Location.Country,
                     dto.Location.City,
-                    dto.Latitude,
-                    dto.Longitude
+                    dto.Location.Latitude,
+                    dto.Location.Longitude
                 }
             );
             connection.Close();

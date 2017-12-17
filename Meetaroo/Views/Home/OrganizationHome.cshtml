@@ -7,20 +7,28 @@
 
 <section class="section">
 <div class="container">
-    <h1 class="title">Presentations</h1>
-    <ul class="menu-list">
-    @foreach(var presentation in Model.Presentations)
-    {
-        <li>
-            <a class="has-text-primary" href="/Deck/Join/@presentation.Id">@presentation.Name</a>
-        </li>
-    }
-    </ul>
+<div class="columns">
+    <div class="column">
+        <h1 class="title">Presentations</h1>
+        <ul class="menu-list">
+        @foreach(var presentation in Model.Presentations)
+        {
+            <li>
+                <a class="has-text-primary" href="/Deck/Join/@presentation.Id">@presentation.Name</a>
+            </li>
+        }
+        </ul>
+    </div>
+    <div class="column">
+        <h1 class="title">Analytics</h1>
+        <p><a href="/Stats">See your organization's statistics</a></p>
+        <p><a href="/Stats/RealtimeMap">See who's looking at your presentations right now</a></p>
+    </div>
+</div>
 </div>
 </section>
 
 <hr/>
-
 
 <section class="section">
 <div class="container">
