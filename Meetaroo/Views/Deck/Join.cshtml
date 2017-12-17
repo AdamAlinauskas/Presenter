@@ -24,7 +24,7 @@
         @if (!Model.Conversation.CurrentUserIsMod) {
             <p>Moderated by @Model.Conversation.CreatedBy</p>
         }
-        <div id="presentation"></div>
+        <div id="presentation" class="fd-hidden"></div>
         <div id="presentation-will-start-shortly-area" class="fd-hidden">The presentation will be starting shortly</div>
         <div id="presentation-is-complete-area" class="fd-hidden">The presentation is complete</div>
         <div id="start-presentation-area" class="fd-hidden">
