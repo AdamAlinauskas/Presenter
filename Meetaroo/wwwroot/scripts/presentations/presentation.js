@@ -207,7 +207,7 @@ class Analytics{
     createAnalyticsRecord(position){
         let latitude = null;
         let longitude = null;
-        if (position && position.latitude) {
+        if (position && position.coords.latitude) {
             latitude = position.coords.latitude;
             longitude = position.coords.longitude;
             console.log("lat "+latitude +" long "+ longitude  );
