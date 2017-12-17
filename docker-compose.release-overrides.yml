@@ -3,7 +3,7 @@ version: '3'
 services:
   meetaroo:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_ENVIRONMENT=Production
   redirector:
     image: nginx:alpine
     volumes:
