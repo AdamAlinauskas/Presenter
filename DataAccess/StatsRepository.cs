@@ -10,6 +10,7 @@ namespace DataAccess
     {
         Task<ViewsOverTime> ViewsPerDay();
         Task<GeographicViews> GeographicViews();
+        Task<RealtimeGeoViews> GeoViewsSince(long lastId);
     }
 
     public class StatsRepository : BaseRepository, IStatsRepository
@@ -60,6 +61,32 @@ namespace DataAccess
             ");
 
             return new GeographicViews
+            {
+                Samples = samples
+            };
+        }
+
+        public async Task<RealtimeGeoViews> GeoViewsSince(long lastId)
+        {
+            await ConnectAndSetSchema();
+
+            var samples = await connection.QueryAsync<GeoViewSample>(@"
+                SELECT
+                    session.id AS id,
+                    session.latitude AS lat,
+                    session.longitude AS long,
+                    viewer.name AS name
+                FROM user_analytics_sessions session
+                    INNER JOIN meetaroo_shared.users viewer ON session.created_by = viewer.id
+                WHERE
+                    session.latitude IS NOT NULL
+                    AND session.longitude IS NOT NULL
+                    AND session.id > @lastId
+                    AND session.created_at > now() - interval '1 minute'
+            ",
+            new { lastId });
+
+            return new RealtimeGeoViews
             {
                 Samples = samples
             };

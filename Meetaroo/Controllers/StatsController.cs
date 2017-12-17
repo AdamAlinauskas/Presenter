@@ -42,5 +42,15 @@ namespace Meetaroo.Controllers
             var model = await stats.GeographicViews();
             return new JsonResult(model);
         }
+
+        public IActionResult RealtimeMap()
+        {
+            return View();
+        }
+
+        public async Task<JsonResult> RealtimeStats(long id = 0)
+        {
+            return new JsonResult(await stats.GeoViewsSince(id));
+        }
     }
 }
