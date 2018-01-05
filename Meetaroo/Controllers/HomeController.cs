@@ -32,7 +32,7 @@ namespace Meetaroo.Controllers
                     : await RenderAdminHome();
             }
 
-            return RedirectToAction("Login", "Account");
+            return View();
         }
 
         public IActionResult HealthCheck()
