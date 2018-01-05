@@ -27,12 +27,19 @@ namespace DataAccess
                     created_at::date AS date,
                     count(*) AS views
                 FROM user_analytics_sessions
+                WHERE created_at::date > current_date - interval '30 days'
                 GROUP BY date
                 ORDER BY date"
             );
 
-            return new ViewsOverTime{
-                ViewsPerDay = samples
+            var totalPreviousPeriod = await connection.QuerySingleAsync<int>(@"
+                SELECT count(*) FROM user_analytics_sessions
+                WHERE created_at > current_date - interval '60 days' AND created_at < current_date - interval '30 days'
+            ");
+
+            return new ViewsOverTime {
+                ViewsPerDay = samples,
+                TotalPreviousPeriod = totalPreviousPeriod
             };
         }
 
