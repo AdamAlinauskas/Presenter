@@ -3,7 +3,9 @@ version: '3'
 services:
   meetaroo:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+     - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+     - ./Meetaroo/wwwroot:/app/wwwroot
   ssl_terminator:
     image: nginx:alpine
     volumes:
