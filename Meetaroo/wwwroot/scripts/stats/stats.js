@@ -29,6 +29,22 @@ class Plots
             },
             { displayModeBar: false }
         );
+
+        if (model.totalPreviousPeriod === 0)
+            return;
+
+        const totalRecentViews = model.viewsPerDay.reduce((p, c) => p + c.views, 0);
+        const percentageChangeInViews = Math.round((totalRecentViews - model.totalPreviousPeriod) / model.totalPreviousPeriod * 100);
+
+        document.getElementById('mt-views-change-amount').innerText = (percentageChangeInViews + '%').replace('-', '');
+
+        if (percentageChangeInViews < 0) {
+            document.getElementById('mt-views-change-icon-decrease').classList.remove('is-hidden');
+            document.getElementById('mt-views-change-desc').innerText = 'decrease in views';
+        } else {
+            document.getElementById('mt-views-change-icon-increase').classList.remove('is-hidden');
+            document.getElementById('mt-views-change-desc').innerText = 'increase in views';
+        }
     }
 
     showMap(model) {
