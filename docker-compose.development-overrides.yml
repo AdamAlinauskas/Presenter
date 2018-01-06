@@ -17,10 +17,12 @@ services:
     ports:
      - "5432:5432"
   # pgAdmin README:
-  # 1. Get the IP address from `docker inspect meetaroo_pgadmin_1`
+  # 1. In your browser go to http://localhost:65325/
   # 2. Log in with the credentials below
   pgadmin:
     image: dpage/pgadmin4
+    ports:
+      - "65325:80"
     environment:
      - PGADMIN_DEFAULT_EMAIL=dev@findecks.com
      - PGADMIN_DEFAULT_PASSWORD=meetaroo
