@@ -11,15 +11,22 @@
         <form id="mt-orgname-form">
             <h1>Let's get started!</h1>
             <input id="mt-orgname-input" placeholder="Your organization's name" />
-            <input class="mt-schema" type="hidden"/>
             <div id="mt-schema-display"></div>
             <input type="submit" value="Go &raquo;" />
         </form>
-        <form id="mt-presentation-form" class="hidden">
-
-            <input class="mt-schema" type="hidden"/>
+        <div id="mt-upload-presentation" class="hidden">
+            Drop your presentation file here
+        </div>
+        <form id="mt-name-presentation-form" class="hidden">
+            <input id="mt-presentation-name" />
             <input type="submit" value="Go &raquo;" />
         </form>
+        <div id="mt-done" class="hidden">
+            <p>All done!</p>
+            <p>TODO AP : Share link</p>
+            <p><a id="mt-dashboard-link">Go to your dashboard</a></p>
+        </div>
+        <script src="/scripts/dropzone/dropzone.js"></script>
         <script src="/scripts/signup/signup.js"></script>
     </body>
 </html>

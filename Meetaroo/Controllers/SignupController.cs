@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Dapper;
+using DataAccess;
+using Meetaroo.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Migrator;
 using Npgsql;
+using Service;
 
 namespace Meetaroo.Controllers
 {
@@ -17,14 +20,35 @@ namespace Meetaroo.Controllers
         public string DisplayName { get; set; }
     }
 
+    // TODO AP : Own file
+    public class CreatePresentationDto
+    {
+        public string SchemaName { get; set; }
+        public long DocumentId { get; set; }
+        public string PresentationName { get; set; }
+    }
+
     [Authorize]
     public class SignupController : Controller
     {
-        NpgsqlConnection connection;
+        private readonly NpgsqlConnection connection;
+        private readonly ICurrentSchema currentSchema;
+        private readonly ICreatePresentationCommand createPresentationCommand;
+        private readonly IRetrievePresentationToViewQuery retrievePresentationToViewQuery;
+        private readonly IUploadFileCommand uploadFileCommand;
 
-        public SignupController(NpgsqlConnection connection)
+        public SignupController(
+            NpgsqlConnection connection,
+            ICurrentSchema currentSchema,
+            ICreatePresentationCommand createPresentationCommand,
+            IRetrievePresentationToViewQuery retrievePresentationToViewQuery,
+            IUploadFileCommand uploadFileCommand)
         {
             this.connection = connection;
+            this.currentSchema = currentSchema;
+            this.createPresentationCommand = createPresentationCommand;
+            this.retrievePresentationToViewQuery = retrievePresentationToViewQuery;
+            this.uploadFileCommand = uploadFileCommand;
         }
         
         public ViewResult Index()
@@ -43,6 +67,36 @@ namespace Meetaroo.Controllers
                 new { parameters.SchemaName, parameters.DisplayName }
             );
             MigrateOrg(parameters.SchemaName);
+
+            return new JsonResult(new object());
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UploadPresentation(string schemaName)
+        {
+            currentSchema.Name = schemaName;
+            var user = await this.GetCurrentUser();
+
+            var file = Request.Form.Files[0];
+
+            using (var filestream = file.OpenReadStream())
+            {
+                var documentId = await uploadFileCommand.Execute(filestream, file.FileName, user.Id);
+                return new JsonResult(new { documentId });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreatePresentation([FromBody] CreatePresentationDto parameters)
+        {
+            var user = await this.GetCurrentUser();
+            currentSchema.Name = parameters.SchemaName;
+            
+            await createPresentationCommand.Execute(new Dto.PresentationDto {
+                CreatedBy = user.Id,
+                DocumentId = parameters.DocumentId,
+                Name = parameters.PresentationName
+            });
 
             return new JsonResult(new object());
         }
