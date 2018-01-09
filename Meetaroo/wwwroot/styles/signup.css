@@ -1,0 +1,3 @@
+body { margin: 0; overflow: hidden; background: #202d3d; }
+.hidden { display: none; }
+#signup-image { height: 100vh; left: 0; top: 0; position: absolute; }
