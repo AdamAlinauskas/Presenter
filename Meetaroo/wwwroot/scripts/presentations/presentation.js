@@ -334,11 +334,13 @@ class Analytics {
             return;
         var end = new Date();
         var duration = end - this.start;
-        $.post(
-            this.updateSessionDurationUrl,
-            { analyticsId: this.analyticsId, duration: duration },
-            (data) => { }
-        )
+        //No support in IE, should add polyfill
+        fetch(this.updateSessionDurationUrl, {
+            method:"POST",
+            body: JSON.stringify({ analyticsId: this.analyticsId, duration: duration }),
+            headers: {"Content-Type":"application/json"},
+            credentials: 'include'
+        })
     }
 
     startRecordingDuration() {

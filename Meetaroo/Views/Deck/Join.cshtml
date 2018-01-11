@@ -160,6 +160,8 @@
             analytics.init();
             presentation.start();
         });
-        
+
+        /*add event listener was not working chrome. other alternative is jquery if this stops working */
+        window.onbeforeunload = ()=>analytics.stopRecordingDuration();
     });
 </script>

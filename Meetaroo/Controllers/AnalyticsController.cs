@@ -46,11 +46,11 @@ namespace Meetaroo.Controllers
             return Json(new TrackResponseDto { AnalyticsId = analyticsId });
         }
 
-        public async Task<JsonResult> UpdateDuration(UpdateAnalyticsDurationRequestDto dto)
+        public async Task<JsonResult> UpdateDuration([FromBody] UpdateAnalyticsDurationRequestDto dto)
         {
-            Console.WriteLine($"Update Duration for session id: {dto.AnalyticsId} with duration of {dto.Duration}");
+            Console.WriteLine($"Update Duration for session id: {dto.AnalyticsId}  Duration is: {dto.Duration}");
             await updateAnalyticsDurationCommand.Execute(dto);
-            return Json(new {});
+            return Json(new { });
         }
     }
 }
