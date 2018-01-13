@@ -1,1 +1,14 @@
-#room2 { opacity: 0.1; }
+g {
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideLeftBase {
+    from { transform: translateX(0px) }
+    to { transform: translateX(-800px) }
+}
+
+@keyframes slideLeftObjects {
+    from { transform: translateX(0px) }
+    to { transform: translateX(-1600px) }
+}

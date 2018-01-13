@@ -1,3 +1,9 @@
 body { margin: 0; overflow: hidden; background: #202d3d; }
 .hidden { display: none; }
 #signup-image { height: 100vh; left: 0; top: 0; position: absolute; }
+input { position: absolute; z-index: 100; }
+input[type='text'] { border-radius: 10px; font-size: 4rem; color: #202d3d; }
+.mt-next-button {
+    color: white; background: #21B5A2; font-size: 4rem; padding: 1rem; border-radius: 10px;
+    position: absolute; z-index: 100; right: 2rem; bottom: 2rem;
+}

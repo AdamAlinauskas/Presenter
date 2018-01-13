@@ -169,6 +169,19 @@
        y2="1124.1948"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1,0,0,0.84594661,0,201.6915)" />
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4307"
+       x="-0.047098122"
+       width="1.0941962"
+       y="-0.070280372"
+       height="1.1405607">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="6.7142857"
+         id="feGaussianBlur4309" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -177,11 +190,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="644.72944"
-     inkscape:cy="243.92218"
+     inkscape:zoom="0.35"
+     inkscape:cx="1173.7616"
+     inkscape:cy="240.01269"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="svg2"
      showgrid="false"
      units="px"
      inkscape:window-width="1920"
@@ -197,18 +210,19 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
+     inkscape:label="Base layer"
      inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-252.36216)">
+     id="base_layer"
+     class="layer"
+     style="display:inline">
     <g
        id="plant"
-       transform="matrix(1.3510885,0,0,1.3510885,-213.52522,-619.84604)">
+       transform="matrix(1.3510885,0,0,1.3510885,-213.52522,-888.41747)">
       <path
          sodipodi:nodetypes="cscsc"
          inkscape:connector-curvature="0"
@@ -258,9 +272,24 @@
          d="m 1097.2073,1219.3581 c 0,0 -20.5985,58.6653 -79.9904,86.8557 -62.03878,29.4469 -99.59427,10.3159 -99.59427,10.3159 0,0 7.34025,-44.0163 55.50222,-69.189 65.29685,-34.1288 124.08245,-27.9826 124.08245,-27.9826 z"
          style="fill:#9dd513;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
     </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="objects_layer"
+     inkscape:label="Objects layer"
+     style="display:inline">
     <g
+       style="display:inline"
        id="computer"
-       transform="matrix(1.1719166,0,0,1.1719166,-6.139878,-167.25095)">
+       transform="matrix(1.1719166,0,0,1.1719166,-6.139878,-435.82238)">
+      <rect
+         style="fill:#000000;fill-opacity:0.64467008;stroke:none;filter:url(#filter4307)"
+         id="rect4233"
+         width="342.14285"
+         height="229.28572"
+         x="480"
+         y="719.505"
+         ry="18.571428" />
       <rect
          style="fill:#b3b3b3;fill-opacity:1;stroke:none"
          id="rect4145"
@@ -315,9 +344,9 @@
          id="text4264"
          sodipodi:linespacing="125%"><tspan
            sodipodi:role="line"
-           id="tspan4266"
+           id="url_preview"
            x="493.21426"
-           y="746.86224">acmedynamitecorporation.findecks.com</tspan></text>
+           y="746.86224">findecks.com</tspan></text>
       <rect
          y="757.48053"
          x="487.85715"
@@ -380,8 +409,9 @@
          style="fill:#b3b3b3;fill-opacity:1;stroke:none" />
     </g>
     <g
+       style="display:inline"
        id="coffee"
-       transform="matrix(1.1719166,0,0,1.1719166,-250.5682,-166.06714)">
+       transform="matrix(1.1719166,0,0,1.1719166,-250.5682,-434.63857)">
       <g
          id="g4246">
         <path
@@ -422,8 +452,9 @@
       </g>
     </g>
     <g
+       style="display:inline"
        id="sign"
-       transform="matrix(1.1719166,0,0,1.1719166,-650.13498,-414.68275)">
+       transform="matrix(1.1719166,0,0,1.1719166,-650.13498,-683.25418)">
       <rect
          ry="7.8571301"
          y="702.3443"
@@ -449,19 +480,8 @@
          x="625.78949"
          height="58.588848"
          width="733.37073"
-         id="rect4323"
+         id="orgname_container"
          style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;line-height:125%;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;letter-spacing:0px;word-spacing:0px;fill:#233d5e;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         x="634.90118"
-         y="805.27826"
-         id="text4319"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan4321"
-           x="634.90118"
-           y="805.27826">ACME Dynamite Corporation|</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -475,8 +495,9 @@
            y="645.19977">Let's get started!</tspan></text>
     </g>
     <g
+       style="display:inline"
        id="desk"
-       transform="matrix(1.1719166,0,0,1.1719166,-6.139878,-220.61538)">
+       transform="matrix(1.1719166,0,0,1.1719166,-6.139878,-489.18681)">
       <rect
          y="1026.0513"
          x="35.714283"
@@ -500,8 +521,9 @@
          style="opacity:0.29899998;fill:url(#linearGradient4818);fill-opacity:1;stroke:none" />
     </g>
     <g
+       style="display:inline"
        id="room2"
-       transform="matrix(1.1719166,0,0,1.1719166,191.85002,-220.61538)">
+       transform="matrix(1.1719166,0,0,1.1719166,191.85002,-489.18681)">
       <g
          transform="translate(268.70057,0)"
          id="projector">
@@ -608,5 +630,16 @@
         </g>
       </g>
     </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;fill:#202d3d;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="97.142853"
+       y="258.07645"
+       id="text4444"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="company_name_preview"
+         x="97.142853"
+         y="258.07645">Your organization's name</tspan></text>
   </g>
 </svg>
