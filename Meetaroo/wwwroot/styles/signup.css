@@ -1,9 +1,12 @@
 body { margin: 0; overflow: hidden; background: #202d3d; }
-.hidden { display: none; }
 #signup-image { height: 100vh; left: 0; top: 0; position: absolute; }
-input { position: absolute; z-index: 100; }
-input[type='text'] { border-radius: 10px; font-size: 4rem; color: #202d3d; }
+#mt-upload-presentation * { display: none; }
+.hidden { display: none; }
+.mt-placeable { position: absolute; z-index: 100; }
 .mt-next-button {
-    color: white; background: #21B5A2; font-size: 4rem; padding: 1rem; border-radius: 10px;
-    position: absolute; z-index: 100; right: 2rem; bottom: 2rem;
+    color: white; background: #21B5A2; font-size: 3.5rem; padding: 1rem; border-radius: 10px;
+    right: 2rem; bottom: 2rem; box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
 }
+input[type='text'] { border-radius: 10px; font-size: 3.5rem; color: #202d3d; }
+input { border: none; }
+input:focus { outline: none; }

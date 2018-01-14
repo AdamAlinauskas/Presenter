@@ -7,22 +7,16 @@
     </head>
     <body>
         <form id="mt-orgname-form">
-            <input type="text" id="mt-orgname-input" placeholder="Your organization's name" />
+            <input type="text" autocomplete="off" id="mt-orgname-input" placeholder="Your organization's name" class="mt-placeable"/>
             <div id="mt-schema-display"></div>
-            <input type="submit" value="Next &raquo;" class="mt-next-button"/>
+            <input type="submit" value="Next &raquo;" class="mt-next-button mt-placeable"/>
         </form>
-        <div id="mt-upload-presentation" class="hidden">
-            Drop your presentation file here
+        <div id="mt-upload-presentation" class="hidden mt-placeable">
         </div>
         <form id="mt-name-presentation-form" class="hidden">
-            <input type="text" id="mt-presentation-name" />
-            <input type="submit" value="Next &raquo;" class="mt-next-button"/>
+            <input type="text" autocomplete="off" id="mt-presentation-name" class="mt-placeable" placeholder="Presentation title"/>
+            <input type="submit" value="Next &raquo;" class="mt-next-button mt-placeable"/>
         </form>
-        <div id="mt-done" class="hidden">
-            <p>All done!</p>
-            <p>TODO AP : Share link</p>
-            <p><a id="mt-dashboard-link">Go to your dashboard</a></p>
-        </div>
         <object id="signup-image" type="image/svg+xml" data="/images/signup_desk.svg"></object>
         <script src="/scripts/dropzone/dropzone.js"></script>
         <script src="/scripts/signup/signup.js"></script>

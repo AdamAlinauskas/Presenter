@@ -5,10 +5,24 @@ g {
 
 @keyframes slideLeftBase {
     from { transform: translateX(0px) }
-    to { transform: translateX(-800px) }
+    to { transform: translateX(-600px) }
 }
 
 @keyframes slideLeftObjects {
     from { transform: translateX(0px) }
     to { transform: translateX(-1600px) }
+}
+
+@keyframes slideLeftBase2 {
+    from { transform: translateX(-800px) }
+    to { transform: translateX(-1200px) }
+}
+
+@keyframes slideLeftObjects2 {
+    from { transform: translateX(-1600px) }
+    to { transform: translateX(-3200px) }
+}
+
+#done_button {
+    cursor: pointer;
 }
