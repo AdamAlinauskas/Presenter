@@ -1,5 +1,6 @@
 window.onload = () => {
-    Notification.requestPermission();
+    if(Window.Notification)
+        Notification.requestPermission();
     let connection;
 
     // TODO AP : Can refactor send message and reply methods into one
@@ -140,7 +141,8 @@ window.onload = () => {
         ).catch(
         (err) => {
             console.log(err);
-            new Notification('Something went wrong');
+            if(Window.Notification)
+                new Notification('Something went wrong');
         }
     );
 };
