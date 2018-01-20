@@ -198,6 +198,8 @@ var Presentation = function (options) {
         wireupCallbacks();
     }
 
+    const start = this.start;
+
     var joinPresenation = function () {
         connection = new signalR.HubConnection('/ViewPresentation');
 
@@ -213,8 +215,13 @@ var Presentation = function (options) {
             statusChanged(newStatus);
         });
 
+        connection.connection.onclose = () => {
+            setTimeout(start, 1000);
+        }
+
         connection.start()
-            .then(() => connection.invoke('JoinPresentation', options.schema, options.presentationId, options.presentationKey));
+            .then(() => connection.invoke('JoinPresentation', options.schema, options.presentationId, options.presentationKey))
+            .catch(() => setTimeout(start, 1000));
     }
 
     var statusChanged = function (newStatus) {

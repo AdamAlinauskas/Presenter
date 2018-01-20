@@ -115,9 +115,18 @@ window.onload = () => {
 
     // -----------------------------
 
-    connection = new signalR.HubConnection('/JoinConversation');
-    connection.on('message', message => render([message]));
-    connection.start().then(() => connection.invoke('JoinConversation', conversationInfo.id));
+    function start() {
+        connection = new signalR.HubConnection('/JoinConversation');
+
+        connection.on('message', message => render([message]));
+        connection.connection.onclose = () => {
+            setTimeout(start, 1000);
+        };
+        connection.start()
+            .then(() => connection.invoke('JoinConversation', conversationInfo.id))
+            .catch(() => setTimeout(start, 1000));
+    }
+    start();
 
     fetch(
         `/Deck/GetMessages?conversationId=${conversationInfo.id}&since=-1`,
