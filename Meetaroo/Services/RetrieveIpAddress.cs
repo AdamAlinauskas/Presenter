@@ -31,8 +31,12 @@ namespace Meetaroo.Services
             // approach might be to read each IP from right to left and use the first public IP.
             // http://stackoverflow.com/a/43554000/538763
             //
+
+            Console.WriteLine($"X-Forwarded-For is: {GetHeaderValueAs<string>("X-Forwarded-For")}");
+            Console.WriteLine($"Forwarded: {GetHeaderValueAs<string>("Forwarded")}");
+
             if (tryUseXForwardHeader)
-                ip = SplitCsv(GetHeaderValueAs<string>("X-Forwarded-For")).FirstOrDefault();
+                ip = GetFirstPubplicIp(SplitCsv(GetHeaderValueAs<string>("X-Forwarded-For")));
 
             // RemoteIpAddress is always null in DNX RC1 Update1 (bug).
             if (string.IsNullOrEmpty(ip) && httpContext?.Connection?.RemoteIpAddress != null)
@@ -47,6 +51,25 @@ namespace Meetaroo.Services
                 throw new Exception("Unable to determine caller's IP.");
 
             return ip;
+        }
+
+        private string GetFirstPubplicIp(List<string> ips)
+        {
+            Console.WriteLine($"Find Public IP Address in: {string.Join(",", ips)}");
+            var privateIps = new List<String> { "10", "100", "172", "192", "198" };
+            ips.Reverse(); //read right to left.
+            foreach (var ip in ips)
+            {
+                Console.WriteLine($"Checking if this ip is public {ip}");
+                var startOfIp = ip.Split(".").First();
+                Console.WriteLine($"ip part {startOfIp}");
+                if (!privateIps.Contains(startOfIp))
+                {
+                    Console.WriteLine($"Found public ip {ip}");
+                    return ip;
+                }
+            }
+            return string.Empty;
         }
 
         public T GetHeaderValueAs<T>(string headerName)
